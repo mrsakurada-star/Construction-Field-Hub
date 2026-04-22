@@ -1,0 +1,821 @@
+/* © 2026 Nozomi Sakurada. All rights reserved. */
+:root {
+    --bg: #f8f8f6;
+    --white: #ffffff;
+    --border: #e2e2dc;
+    --border-dark: #c8c8c0;
+    --text: #1a1a18;
+    --text2: #6b6b60;
+    --text3: #9e9e94;
+    --accent: #2a2a24;
+    --accent-line: #3d3d35;
+    --primary: #2a2a24;
+    --secondary: #6b6b60;
+    --success: #4a6741;
+    --chart-1: #2a2a24;
+    --chart-2: #6b6b60;
+    --chart-3: #9e9e94;
+    --chart-4: #c8c8c0;
+}
+
+body {
+    font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+}
+
+header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+main {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 48px;
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 32px;
+}
+
+.config-panel {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    height: calc(100vh - 140px);
+    overflow-y: auto;
+    position: sticky;
+    top: 24px;
+}
+
+.results-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+    transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--border-dark);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--accent);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.grid-cols-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.checkbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    background: var(--white);
+    transition: all 0.2s;
+}
+
+.checkbox-item:hover {
+    border-color: var(--border-dark);
+    background: var(--bg);
+}
+
+.checkbox-item input {
+    width: auto;
+    margin: 0;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+/* --- 印刷用レイアウト専用コンポーネント (通常画面では非表示) --- */
+.print-section {
+    display: none;
+}
+
+/* 1. レポートヘッダー */
+.print-report-header {
+    background: #2a2a24;
+    color: #ffffff;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 4px solid #4a6741;
+    margin-bottom: 24px;
+}
+.header-left .report-label {
+    font-size: 10px;
+    color: #9e9e94;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+}
+.header-left h1 {
+    font-size: 20px;
+    margin: 0;
+    font-weight: 700;
+}
+.header-right {
+    text-align: right;
+    font-size: 11px;
+    color: #e2e2dc;
+}
+.header-right .target-info {
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+/* 2. 試算条件グリッド */
+.print-conditions-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto auto;
+    gap: 1px;
+    background: #e2e2dc;
+    border: 1px solid #e2e2dc;
+    border-radius: 4px;
+    margin-bottom: 24px;
+    overflow: hidden;
+}
+.print-conditions-grid .condition-item {
+    background: #ffffff;
+    padding: 8px 12px;
+}
+.print-conditions-grid label {
+    font-size: 9px;
+    margin-bottom: 2px;
+    color: #6b6b60;
+}
+.print-conditions-grid .value {
+    font-size: 12px;
+    font-weight: 700;
+    color: #1a1a18;
+}
+
+/* 3. ヒーローセービングカード */
+.print-hero-cards {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr 1.2fr;
+    gap: 12px;
+    margin-bottom: 24px;
+    align-items: center;
+}
+.hero-card {
+    padding: 16px;
+    border-radius: 6px;
+    border: 1px solid #e2e2dc;
+    background: #ffffff;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.hero-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #6b6b60;
+    margin-bottom: 8px;
+}
+.hero-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a18;
+}
+.hero-unit {
+    font-size: 11px;
+    font-weight: 400;
+    margin-left: 4px;
+}
+/* 最安カード (中央) */
+.hero-best {
+    background: linear-gradient(135deg, #4a6741 0%, #3a5233 100%);
+    border: none;
+    color: #ffffff;
+    padding: 20px 16px;
+    transform: scale(1.02);
+}
+.hero-best .hero-label, .hero-best .hero-value {
+    color: #ffffff;
+}
+.hero-badge {
+    position: absolute;
+    top: -10px;
+    left: 16px;
+    background: #e8f2e5;
+    color: #4a6741;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+/* 節約額カード (右端) */
+.hero-savings {
+    background: #fdfaf5;
+    border-color: #e5d1a8;
+}
+.hero-savings .hero-label {
+    color: #a37c22;
+}
+.hero-savings .hero-value {
+    font-size: 26px;
+    color: #b8860b;
+}
+
+/* 4. CSSバーチャート */
+.print-css-chart {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #e2e2dc;
+    border-radius: 4px;
+}
+.print-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #6b6b60;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #e2e2dc;
+    padding-bottom: 6px;
+}
+.css-bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 11px;
+}
+.css-bar-label {
+    width: 90px;
+    font-weight: 600;
+    color: #2a2a24;
+}
+.css-bar-track-wrapper {
+    flex: 1;
+    position: relative;
+    padding-right: 120px; /* 値表示スペース */
+}
+.css-bar-track {
+    height: 16px;
+    background: #f0f0ed;
+    border-radius: 2px;
+    width: 100%;
+    position: relative;
+}
+.css-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+}
+.css-bar-value {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+.css-bar-cost {
+    font-weight: 700;
+}
+.css-bar-diff {
+    font-size: 10px;
+    width: 45px;
+    text-align: right;
+}
+.row-current .css-bar-label,
+.row-current .css-bar-cost {
+    font-weight: 700;
+}
+.row-current .css-bar-track {
+    outline: 1px solid #2a2a24;
+    outline-offset: 1px;
+}
+
+/* 5. テーブル印刷調整 */
+tr.best-row {
+    background-color: #f7fbf6 !important;
+}
+tr.current-row {
+    background-color: #f8f8f6 !important;
+}
+
+/* 6. 計算式詳細行のスタイル */
+.formula-row {
+    display: none; /* 初期状態は非表示 */
+    background-color: #fafaf8;
+}
+.formula-row.active {
+    display: table-row;
+}
+.formula-content {
+    padding: 12px 16px 12px 48px;
+    font-size: 11px;
+    color: #6b6b60;
+    line-height: 1.5;
+    border-bottom: 1px solid var(--border);
+}
+.formula-toggle-icon {
+    transition: transform 0.2s ease;
+    color: var(--text3);
+}
+tr:hover .formula-toggle-icon {
+    color: var(--text);
+}
+
+/* --- モーダル (screen-only) --- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+.modal-box {
+    background: #fff;
+    border-radius: 8px;
+    max-width: 760px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    overflow: hidden;
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--border);
+    background: var(--accent);
+    color: #fff;
+    flex-shrink: 0;
+}
+.modal-header h2 {
+    margin: 0;
+    font-size: 16px;
+}
+.modal-close {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+}
+.modal-body {
+    padding: 24px 28px;
+    overflow-y: auto;
+}
+.modal-body h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 20px 0 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.modal-body h3:first-child {
+    margin-top: 0;
+}
+.logic-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+.logic-table th {
+    background: #f2f2ef;
+    color: var(--text2);
+    text-align: left;
+    padding: 8px 12px;
+    font-weight: 600;
+    border: 1px solid var(--border);
+}
+.logic-table td {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    line-height: 1.5;
+}
+.logic-table tr:nth-child(even) td {
+    background: #fafaf8;
+}
+.logic-note {
+    font-size: 10px;
+    color: var(--text3);
+    margin: 6px 0 0;
+}
+
+/* --- 印刷メディアクエリ --- */
+@page {
+    size: A4 landscape;
+    margin: 6mm 8mm; /* 余白を少し削って縦を稼ぐ */
+}
+
+@media print {
+    /* ===== ベースリセット ===== */
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        padding: 0 !important;
+        background: white !important;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+        font-family: 'Noto Sans JP', sans-serif;
+        font-size: 9px;
+        color: #1a1a18;
+    }
+
+    /* ===== 画面専用要素を完全非表示 ===== */
+    header,
+    .config-panel,
+    .btn,
+    .screen-only,
+    .modal-overlay,
+    footer {
+        display: none !important;
+    }
+
+    main {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* ===== 印刷専用要素を表示 ===== */
+    .print-section { display: block !important; }
+    .print-conditions-grid { display: grid !important; }
+    .print-hero-cards { display: grid !important; }
+    .print-report-header { display: flex !important; }
+    .print-left-col { display: flex !important; }
+
+    /* ===== results-panel: CSS Grid ─ ヘッダー全幅 + 左右2列 + ロジック帯 ===== */
+    .results-panel {
+        display: grid !important;
+        grid-template-columns: 82mm 1fr;
+        grid-template-rows: auto 1fr auto;
+        grid-template-areas:
+            "hdr hdr"
+            "left right"
+            "logic logic";
+        gap: 3px 5mm;
+        width: 100%;
+    }
+
+    /* ─── スリムヘッダー ─── 縦を最小限に圧縮 ─── */
+    .print-report-header {
+        grid-area: hdr;
+        padding: 5px 12px;
+        background: #2a2a24 !important;
+        border-bottom: 2px solid #4a6741;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .print-report-header h1 {
+        font-size: 13px;
+        margin: 0;
+        color: #fff !important;
+        font-weight: 700;
+    }
+    .header-left .report-label {
+        font-size: 7px;
+        color: #9e9e94 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-bottom: 1px;
+    }
+    .header-right {
+        text-align: right;
+    }
+    .print-date-info, .target-info {
+        color: #cccccc !important;
+        font-size: 8px;
+        line-height: 1.4;
+    }
+
+    /* ─── 左列 ─── */
+    .print-left-col {
+        grid-area: left;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    /* ─── 右列 ─── */
+    .print-right-col {
+        grid-area: right;
+        min-width: 0;
+    }
+
+    /* ===== 試算条件グリッド ===== */
+    .print-conditions-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 1px !important;
+        background: #d0d0c8;
+        border: 1px solid #d0d0c8;
+        border-radius: 3px;
+        overflow: hidden;
+        margin-bottom: 0 !important;
+    }
+    .print-conditions-grid .condition-item {
+        background: #fff !important;
+        padding: 4px 7px !important;
+    }
+    .print-conditions-grid label {
+        font-size: 7px !important;   /* 6px → 7px */
+        color: #888 !important;
+        display: block;
+        margin-bottom: 1px;
+    }
+    .print-conditions-grid .value {
+        font-size: 9px !important;   /* 8px → 9px */
+        font-weight: 700;
+        color: #1a1a18 !important;
+    }
+
+    /* ===== ヒーローカード ===== */
+    .print-hero-cards {
+        grid-template-columns: 1fr 1fr 1fr !important;
+        gap: 3px !important;
+        margin-bottom: 0 !important;
+    }
+    .hero-card {
+        padding: 6px 8px !important;  /* 5px → 6px */
+        border-radius: 3px !important;
+    }
+    .hero-current {
+        background: #f8f8f6 !important;
+        border: 1px solid #ddd !important;
+    }
+    .hero-best {
+        background: #edf4ec !important;
+        border: 1px solid #4a6741 !important;
+    }
+    .hero-savings {
+        background: #2a2a24 !important;
+        border: none !important;
+    }
+    .hero-label {
+        font-size: 7px !important;   /* 6px → 7px */
+        margin-bottom: 2px !important;
+        color: #888 !important;
+    }
+    .hero-best .hero-label { color: #5a8055 !important; }
+    .hero-savings .hero-label { color: #bbb !important; }
+    .hero-value {
+        font-size: 14px !important;  /* 12px → 14px */
+        font-weight: 700;
+    }
+    .hero-current .hero-value { color: #1a1a18 !important; }
+    .hero-best .hero-value { color: #2d5a27 !important; }
+    .hero-savings .hero-value { color: #fff !important; }
+    .hero-unit { font-size: 7.5px !important; }
+    .hero-badge {
+        font-size: 6.5px !important;
+        top: -7px !important;
+    }
+
+    /* ===== CSSバーチャート ===== */
+    .print-css-chart {
+        flex: 1;
+        padding: 7px 8px !important;
+        border: 1px solid #e2e2dc;
+        border-radius: 3px;
+        background: #fff !important;
+        margin-bottom: 0 !important;
+    }
+    .print-section-title {
+        font-size: 8px !important;   /* 7px → 8px */
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #777 !important;
+        padding-bottom: 3px !important;
+        margin-bottom: 5px !important;
+        border-bottom: 1px solid #eee;
+    }
+    .css-bar-row { margin-bottom: 5px !important; }  /* 3px → 5px で行間拡大 */
+    .css-bar-label { width: 52px !important; font-size: 8px !important; color: #444 !important; }  /* 6.5px → 8px */
+    .css-bar-track { height: 10px !important; border-radius: 2px !important; }  /* 8px → 10px */
+    .css-bar-track-wrapper { padding-right: 80px !important; }
+    .css-bar-cost { font-size: 8px !important; color: #1a1a18 !important; }  /* 6.5px → 8px */
+    .css-bar-diff { font-size: 7.5px !important; width: 30px !important; }  /* 6px → 7.5px */
+
+    /* ===== 詳細テーブルカード ===== */
+    .print-right-col .card {
+        border: 1px solid #e2e2dc !important;
+        padding: 7px 10px !important;
+        border-radius: 3px !important;
+        margin: 0 !important;
+        background: #fff !important;
+    }
+    .section-title {
+        font-size: 8px !important;   /* 7px → 8px */
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #777 !important;
+        margin-bottom: 5px !important;
+        padding-bottom: 3px;
+        border-bottom: 1px solid #eee;
+    }
+    .section-title i { display: none !important; }
+    .table-wrap { margin: 0 !important; }
+    table { border-collapse: collapse; width: 100%; }
+    table th {
+        background: #f2f2ef !important;
+        color: #555 !important;
+        font-size: 7.5px !important;  /* 6.5px → 7.5px */
+        font-weight: 600;
+        text-align: left;
+        padding: 4px 6px !important;  /* 3px → 4px */
+        border-bottom: 1px solid #ddd;
+        white-space: nowrap;
+    }
+    table td {
+        font-size: 9px !important;   /* 7.5px → 9px */
+        padding: 4px 6px !important;  /* 3px → 4px */
+        border-bottom: 1px solid #eee;
+        color: #1a1a18 !important;
+        vertical-align: top;
+    }
+    tr.best-row td { background: #f0f6ef !important; }
+    tr.current-row td { background: #f8f8f6 !important; }
+    .footer-note {
+        font-size: 7px !important;   /* 6px → 7px */
+        color: #999 !important;
+        margin-top: 4px !important;
+    }
+
+    /* ===== 計算式行: 印刷時は全展開 ===== */
+    .formula-row { display: table-row !important; }
+    .formula-content {
+        padding: 2px 8px 3px 20px !important;
+        font-size: 7px !important;   /* 6px → 7px */
+        color: #666 !important;
+        line-height: 1.4 !important;
+        background: #fafaf8 !important;
+        border-bottom: 1px solid #f0f0ed !important;
+    }
+    .formula-toggle-icon { display: none !important; }
+
+    /* ===== 計算ロジック下部帯 ===== */
+    .print-logic-section {
+        grid-area: logic;
+        margin-top: 4px;
+        border: 1px solid #e2e2dc;
+        border-radius: 3px;
+        background: #fafaf8 !important;
+        overflow: hidden;
+    }
+    .print-logic-header {
+        background: #f2f2ef !important;
+        border-bottom: 1px solid #e2e2dc;
+        padding: 3px 10px;
+        font-size: 7.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #666 !important;
+    }
+    .print-logic-body {
+        display: flex;
+        gap: 8px;
+        padding: 5px 10px;
+    }
+    .print-logic-col {
+        flex: 1;
+    }
+    .print-logic-subtitle {
+        font-size: 7px;
+        font-weight: 700;
+        color: #888 !important;
+        margin-bottom: 3px;
+    }
+    .print-logic-table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 0;
+    }
+    .print-logic-table th {
+        background: #ebebea !important;
+        font-size: 6.5px !important;
+        font-weight: 600;
+        color: #666 !important;
+        padding: 2px 5px !important;
+        border: 1px solid #ddd;
+        white-space: nowrap;
+    }
+    .print-logic-table td {
+        font-size: 7px !important;
+        padding: 2px 5px !important;
+        border: 1px solid #e8e8e5;
+        color: #1a1a18 !important;
+        line-height: 1.3;
+    }
+    .print-logic-table td strong {
+        font-weight: 700;
+    }
+    .print-logic-note {
+        font-size: 6.5px;
+        color: #999 !important;
+        margin-top: 3px;
+    }
+}
+
+
+

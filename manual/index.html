@@ -1,0 +1,366 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <title>パーパスガス給湯器 汎用マニュアル作成ツール（完全版）</title>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="control-panel">
+    <h3>マニュアル作成設定</h3>
+    <div class="input-group">
+        <label for="company-name">宛先会社名・支店名</label>
+        <input type="text" id="company-name" placeholder="例：〇〇株式会社 〇〇支社" value="〇〇株式会社 〇〇支社">
+    </div>
+    <div class="input-group">
+        <label for="manual-type">マニュアル種類</label>
+        <select id="manual-type">
+            <option value="diag">簡易診断マニュアル</option>
+            <option value="alarms">アラーム一覧・チェックポイント</option>
+        </select>
+    </div>
+    <button class="btn-print" onclick="window.print()">印刷用画面を表示/印刷</button>
+</div>
+
+<div id="preview-container">
+    <div id="manual-diag" class="manual-content active">
+        <div class="cover-page">
+            <div class="ref-model-note">
+                参考機種: SM-GHH(D)2400Z(A)WH<br>
+                SM-GHHK247ZW
+            </div>
+            <div class="cover-logo-area">
+                <div class="company-tag"><span class="dynamic-name">〇〇株式会社 〇〇支社</span> 様向け</div>
+                <div class="for-label">パーパス製ガス給湯器 サービスマニュアル</div>
+            </div>
+
+            <div class="cover-title-box">
+                <div class="cover-subtitle">経年機器対応</div>
+                <h1 class="cover-title">簡易診断マニュアル</h1>
+                <div class="cover-version">2025年3月版</div>
+            </div>
+
+            <div class="cover-badge">
+                <div class="badge">エラーコード対応</div>
+                <div class="badge">メンテナンスモード活用</div>
+                <div class="badge">耐久寿命早見表</div>
+                <div class="badge">取替提案トークスクリプト</div>
+            </div>
+        </div>
+
+        <div class="content-page">
+            <div class="page-header-bar">
+                <span><span class="dynamic-name">〇〇株式会社 〇〇支社</span>様向け</span>
+                <span>パーパスガス給湯器 簡易診断マニュアル</span>
+            </div>
+
+            <div class="note-box" style="background:#e8f0fe; border-color:#1a4fa8; font-size:10pt; padding:10px 14px;">
+                本マニュアルは、パーパス製のガス給湯器（主に経年機器）を対象とした、<strong>簡易診断・状況説明・早期取替提案</strong>に繋げるためのガイドです。
+                リモコンのメンテナンスモードと組み合わせて、現場でのスピーディーな診断にご活用ください。
+            </div>
+
+            <h2 class="section-title"><span class="section-num">1</span>経年機器で発生しやすいエラーと症状</h2>
+            <p style="margin:0 0 4mm; font-size:10pt;">経年劣化により次のエラーが発生しやすくなります。お客様からお問い合わせの際、該当しないかご確認ください。</p>
+
+            <div class="error-cards">
+                <div class="error-card no-break">
+                    <div class="card-header">エラー 111 ／ 113　点火不良</div>
+                    <div class="card-body">
+                        <strong>111</strong>：給湯点火不良（給湯が使えない）<br>
+                        <strong>113</strong>：暖房点火不良（暖房が効かない）<br>
+                        <div style="color:#555; font-size:9pt; margin-top:3px;">【主な原因】ガス電磁弁回路の故障など</div>
+                    </div>
+                </div>
+                <div class="error-card no-break">
+                    <div class="card-header" style="background:#d4700a">エラー 101 ／ 103　燃焼異常（連続警告）</div>
+                    <div class="card-body">
+                        <strong>101</strong>：給湯燃焼異常（連続検知）<br>
+                        <strong>103</strong>：暖房燃焼異常（連続検知）<br>
+                        <div style="color:#555; font-size:9pt; margin-top:3px;">【主な原因】給排気経路の閉塞・二次ガス圧不良など</div>
+                    </div>
+                </div>
+                <div class="error-card no-break">
+                    <div class="card-header" style="background:#c0392b">エラー 991 ／ 993　熱交換器・ファン異常</div>
+                    <div class="card-body">
+                        <strong>991</strong>：給湯熱交換器・給湯ファン異常<br>
+                        <strong>993</strong>：暖房熱交換器・暖房ファン異常<br>
+                        <div style="color:#555; font-size:9pt; margin-top:3px;">【主な原因】燃焼回路のススつまり・スス詰まりなど</div>
+                    </div>
+                </div>
+                <div class="error-card no-break">
+                    <div class="card-header" style="background:#0d7a6b">エラー 173　暖房回路の漏水</div>
+                    <div class="card-body">
+                        <strong>暖房回路上の不凍液漏れ</strong>を検知<br>
+                        配管・機器内部・暖房端末いずれでも発生します<br>
+                        <div style="color:#555; font-size:9pt; margin-top:3px;">【主な原因】経年劣化による腐食・ピンホール</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-box">
+                エラー発生時は、まず「メンテナンスモード」（第2節）でエラー履歴を確認し、エラーコードと発生頻度を把握してください。
+            </div>
+
+            <div class="page-section">
+                <div class="page-header-bar">
+                    <span><span class="dynamic-name">〇〇株式会社 〇〇支社</span>様向け</span>
+                    <span>パーパスガス給湯器 簡易診断マニュアル</span>
+                </div>
+
+                <h2 class="section-title"><span class="section-num">2</span>給湯リモコン メンテナンスモードの活用</h2>
+                <p style="margin:0 0 4mm; font-size:10pt;">
+                    リモコンのメンテナンスモードを使うことで、<strong>エラー履歴・燃焼時間・燃焼回数</strong>などの機器使用履歴を現場で直接確認できます。
+                    お客様に見せながら状況を説明する際にも有効です。
+                </p>
+
+                <div class="subsection-title">▼ メンテナンスモードの入り方（標準操作）</div>
+                <ul class="process-list">
+                    <li><span class="step-num">1</span><div class="step-content">運転ボタンの ON/OFF 状態にかかわらず、メンテナンスモードへ入ることができます。</div></li>
+                    <li><span class="step-num">2</span><div class="step-content"><strong>給湯温度設定ボタンの「▲（上）」と「▼（下）」を同時に約5秒以上長押し</strong><br>→ 時刻表示部に「メンテ番号」が表示され、メンテナンスモードに切り替わります。</div></li>
+                    <li><span class="step-num">3</span><div class="step-content">「▲」「▼」ボタンで番号を切り替え、「確定」ボタンを押すと各番号のデータが表示されます。</div></li>
+                    <li><span class="step-num">4</span><div class="step-content">終了するには「運転（切）」ボタンを押します。</div></li>
+                </ul>
+
+                <div class="subsection-title">▼ 確認すべき主要メンテナンス番号</div>
+                <table>
+                    <thead>
+                        <tr><th style="width:15%">番号</th><th style="width:40%">項目</th><th style="width:25%">単位・表示</th><th>用途</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr class="highlight-row"><td class="center bold">1</td><td>給湯燃焼時間</td><td class="center">表示値 × 10 時間</td><td>寿命診断</td></tr>
+                        <tr class="highlight-row"><td class="center bold">2</td><td>給湯燃焼回数</td><td class="center">表示値 × 100 回</td><td>使用頻度</td></tr>
+                        <tr><td class="center bold">11</td><td>エラー履歴（最新）</td><td class="center">エラーコード</td><td>故障診断</td></tr>
+                        <tr><td class="center bold">12</td><td>エラー履歴（前回）</td><td class="center">前回のコード</td><td>故障傾向</td></tr>
+                        <tr><td class="center bold">13</td><td>エラー履歴（前々回）</td><td class="center">前々回のコード</td><td>故障傾向</td></tr>
+                        <tr class="highlight-row"><td class="center bold">17</td><td>暖房燃焼時間</td><td class="center">表示値 × 10 時間</td><td>暖房寿命</td></tr>
+                        <tr class="highlight-row"><td class="center bold">18</td><td>暖房燃焼回数</td><td class="center">表示値 × 100 回</td><td>暖房使用頻度</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="page-section">
+                <div class="page-header-bar">
+                    <span><span class="dynamic-name">〇〇株式会社 〇〇支社</span>様向け</span>
+                    <span>パーパスガス給湯器 簡易診断マニュアル</span>
+                </div>
+                <h2 class="section-title"><span class="section-num">3</span>お客様への状況説明と問診</h2>
+                <div class="flow-steps" style="margin-bottom:5mm;">
+                    <div class="flow-step">①<br>エラー内容<br>の共有</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">②<br>使用頻度・<br>機器状態の説明</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">③<br>お困りごと<br>のヒアリング</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">④<br>早期取替<br>の提案へ</div>
+                </div>
+                <ul class="process-list">
+                    <li><span class="step-num">①</span><div class="step-content"><strong>エラー内容の共有</strong><br>「リモコンの履歴を確認したところ、〇〇の症状が記録されています。」</div></li>
+                    <li><span class="step-num">②</span><div class="step-content"><strong>使用頻度と機器状態の説明</strong><br>「現在の総燃焼時間は〇〇時間となっています。」</div></li>
+                    <li><span class="step-num">③</span><div class="step-content"><strong>お困りごとの確認</strong><br>「もし今日、突然お湯が使えなくなった場合、どなたがどのくらいお困りになりますでしょうか？」</div></li>
+                </ul>
+            </div>
+
+            <div class="page-section">
+                <div class="page-header-bar">
+                    <span><span class="dynamic-name">〇〇株式会社 〇〇支社</span>様向け</span>
+                    <span>パーパスガス給湯器 簡易診断マニュアル</span>
+                </div>
+                <h2 class="section-title"><span class="section-num">4</span>燃焼時間による機器耐久（寿命）早見表</h2>
+                <div class="formula-box">現在の燃焼時間（時間） ÷ （使用年数 × 365日） ＝ 1日あたりの使用時間（時間）</div>
+                <table>
+                    <thead>
+                        <tr><th>1日あたりの使用時間</th><th>おもな家族構成・状況</th><th>3,000h到達目安</th><th>状態の目安</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="center bold" style="background:#cce5ff">約 20分（0.33h）</td><td>1～2人暮らし</td><td class="center">約 25年</td><td>余裕あり</td></tr>
+                        <tr><td class="center bold" style="background:#d4edda">約 30分（0.5h）</td><td>2～3人家族</td><td class="center">約 16年</td><td>標準的</td></tr>
+                        <tr style="background:#fff3cd"><td class="center bold">約 50分（0.83h）</td><td>4人家族（標準）</td><td class="center">約 10年</td><td>標準寿命</td></tr>
+                        <tr><td class="center bold" style="background:#ffcccc">約 75分（1.25h）</td><td>5人以上 / 多使用世帯</td><td class="center">約 7年</td><td>早期到達</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="page-section">
+                <div class="page-header-bar">
+                    <span><span class="dynamic-name">〇〇株式会社 〇〇支社</span>様向け</span>
+                    <span>パーパスガス給湯器 簡易診断マニュアル</span>
+                </div>
+                <h2 class="section-title"><span class="section-num">5</span>不凍液の点検・交換と暖房回路メンテナンス</h2>
+                <div class="info-box">メーカー推奨：<strong>3年ごとの不凍液交換</strong>が目安です。</div>
+                <ul class="process-list">
+                    <li><span class="step-num">!</span><div class="step-content"><strong>暖房端末・配管の腐食進行</strong>：防錆効果が解消され、サビが発生しやすくなります。</div></li>
+                    <li><span class="step-num">!</span><div class="step-content"><strong>機器故障・配管詰まり</strong>：サビや汚れが回路を循環し、熱動弁の作動不良を引き起こします。</div></li>
+                </ul>
+                <div class="talk-script">「不凍液は車のエンジンオイルと同じように、定期的な交換が必要です。交換せずにいると、将来的に大規模な修理が必要になるリスクが高まります。」</div>
+            </div>
+
+            <div class="page-section">
+                <div class="page-header-bar">
+                    <span><span class="dynamic-name">〇〇株式会社 〇〇支社</span>様向け</span>
+                    <span>パーパスガス給湯器 簡易診断マニュアル</span>
+                </div>
+                <h2 class="section-title"><span class="section-num">6</span>現場での活用ポイント</h2>
+                <ul style="padding-left:20px; font-size:10pt;">
+                    <li style="margin-bottom:8px;">定期的なメンテナンス提案と合わせて、履歴情報を<strong>初期診断ツール</strong>として活用してください。</li>
+                    <li style="margin-bottom:8px;">暖房付き給湯器は、給湯・暖房の<strong>総合的な稼働時間で診断</strong>してください。</li>
+                    <li>不凍液点検とセットで提案することで、<strong>予防保全の付加価値</strong>を訴求できます。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="manual-alarms" class="manual-content">
+        <div class="content-page">
+            <div class="page-header-bar">
+                <span>パーパスガス給湯器 アラーム（エラーコード）一覧</span>
+                <span style="font-size: 9pt; font-weight: normal; opacity: 0.9;"><span class="dynamic-name">〇〇株式会社 〇〇支社</span>様向け</span>
+            </div>
+
+            <div class="info-box" style="background:#fffde7; border-left:4px solid #f5c518; padding:5px 8px; font-size:8pt; margin:2mm 0; color:#555;">
+                ※本資料はサービスマニュアルに記載されているすべてのアラームコードを網羅・分類したものです。<br>
+                ※アラーム番号の末尾の「1」は給湯側、「3」は暖房側を示しているケースがあります（例：111と113）。
+            </div>
+
+            <h2 class="section-title">1. アラーム（エラーコード）完全一覧</h2>
+
+            <div class="subsection-title" style="font-size: 10pt; font-weight: bold; color: #1a4fa8; display: flex; align-items: center; margin: 4mm 0 2mm 0;">1-1. 燃焼・着火・ガス系の異常</div>
+            <table>
+                <thead>
+                    <tr><th>コード</th><th>名称</th><th>診断ポイント（故障箇所・確認事項）</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td class="td-code">100</td><td class="td-name">自己診断燃焼異常警告</td><td class="td-point">燃焼状態の悪化を検知。給排気部の詰まり等確認。</td></tr>
+                    <tr><td class="td-code">111 / 113</td><td class="td-name">着火ミス<br><span style="font-weight:normal;font-size:7.5pt;">(給湯:111 / 暖房:113)</span></td><td class="td-point">ガス元栓、ガスメーター遮断、イグナイター、点火プラグ、ガス電磁弁、フレームロッドの確認</td></tr>
+                    <tr><td class="td-code">121 / 123</td><td class="td-name">失火<br><span style="font-weight:normal;font-size:7.5pt;">(給湯:121 / 暖房:123)</span></td><td class="td-point">燃焼途中の消火。ガス圧低下、フレームロッド汚れ、風雨の影響</td></tr>
+                    <tr><td class="td-code">390</td><td class="td-name">自己診断用フレームロッド異常</td><td class="td-point">自己診断用フレームロッドの汚れ、断線、ショート</td></tr>
+                    <tr><td class="td-code">510</td><td class="td-name">元ガス電磁弁故障</td><td class="td-point">元ガス電磁弁の作動不良、電装基板</td></tr>
+                    <tr><td class="td-code">513</td><td class="td-name">ガス切替弁故障</td><td class="td-point">ガス切替弁の作動不良、電装基板</td></tr>
+                    <tr><td class="td-code">610(-01〜07)</td><td class="td-name">燃焼ファン異常</td><td class="td-point">燃焼ファンモーター、電装基板</td></tr>
+                    <tr><td class="td-code">700(-04, 05)</td><td class="td-name">ガス比例弁駆動回路異常</td><td class="td-point">電装基板、ガス比例弁</td></tr>
+                    <tr><td class="td-code">710(-03〜09)</td><td class="td-name">元ガス電磁弁リリ異常</td><td class="td-point">電装基板（温度ヒューズ断線も確認）</td></tr>
+                    <tr><td class="td-code">711(-01, 02)</td><td class="td-name">ガス切替弁駆動回路異常</td><td class="td-point">電装基板</td></tr>
+                    <tr><td class="td-code">720(-01〜03)</td><td class="td-name">疑似炎検知</td><td class="td-point">点火前・消火後の炎検知。電装基板、フレームロッド</td></tr>
+                    <tr><td class="td-code">900(-01, 02)</td><td class="td-name">給排気閉塞検出</td><td class="td-point">給気・排気筒の閉塞（積雪、異物）、詰まり確認</td></tr>
+                    <tr><td class="td-code">903</td><td class="td-name">給気汚染異常（波板制御）</td><td class="td-point">排気の再吸い込み。機器設置場所、波板囲いなどの確認</td></tr>
+                    <tr><td class="td-code">990(-01, 02)</td><td class="td-name">燃焼異常（悪化停止）</td><td class="td-point">燃焼が急激(01)または徐々(02)に悪化。熱交換器のスス詰まり等</td></tr>
+                </tbody>
+            </table>
+
+            <div class="page-break"></div>
+            <div class="page-header-bar">
+                <span>パーパスガス給湯器 アラーム（エラーコード）一覧</span>
+                <span style="font-size: 9pt; font-weight: normal; opacity: 0.9;"><span class="dynamic-name">〇〇株式会社 〇〇支社</span>様向け</span>
+            </div>
+
+            <div class="subsection-title" style="font-size: 10pt; font-weight: bold; color: #1a4fa8; display: flex; align-items: center; margin: 4mm 0 2mm 0;">1-2. 水位・注湯・ポンプ・弁系の異常</div>
+            <table>
+                <thead>
+                    <tr><th>コード</th><th>名称</th><th>診断ポイント（故障箇所・確認事項）</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td class="td-code">032(-01〜20)</td><td class="td-name">注湯時間異常（凍結予防水抜き異常）</td><td class="td-point">お湯はり時、一定時間で設定水位にならない。浴槽の栓抜け、水位センサー、ふろ水流スイッチ</td></tr>
+                    <tr><td class="td-code">252</td><td class="td-name">自動水張り異常（暖房）</td><td class="td-point">暖房配管の漏れ、補給水電磁弁、給水圧の低下</td></tr>
+                    <tr><td class="td-code">422(-01)</td><td class="td-name">注湯量センサーON故障</td><td class="td-point">注湯量センサー、注湯電磁弁が閉まらない（垂れ流し）</td></tr>
+                    <tr><td class="td-code">432(-03〜35)</td><td class="td-name">水位センサー異常（フルオート）</td><td class="td-point">水位を正しく検出できない。水位センサー本体、電装基板、配管施工状態</td></tr>
+                    <tr><td class="td-code">433(-02〜06)</td><td class="td-name">暖房水タンク水位電極異常</td><td class="td-point">暖房水タンクの水位電極の汚れ、ショート、断線</td></tr>
+                    <tr><td class="td-code">542(-01〜05)</td><td class="td-name">切替弁異常（フルオート）</td><td class="td-point">切替弁（二方弁）の固着、作動不良</td></tr>
+                    <tr><td class="td-code">543</td><td class="td-name">補給水電磁弁異常</td><td class="td-point">補給水電磁弁の作動不良、給水圧低下</td></tr>
+                    <tr><td class="td-code">562(-01〜19)</td><td class="td-name">注湯電磁弁閉故障（自動設定時）</td><td class="td-point">注湯電磁弁が開かない（注湯されない）。注湯電磁弁、二方弁、注湯量センサー</td></tr>
+                    <tr><td class="td-code">623(-01, 02)</td><td class="td-name">循環(暖房)ポンプ異常</td><td class="td-point">暖房・循環ポンプの固着、断線、電装基板</td></tr>
+                    <tr><td class="td-code">632(-01, 03, 04)</td><td class="td-name">ふろポンプ・水流スイッチ異常</td><td class="td-point">水流を検知しない。フィルター詰まり、エア噛み、ふろ水流スイッチ・ポンプ故障</td></tr>
+                </tbody>
+            </table>
+
+            <div class="page-break"></div>
+            <div class="page-header-bar">
+                <span>パーパスガス給湯器 アラーム（エラーコード）一覧</span>
+                <span style="font-size: 9pt; font-weight: normal; opacity: 0.9;"><span class="dynamic-name">〇〇株式会社 〇〇支社</span>様向け</span>
+            </div>
+
+            <div class="subsection-title" style="font-size: 10pt; font-weight: bold; color: #1a4fa8; display: flex; align-items: center; margin: 4mm 0 2mm 0;">1-3. サーミスタ（温度センサー）の異常</div>
+            <table>
+                <thead>
+                    <tr><th>コード</th><th>名称</th><th>診断ポイント（故障箇所・確認事項）</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td class="td-code">300(-01, 02)</td><td class="td-name">外気温度サーミスタ異常</td><td class="td-point">外気温度サーミスタの断線(01)・短絡(02)</td></tr>
+                    <tr><td class="td-code">311(-01, 02)</td><td class="td-name">出湯温サーミスタ異常</td><td class="td-point">出湯温サーミスタの断線(01)・短絡(02)</td></tr>
+                    <tr><td class="td-code">312(-01, 02, 03)</td><td class="td-name">ふろ入(戻)サーミスタ異常</td><td class="td-point">ふろ入サーミスタの断線(01)・短絡(02)、抵抗値異常(03)</td></tr>
+                    <tr><td class="td-code">313(-01, 02)</td><td class="td-name">暖房高温サーミスタ異常</td><td class="td-point">暖房高温サーミスタの断線(01)・短絡(02)</td></tr>
+                    <tr><td class="td-code">321(-01, 02)</td><td class="td-name">入水温サーミスタ異常</td><td class="td-point">入水温サーミスタの断線(01)・短絡(02)</td></tr>
+                    <tr><td class="td-code">343(-01, 02)</td><td class="td-name">タンク出サーミスタ異常</td><td class="td-point">タンク出サーミスタの断線(01)・短絡(02)</td></tr>
+                </tbody>
+            </table>
+
+            <div class="subsection-title" style="font-size: 10pt; font-weight: bold; color: #1a4fa8; display: flex; align-items: center; margin: 4mm 0 2mm 0;">1-4. 漏水・中和器・基板・通信・その他</div>
+            <table>
+                <thead>
+                    <tr><th>コード</th><th>名称</th><th>診断ポイント（故障箇所・確認事項）</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td class="td-code">140</td><td class="td-name">過熱防止装置作動（ハイリミット）</td><td class="td-point">機器内部が異常高温。手動復帰型スイッチ作動。熱交詰まり、空焚きなど</td></tr>
+                    <tr><td class="td-code">173</td><td class="td-name">暖房水回路微少漏れ</td><td class="td-point">暖房配管、システム等のどこかで微少な漏水</td></tr>
+                    <tr><td class="td-code">290(-01,02 等)</td><td class="td-name">中和器寿命警告</td><td class="td-point">中和器寿命が近い。機器は使えるが早期交換が必要。中和器電極、ドレン詰まり</td></tr>
+                    <tr><td class="td-code">740</td><td class="td-name">台所リモコン通信異常</td><td class="td-point">台所リモコン配線断線、リモコン故障、電装基板</td></tr>
+                    <tr><td class="td-code">750</td><td class="td-name">浴室リモコン通信異常</td><td class="td-point">浴室リモコン配線断線、リモコン故障、電装基板</td></tr>
+                    <tr><td class="td-code">920</td><td class="td-name">中和器寿命警告</td><td class="td-point">中和器寿命警告。使用は可能だが交換時期</td></tr>
+                    <tr><td class="td-code">930</td><td class="td-name">中和器寿命（燃焼停止）</td><td class="td-point">中和器寿命到達。燃焼は停止する（お湯は使えません）</td></tr>
+                </tbody>
+            </table>
+
+            <div class="page-break"></div>
+            <div class="page-header-bar">
+                <span>パーパスガス給湯器 故障時チェックポイント</span>
+                <span style="font-size: 9pt; font-weight: normal; opacity: 0.9;"><span class="dynamic-name">〇〇株式会社 〇〇支社</span>様向け</span>
+            </div>
+
+            <h2 class="section-title">2. 故障時の症状別チェックポイント（抜粋）</h2>
+            <div class="check-card">
+                <div class="check-card-header"><span class="icon">症状A</span> お湯が出ない・火がつかない</div>
+                <div class="check-card-body">
+                    <ul class="check-list">
+                        <li><strong>ガス供給：</strong> ガスメーターの遮断、ガス元栓の確認。</li>
+                        <li><strong>点火部品：</strong> イグナイターから火花（パチパチ音）が出ているか確認。</li>
+                        <li><strong>炎検知：</strong> フレームロッドの汚れ(シリコン付着等)を確認。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="check-card">
+                <div class="check-card-header"><span class="icon">症状B</span> 焦げ臭い・異音がする・ススが出る</div>
+                <div class="check-card-body">
+                    <ul class="check-list">
+                        <li><strong>給排気：</strong> 給排気口の閉塞(雪、落ち葉、クモの巣)を確認。</li>
+                        <li><strong>熱交換器：</strong> フィンのスス詰まりを目視で確認。</li>
+                        <li><strong>ファン：</strong> 燃焼用ファンの回転音異常。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="check-card">
+                <div class="check-card-header"><span class="icon">症状C</span> お湯はりが止まる・追いだき不良</div>
+                <div class="check-card-body">
+                    <ul class="check-list">
+                        <li><strong>浴槽：</strong> 排水栓の閉め忘れ。循環フィルターの詰まり清掃。</li>
+                        <li><strong>配管：</strong> 追いだき配管内のエア噛み。</li>
+                        <li><strong>部品：</strong> ふろ水流スイッチ・ポンプの固着。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="check-card">
+                <div class="check-card-header"><span class="icon">症状D</span> 暖房不良・漏水</div>
+                <div class="check-card-body">
+                    <ul class="check-list">
+                        <li><strong>特定：</strong> 機器内部、システム配管、端末の漏水目視点検。</li>
+                        <li><strong>液量：</strong> 不凍液の不足、交換履歴の確認(3年推奨)。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

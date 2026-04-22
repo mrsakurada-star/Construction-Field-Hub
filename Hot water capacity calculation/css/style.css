@@ -1,0 +1,68 @@
+/* © 2026 Nozomi Sakurada. All rights reserved. */
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+body { font-family: 'Noto Sans JP', sans-serif; }
+.page { display: none; }
+.page.active { display: block; }
+.side-nav-item.active { background: white; color: #1960a3; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+.pat-btn.active { background: #1960a3; color: white; }
+.pat-btn { background: #f1f4f6; color: #43474e; }
+
+/* ===== 🖨️ PRINT (A4 Optimization) ===== */
+@page {
+  size: A4 portrait;
+  margin: 10mm 10mm 15mm 10mm;
+}
+
+@media print {
+  .no-print { display: none !important; }
+  body, html { margin: 0; padding: 0 !important; background: white; }
+  
+  #page-report {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+    display: block !important;
+  }
+
+  /* Tailwindのパディング・余白を無効化し物理A4枠内から溢れないようにする */
+  #page-report > .max-w-5xl, #report-content {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    width: 100% !important;
+  }
+
+  .report-page {
+    width: 190mm !important;
+    height: 272mm !important;
+    padding: 10mm 15mm !important;
+    margin: 0 !important;
+    background: white !important;
+    box-shadow: none !important;
+    overflow: hidden !important; /* コンテンツの溢れをカット */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    /* 確実に改ページ・空ページ回避を行う */
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    border: none !important;
+  }
+  
+  .report-page:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  /* テーブルのセルのパディングを少し詰めてA4に収まりやすくする */
+  table th, table td {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+
+  /* フォントサイズの微調整（印刷時のみ） */
+  .text-5xl { font-size: 3rem !important; }
+  .text-4xl { font-size: 2.25rem !important; }
+}

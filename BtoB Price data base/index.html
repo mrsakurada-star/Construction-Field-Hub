@@ -1,0 +1,799 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BtoB価格表作成ツール</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* トースト */
+        .toast {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            background: var(--accent);
+            color: #fff;
+            padding: 12px 22px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.25s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.toast-danger {
+            background: var(--danger);
+        }
+
+        .toast.toast-success {
+            background: var(--success);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ========================
+     ヘッダー
+======================== -->
+    <header class="app-header">
+        <div class="logo">
+            <i data-lucide="clipboard-list" style="width:20px;height:20px"></i>
+            BtoB価格表作成ツール
+            <span>Construction Field Hub</span>
+        </div>
+        <div class="header-actions screen-only">
+            <button class="btn btn-secondary btn-sm" type="button" onclick="window.location.href='../index.html'"
+                style="background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.2);color:#fff">
+                <i data-lucide="home" style="width:14px;height:14px"></i> ポータルへ戻る
+            </button>
+        </div>
+    </header>
+
+    <!-- ========================
+     レイアウト
+======================== -->
+    <div class="app-layout">
+
+        <!-- サイドナビ -->
+        <nav class="sidebar screen-only">
+            <div class="sidebar-section-label">メイン</div>
+            <button class="nav-item" type="button" data-page="dashboard">
+                <i data-lucide="layout-dashboard" style="width:15px;height:15px"></i> ダッシュボード
+                <span class="badge" id="nav-badge-expired" style="display:none">0</span>
+            </button>
+
+            <div class="sidebar-section-label" style="margin-top:8px">マスタ管理</div>
+            <button class="nav-item" type="button" data-page="customers">
+                <i data-lucide="building-2" style="width:15px;height:15px"></i> 顧客管理
+            </button>
+            <button class="nav-item" type="button" data-page="products">
+                <i data-lucide="package" style="width:15px;height:15px"></i> 製品マスタ
+            </button>
+            <button class="nav-item" type="button" data-page="constructions">
+                <i data-lucide="hammer" style="width:15px;height:15px"></i> 工事マスタ
+            </button>
+
+            <div class="sidebar-section-label" style="margin-top:8px">設定・保守</div>
+            <button class="nav-item" type="button" data-page="data">
+                <i data-lucide="database-zap" style="width:15px;height:15px"></i> データ管理
+            </button>
+        </nav>
+
+        <!-- メインコンテンツ -->
+        <main class="main-content">
+
+            <!-- ========================
+             ダッシュボード
+        ======================== -->
+            <div id="page-dashboard" class="page">
+                <div class="page-header">
+                    <div class="page-title">
+                        <i data-lucide="layout-dashboard" class="ico" style="width:20px;height:20px"></i>
+                        ダッシュボード
+                    </div>
+                    <button class="btn btn-primary screen-only" type="button" onclick="openPriceListModal()">
+                        <i data-lucide="plus" style="width:15px;height:15px"></i> 新規価格表
+                    </button>
+                </div>
+
+                <div class="stat-grid">
+                    <div class="stat-card success">
+                        <div class="stat-label">有効な価格表</div>
+                        <div class="stat-value" id="stat-pricelists">—</div>
+                    </div>
+                    <div class="stat-card danger">
+                        <div class="stat-label">期限切れ・期限間近</div>
+                        <div class="stat-value" id="stat-expired">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">顧客数</div>
+                        <div class="stat-value" id="stat-customers">—</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">製品 / 工事</div>
+                        <div class="stat-value">
+                            <span id="stat-products">—</span>
+                            <span style="font-size:16px;color:var(--text3)"> / </span>
+                            <span id="stat-constructions">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i data-lucide="clock" style="width:14px;height:14px"></i>
+                            最近の価格表
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>価格表名</th>
+                                    <th>顧客</th>
+                                    <th>有効期限</th>
+                                    <th>状態</th>
+                                    <th>作成日</th>
+                                    <th class="screen-only">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-list">
+                                <tr>
+                                    <td colspan="6" class="text-center" style="padding:32px;color:var(--text3)">読み込み中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================
+             顧客管理
+        ======================== -->
+            <div id="page-customers" class="page">
+                <div class="page-header">
+                    <div class="page-title">
+                        <i data-lucide="building-2" class="ico" style="width:20px;height:20px"></i>
+                        顧客管理
+                    </div>
+                    <button class="btn btn-primary screen-only" type="button" onclick="openCustomerModal()">
+                        <i data-lucide="plus" style="width:15px;height:15px"></i> 顧客を追加
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar screen-only">
+                        <div class="search-input-wrap" style="max-width:360px">
+                            <i data-lucide="search" class="search-icon" style="width:15px;height:15px"></i>
+                            <input type="text" id="customer-search" placeholder="顧客名・フリガナで検索...">
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>顧客名</th>
+                                    <th>フリガナ</th>
+                                    <th>担当者・連絡先</th>
+                                    <th>メモ</th>
+                                    <th class="screen-only">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="customer-list">
+                                <tr>
+                                    <td colspan="5" class="text-center" style="padding:32px;color:var(--text3)">読み込み中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================
+             製品マスタ
+        ======================== -->
+            <div id="page-products" class="page">
+                <div class="page-header">
+                    <div class="page-title">
+                        <i data-lucide="package" class="ico" style="width:20px;height:20px"></i>
+                        製品マスタ
+                    </div>
+                    <button class="btn btn-primary screen-only" type="button" onclick="openProductModal()">
+                        <i data-lucide="plus" style="width:15px;height:15px"></i> 製品を追加
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar screen-only">
+                        <div class="search-input-wrap" style="max-width:360px">
+                            <i data-lucide="search" class="search-icon" style="width:15px;height:15px"></i>
+                            <input type="text" id="product-search" placeholder="製品名・カテゴリ・コードで検索...">
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>コード</th>
+                                    <th>製品名</th>
+                                    <th>カテゴリ</th>
+                                    <th>定価</th>
+                                    <th>仕入単価</th>
+                                    <th>仕入先</th>
+                                    <th>備考</th>
+                                    <th class="screen-only">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="product-list">
+                                <tr>
+                                    <td colspan="7" class="text-center" style="padding:32px;color:var(--text3)">読み込み中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================
+             工事マスタ
+        ======================== -->
+            <div id="page-constructions" class="page">
+                <div class="page-header">
+                    <div class="page-title">
+                        <i data-lucide="hammer" class="ico" style="width:20px;height:20px"></i>
+                        工事マスタ
+                    </div>
+                    <button class="btn btn-primary screen-only" type="button" onclick="openConstructionModal()">
+                        <i data-lucide="plus" style="width:15px;height:15px"></i> 工事を追加
+                    </button>
+                </div>
+                <div class="alert alert-info screen-only" style="margin-bottom:16px">
+                    <i data-lucide="info" style="width:15px;height:15px"></i>
+                    工事費は定価なし（OPEN価格）です。価格表作成時に掛け率または直接金額を設定します。
+                </div>
+
+                <div class="card">
+                    <div class="search-bar screen-only">
+                        <div class="search-input-wrap" style="max-width:360px">
+                            <i data-lucide="search" class="search-icon" style="width:15px;height:15px"></i>
+                            <input type="text" id="construction-search" placeholder="工事名・コードで検索...">
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>コード</th>
+                                    <th>工事名</th>
+                                    <th>定価</th>
+                                    <th>仕入単価</th>
+                                    <th>備考</th>
+                                    <th class="screen-only">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="construction-list">
+                                <tr>
+                                    <td colspan="5" class="text-center" style="padding:32px;color:var(--text3)">読み込み中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================
+             価格表一覧
+        ======================== -->
+            <div id="page-pricelists" class="page">
+                <div class="page-header">
+                    <div class="page-title">
+                        <i data-lucide="file-text" class="ico" style="width:20px;height:20px"></i>
+                        価格表一覧
+                    </div>
+                    <button class="btn btn-primary screen-only" type="button" onclick="openPriceListModal()">
+                        <i data-lucide="plus" style="width:15px;height:15px"></i> 新規価格表
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="search-bar screen-only">
+                        <div class="search-input-wrap" style="max-width:360px">
+                            <div style="display:flex;gap:12px;align-items:center">
+                                <div class="search-box">
+                                    <i data-lucide="search"></i>
+                                    <input type="text" id="pricelist-search" placeholder="価格表名、顧客名で検索...">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>価格表名</th>
+                                    <th>顧客</th>
+                                    <th>有効期限</th>
+                                    <th>状態</th>
+                                    <th>更新日</th>
+                                    <th class="screen-only">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pricelist-list">
+                                <tr>
+                                    <td colspan="6" class="text-center" style="padding:32px;color:var(--text3)">読み込み中...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================
+             印刷プレビュー
+        ======================== -->
+            <div id="page-print" class="page">
+                <div class="page-header screen-only">
+                    <div class="page-title">
+                        <i data-lucide="printer" class="ico" style="width:20px;height:20px"></i>
+                        印刷プレビュー
+                    </div>
+                    <div style="display:flex;gap:10px">
+                        <button class="btn btn-secondary" type="button" id="print-back-btn">
+                            <i data-lucide="arrow-left" style="width:14px;height:14px"></i> 戻る
+                        </button>
+                        <button class="btn btn-primary" type="button" onclick="window.print()">
+                            <i data-lucide="printer" style="width:14px;height:14px"></i> 印刷 / PDF保存
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 印刷ヘッダー（画面・印刷共通） -->
+                <div class="print-header"
+                    style="display:flex;background:var(--accent);color:#fff;padding:12px 20px;border-radius:6px 6px 0 0;margin-bottom:0;justify-content:space-between;align-items:flex-end">
+                    <div>
+                        <div
+                            style="font-size:10px;letter-spacing:1.5px;color:#9e9e94;margin-bottom:2px;text-transform:uppercase">
+                            BtoB Price List</div>
+                        <h1 style="margin:0;font-size:18px;font-weight:700" id="print-pl-title">—</h1>
+                        <div style="display:flex;align-items:baseline;gap:8px;margin-top:4px">
+                            <div style="font-size:14px;color:#fff;font-weight:600"><span id="print-pl-customer">—</span>
+                                御中</div>
+                            <div id="print-pl-sub" style="font-size:11px;color:#ccc"></div>
+                        </div>
+                    </div>
+                    <div style="text-align:right;font-size:11px;color:#ccc;line-height:1.8">
+                        <div id="print-pl-date"></div>
+                        <div id="print-pl-created"></div>
+                    </div>
+                </div>
+
+                <div class="table-wrap"
+                    style="border:1px solid var(--border);border-top:none;border-radius:0 0 6px 6px;overflow:hidden">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width:80px">コード</th>
+                                <th>品名 / 工事名</th>
+                                <th class="text-right" style="width:110px">定価</th>
+                                <th class="text-right" style="width:110px">卸価格</th>
+                                <th class="text-center" style="width:90px">表示</th>
+                            </tr>
+                        </thead>
+                        <tbody id="print-table-body">
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top:10px;font-size:11px;color:var(--text3)" class="screen-only">
+                    ※ 印刷時はA4縦で出力されます。各行の「表示」列は価格表上での卸価格の表示形式（%または金額）を示します。
+                </div>
+            </div>
+
+            <!-- ========================
+             データ管理 (外部同期)
+        ======================== -->
+            <div id="page-data" class="page">
+                <div class="page-header">
+                    <div class="page-title">
+                        <i data-lucide="database-zap" class="ico" style="width:20px;height:20px"></i>
+                        データ管理・外部同期
+                    </div>
+                </div>
+
+                <div class="alert alert-info" style="margin-bottom:24px">
+                    <i data-lucide="info" style="width:16px;height:16px"></i>
+                    データベースはプロジェクト内の <strong>/data/btob_database.json</strong> に保存・同期することを推奨します。
+                </div>
+
+                <div style="max-width:800px">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i data-lucide="file-json-2" style="width:16px;height:16px"></i>
+                                プロジェクトファイル同期
+                            </div>
+                        </div>
+                        <div style="padding:20px">
+                            <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:32px">
+                                <div>
+                                    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">
+                                        プロジェクトフォルダ内の <code>data</code> フォルダに保存先を限定することで、データの散逸を防ぎ、起動時の自動読み込みを確実にします。
+                                    </p>
+                                    <div style="display:flex;flex-direction:column;gap:10px">
+                                        <button class="btn btn-primary" type="button" onclick="connectLocalFile('create')">
+                                            <i data-lucide="file-plus" style="width:14px;height:14px"></i> 新規同期ファイルを作成
+                                        </button>
+                                        <button class="btn btn-secondary" type="button" onclick="connectLocalFile('open')">
+                                            <i data-lucide="folder-open" style="width:14px;height:14px"></i> 既存のファイルを選択
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div id="sync-status-box" style="padding:20px;background:var(--bg);border-radius:8px;border:1px solid var(--border);display:flex;flex-direction:column;justify-content:center">
+                                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+                                        <div id="sync-status-dot" style="width:12px;height:12px;border-radius:50%;background:#ccc"></div>
+                                        <span id="sync-status-text" style="font-size:14px;font-weight:700;color:var(--text3)">未接続</span>
+                                    </div>
+                                    <div style="font-size:12px;color:var(--text3);margin-bottom:16px">
+                                        同期先: <code id="sync-filename" style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px">—</code>
+                                    </div>
+                                    <button class="btn btn-danger btn-sm" type="button" id="btn-disconnect-sync" onclick="disconnectLocalFile()" style="display:none;align-self:flex-start">
+                                        同期を解除
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-top:20px">
+                        <div class="card-header" style="padding:10px 16px">
+                            <div class="card-title" style="font-size:13px;opacity:0.8">
+                                <i data-lucide="settings-2" style="width:14px;height:14px"></i>
+                                詳細・メンテナンス
+                            </div>
+                        </div>
+                        <div style="padding:16px;display:flex;gap:20px;align-items:center;justify-content:space-between">
+                            <div style="display:flex;gap:10px">
+                                <label class="btn btn-xs btn-secondary" style="cursor:pointer;display:inline-flex;align-items:center">
+                                    <i data-lucide="upload" style="width:12px;height:12px;margin-right:6px"></i> バックアップを復元
+                                    <input type="file" id="import-file" style="display:none" onchange="importDataManual(this)">
+                                </label>
+                                <button class="btn btn-xs btn-secondary" type="button" onclick="exportDataManual()">
+                                    <i data-lucide="download" style="width:12px;height:12px;margin-right:6px"></i> 手動DL (JSON)
+                                </button>
+                            </div>
+                            <button class="btn btn-xs btn-danger" style="opacity:0.7" type="button" onclick="resetDatabase()">
+                                内部データ初期化
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ========================
+     トースト通知
+======================== -->
+    <div id="toast" class="toast"></div>
+
+    <!-- ========================
+     モーダル群
+======================== -->
+
+    <!-- 顧客モーダル -->
+    <div id="customer-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('customer-modal')">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="customer-modal-title">顧客を追加</h3>
+                <button class="modal-close" type="button" onclick="closeModal('customer-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="customer-id">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>種別</label>
+                        <select id="customer-type" onchange="toggleCustomerParentField()">
+                            <option value="client">取引先</option>
+                            <option value="dealer">販売店</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>顧客名 <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="customer-name" placeholder="株式会社〇〇">
+                    </div>
+                    <div class="form-group">
+                        <label>電話番号</label>
+                        <input type="text" id="customer-phone" placeholder="03-xxxx-xxxx">
+                    </div>
+                    <div class="form-group full" id="parent-customer-group" style="display:none">
+                        <label>親取引先（販売店の場合のみ設定）</label>
+                        <select id="customer-parentId">
+                            <option value="">— 親取引先を選択 —</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>住所</label>
+                        <input type="text" id="customer-address" placeholder="東京都...">
+                    </div>
+                    <div class="form-group full">
+                        <label>メモ</label>
+                        <textarea id="customer-memo" placeholder="備考など..." style="min-height:60px"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="closeModal('customer-modal')">キャンセル</button>
+                <button class="btn btn-primary" type="button" onclick="saveCustomer()">
+                    <i data-lucide="save" style="width:14px;height:14px"></i> 保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 製品モーダル -->
+    <div id="product-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('product-modal')">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="product-modal-title">製品を追加</h3>
+                <button class="modal-close" type="button" onclick="closeModal('product-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="product-id">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>コード</label>
+                        <input type="text" id="product-code" placeholder="GQ-2437WS">
+                    </div>
+                    <div class="form-group">
+                        <label>カテゴリ</label>
+                        <input type="text" id="product-category" placeholder="給湯器, エコジョーズ など">
+                    </div>
+                    <div class="form-group full">
+                        <label>製品名 <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="product-name" placeholder="ガス給湯器 24号">
+                    </div>
+                    <div class="form-group">
+                        <label>定価（円）</label>
+                        <input type="number" id="product-price" placeholder="280000" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>仕入単価（円）</label>
+                        <input type="number" id="product-costPrice" placeholder="140000" min="0">
+                    </div>
+                    <div class="form-group full">
+                        <label>仕入先</label>
+                        <input type="text" id="product-supplier" placeholder="パーパス株式会社">
+                    </div>
+                    <div class="form-group full">
+                        <label>説明</label>
+                        <input type="text" id="product-description" placeholder="簡単な説明">
+                    </div>
+                    <div class="form-group full">
+                        <label>備考</label>
+                        <textarea id="product-remarks" placeholder="備考..." style="min-height:56px"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="closeModal('product-modal')">キャンセル</button>
+                <button class="btn btn-primary" type="button" onclick="saveProduct()">
+                    <i data-lucide="save" style="width:14px;height:14px"></i> 保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 工事モーダル -->
+    <div id="construction-modal" class="modal-overlay"
+        onclick="if(event.target===this)closeModal('construction-modal')">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="construction-modal-title">工事を追加</h3>
+                <button class="modal-close" type="button" onclick="closeModal('construction-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="construction-id">
+                <div class="alert alert-info" style="margin-bottom:16px">
+                    <i data-lucide="info" style="width:14px;height:14px"></i>
+                    工事の定価はOPEN価格です。価格表作成時に個別設定します。
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>コード</label>
+                        <input type="text" id="construction-code" placeholder="KK-001">
+                    </div>
+                    <div class="form-group">
+                        <label>仕入単価（円）</label>
+                        <input type="number" id="construction-costPrice" placeholder="15000" min="0">
+                    </div>
+                    <div class="form-group full">
+                        <label>工事名 <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="construction-name" placeholder="給湯器取替工事（標準）">
+                    </div>
+                    <div class="form-group full">
+                        <label>説明</label>
+                        <input type="text" id="construction-description" placeholder="簡単な説明">
+                    </div>
+                    <div class="form-group full">
+                        <label>備考</label>
+                        <textarea id="construction-remarks" placeholder="備考..." style="min-height:56px"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button"
+                    onclick="closeModal('construction-modal')">キャンセル</button>
+                <button class="btn btn-primary" type="button" onclick="saveConstruction()">
+                    <i data-lucide="save" style="width:14px;height:14px"></i> 保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 価格表ヘッダーモーダル -->
+    <div id="pl-header-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('pl-header-modal')">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="pl-modal-title">価格表を新規作成</h3>
+                <button class="modal-close" type="button" onclick="closeModal('pl-header-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="pl-id">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>価格表名 <span style="color:var(--danger)">*</span></label>
+                        <input type="text" id="pl-title" placeholder="2026年 〇〇商事 卸価格表">
+                    </div>
+                    <div class="form-group full">
+                        <label>対象顧客</label>
+                        <select id="pl-customer">
+                            <option value="">— 顧客を選択 —</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>有効期限</label>
+                        <input type="date" id="pl-expiration">
+                    </div>
+                    <div class="form-group">
+                        <label>状態</label>
+                        <select id="pl-status">
+                            <option value="active">有効</option>
+                            <option value="archived">アーカイブ</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>メモ</label>
+                        <textarea id="pl-memo" placeholder="備考など..." style="min-height:56px"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="closeModal('pl-header-modal')">キャンセル</button>
+                <button class="btn btn-primary" type="button" onclick="savePriceListHeader()">
+                    <i data-lucide="arrow-right" style="width:14px;height:14px"></i> 次へ（明細を設定）
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 価格表明細編集モーダル -->
+    <div id="pl-edit-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('pl-edit-modal')">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3>
+                    <span id="edit-pl-title">価格表</span>
+                    <span id="edit-pl-version"
+                        style="font-size:12px;font-weight:400;margin-left:8px;opacity:0.7"></span>
+                    — 明細編集
+                </h3>
+                <button class="modal-close" type="button" onclick="closeModal('pl-edit-modal')">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:16px 20px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+                    <div style="font-size:12px;color:var(--text3)">
+                        「%表示」：印刷時に掛け率を表示 ／ 「金額表示」：印刷時に卸価格（円）を表示
+                    </div>
+                    <button class="btn btn-secondary btn-sm" type="button" onclick="openAddItemModal()">
+                        <i data-lucide="plus" style="width:13px;height:13px"></i> 項目を追加
+                    </button>
+                </div>
+                <div class="table-wrap" style="max-height:50vh;overflow-y:auto">
+                    <table class="price-list-items-table">
+                        <thead>
+                            <tr>
+                                <th>品名 / 工事名</th>
+                                <th class="text-right">定価</th>
+                                <th class="text-center">掛け率 (%)</th>
+                                <th class="text-right">特価（直接入力）</th>
+                                <th class="text-right">卸価格 / 粗利</th>
+                                <th class="text-center">表示モード</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="edit-items-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="closeModal('pl-edit-modal')">キャンセル</button>
+                <button class="btn btn-success" type="button" onclick="savePriceListItems()">
+                    <i data-lucide="save" style="width:14px;height:14px"></i> 明細を保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 項目追加モーダル -->
+    <div id="add-item-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('add-item-modal')">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>製品・工事を追加</h3>
+                <button class="modal-close" type="button" onclick="closeModal('add-item-modal')">&times;</button>
+            </div>
+            <div class="modal-body" style="max-height:60vh;overflow-y:auto" id="add-item-list">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" onclick="closeModal('add-item-modal')">キャンセル</button>
+                <button class="btn btn-primary" type="button" onclick="confirmAddItems()">
+                    <i data-lucide="check" style="width:14px;height:14px"></i> 選択した項目を追加
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 顧客別価格表履歴モーダル -->
+    <div id="customer-pl-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('customer-pl-modal')">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3><span id="cust-pl-title"></span> の価格表・見積履歴</h3>
+                <button class="modal-close" type="button" onclick="closeModal('customer-pl-modal')">&times;</button>
+            </div>
+            <div class="modal-body" style="padding:0">
+                <div class="table-wrap" style="max-height:60vh;overflow-y:auto;border:none">
+                    <table style="border-top:none">
+                        <thead>
+                            <tr>
+                                <th>価格表名</th>
+                                <th>状態</th>
+                                <th>Ver</th>
+                                <th>更新日</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cust-pl-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/db.js"></script>
+    <script src="js/app.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+
+</html>

@@ -1,0 +1,139 @@
+{
+  "customers": [
+    {
+      "type": "client",
+      "name": "株式会社テスト瓦斯",
+      "kana": "",
+      "contact": "テスト",
+      "memo": "",
+      "parentId": null,
+      "id": 1
+    },
+    {
+      "type": "dealer",
+      "name": "テストテック",
+      "kana": "",
+      "contact": "テスト山テトト",
+      "memo": "",
+      "parentId": 1,
+      "id": 2
+    }
+  ],
+  "products": [
+    {
+      "code": "000823339",
+      "name": "GH-H2400ZW",
+      "category": "給湯器",
+      "price": 580000,
+      "costPrice": 108000,
+      "supplier": "パーパス",
+      "description": "エコ給湯暖房熱源機",
+      "remarks": "",
+      "id": 1
+    }
+  ],
+  "constructions": [
+    {
+      "code": "000822121",
+      "name": "ECO給湯暖房熱源機　取替標準工事",
+      "costPrice": 35000,
+      "description": "機器の取付、結線、その他ｶﾊﾞｰ取付",
+      "remarks": "",
+      "id": 1
+    }
+  ],
+  "priceLists": [
+    {
+      "title": "テスト価格表",
+      "customerId": 1,
+      "expirationDate": "2026-04-21",
+      "memo": "",
+      "status": "active",
+      "version": 1,
+      "originalId": null,
+      "createdAt": "2026-04-21",
+      "updatedAt": "2026-04-21",
+      "id": 1
+    },
+    {
+      "title": "テスト価格表 (新Ver)",
+      "customerId": 1,
+      "expirationDate": "2026-04-21",
+      "memo": "",
+      "status": "active",
+      "version": 2,
+      "originalId": 1,
+      "createdAt": "2026-04-21",
+      "updatedAt": "2026-04-21",
+      "id": 2
+    },
+    {
+      "title": "テスト山のテスト",
+      "customerId": 2,
+      "expirationDate": "",
+      "memo": "",
+      "status": "archived",
+      "version": 1,
+      "originalId": null,
+      "createdAt": "2026-04-21",
+      "updatedAt": "2026-04-22",
+      "id": 3
+    }
+  ],
+  "priceListItems": [
+    {
+      "priceListId": 1,
+      "itemType": "product",
+      "itemId": 1,
+      "rate": 30,
+      "specialPrice": null,
+      "displayMode": "pct",
+      "id": 7
+    },
+    {
+      "priceListId": 1,
+      "itemType": "construction",
+      "itemId": 1,
+      "rate": null,
+      "specialPrice": 48000,
+      "displayMode": "pct",
+      "id": 8
+    },
+    {
+      "priceListId": 2,
+      "itemType": "product",
+      "itemId": 1,
+      "rate": 26,
+      "specialPrice": null,
+      "displayMode": "pct",
+      "id": 11
+    },
+    {
+      "priceListId": 2,
+      "itemType": "construction",
+      "itemId": 1,
+      "rate": null,
+      "specialPrice": 48000,
+      "displayMode": "pct",
+      "id": 12
+    },
+    {
+      "priceListId": 3,
+      "itemType": "product",
+      "itemId": 1,
+      "rate": 30,
+      "specialPrice": 140000,
+      "displayMode": "pct",
+      "id": 13
+    },
+    {
+      "priceListId": 3,
+      "itemType": "construction",
+      "itemId": 1,
+      "rate": null,
+      "specialPrice": null,
+      "displayMode": "pct",
+      "id": 14
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>レンジフード現地調査シート生成ツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+<!-- SheetJS -->
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="topbar">
+  <h1><i data-lucide="map-pin" style="width:24px;height:24px;"></i> 調査シート生成ツール</h1>
+  <div class="sub">レンジフード現地調査フォームの自動生成 ｜ Excel読込→エリア複数絞込→A4印刷 ／ ブラウザのみで動作</div>
+</div>
+
+<div id="layout">
+  <!-- ===== サイドパネル ===== -->
+  <div id="side">
+
+    <!-- ① Excelアップロード -->
+    <div class="side-section">
+      <h2>① Excelファイルを読み込む</h2>
+      
+      <div class="pwd-notice" onclick="document.getElementById('pwd-modal').style.display='flex'" style="cursor: pointer; transition: 0.2s;" onmouseover="this.style.background='#fee2e2'" onmouseout="this.style.background='#fef2f2'">
+        <strong>⚠ Excelパスワード解除について</strong>
+        本ツールはパスワードなしのExcelのみ対応しています。<br>
+        <div style="margin-top:8px; font-weight:bold; color: #b91c1c; text-decoration: underline; text-align: center; font-size: 12px;">
+          🔍 クリックして解除手順を大きく表示
+        </div>
+      </div>
+
+      <div id="dropzone">
+        <input type="file" id="file-input" accept=".xlsx,.xls">
+        <div class="dz-icon"><i data-lucide="folder-open"></i></div>
+        <div class="dz-text">クリックまたはドラッグ＆ドロップ</div>
+        <div class="dz-hint">パスワード解除済みの Excel ファイル (.xlsx / .xls)</div>
+      </div>
+      <div id="file-name"></div>
+      <div id="progress-wrap">
+        <div id="progress-bar-bg"><div id="progress-bar"></div></div>
+        <div id="progress-msg">処理中...</div>
+      </div>
+    </div>
+
+    <!-- ② フィルタ（複数選択可） -->
+    <div class="side-section">
+      <h2>② エリアを絞り込む（複数選択可）</h2>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">広域地方</div>
+          <div class="pills" id="r-pills"></div>
+        </div>
+        <div id="pref-row" style="display:none">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">都道府県</div>
+          <div class="pills" id="p-pills"></div>
+        </div>
+        <div id="sub-row" style="display:none">
+          <div style="font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px">詳細エリア</div>
+          <div class="pills" id="s-pills"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ 統計 -->
+    <div class="side-section">
+      <h2>③ 対象件数</h2>
+      <div id="stats-box">
+        <div style="font-size:11px;color:var(--primary-dark);margin-bottom:2px">表示中のシート数</div>
+        <strong id="stats-count">0</strong>
+        <span style="font-size:12px"> 件</span>
+        <div style="font-size:10px;color:#64748b;margin-top:3px" id="stats-total"></div>
+      </div>
+    </div>
+
+    <!-- ④ 印刷 -->
+    <div class="side-section">
+      <h2>④ 印刷</h2>
+      <button id="print-btn" disabled onclick="window.print()"><i data-lucide="printer" style="width:16px;height:16px;vertical-align:middle;margin-right:4px;"></i> 印刷する</button>
+      <div style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.6">
+        ※印刷ダイアログで「用紙サイズ：A4」「余白：なし（最小）」を選択してください。<br>
+        ※「ページに合わせる」はOFFにしてください。
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== メインコンテンツ ===== -->
+  <div id="main">
+    <div id="welcome">
+      <div class="wc-icon"><i data-lucide="clipboard-list" style="width:64px;height:64px;"></i></div>
+      <h2>レンジフードの現地調査シートを生成します</h2>
+      <p>左パネルから委託データのExcelファイルを選択すると<br>自動的に調査シートのフォーマットが生成されます。<br><br>
+      エリア・都道府県・詳細エリアは<strong>複数選択</strong>に対応しており、<br>必要な分だけをまとめて絞り込み印刷することができます。</p>
+    </div>
+    <div id="sheet-wrap" style="display:none"></div>
+  </div>
+</div>
+
+<!-- パスワード解除方法モーダル -->
+<div id="pwd-modal" onclick="if(event.target===this) this.style.display='none'">
+  <div class="modal-content">
+    <button class="modal-close" onclick="document.getElementById('pwd-modal').style.display='none'">&times;</button>
+    <h2 style="font-size: 20px; color: #dc2626; margin-bottom: 16px; border-bottom: 2px solid #fee2e2; padding-bottom: 8px;">
+      ⚠ Excelパスワードの手動解除手順
+    </h2>
+    <p style="font-size: 14px; margin-bottom: 12px; color: var(--text);">
+      セキュリティのため、本ツールに読み込ませる前に、あらかじめ以下の手順でExcelのパスワードを解除してください。<br>
+      解除後は、この画面を閉じてからファイルをアップロードしてください。
+    </p>
+    <ol style="font-size: 15px; margin-left: 24px; margin-bottom: 20px; line-height: 1.8; color: var(--text);">
+      <li>Excelファイルをダブルクリックして開き、<strong>パスワードを入力</strong>します。</li>
+      <li>画面左上の<strong>「ファイル」</strong>タブを開き、左メニューから<strong>「情報」</strong>を選択します。</li>
+      <li><strong>「ブックの保護」</strong>ボタンをクリックし、<strong>「パスワードを使用して暗号化」</strong>を選びます。</li>
+      <li>パスワード入力画面が表示されるので、<strong>黒丸「●●●●●●」をすべて消して空欄</strong>にし、「OK」を押します。</li>
+      <li>必ず<strong>上書き保存（Ctrl + S）</strong>をして、Excelを閉じます。</li>
+    </ol>
+    <img src="assets/Screenshot (14).png" alt="パスワード解除の参考画像" class="modal-img" onerror="this.style.display='none'">
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>

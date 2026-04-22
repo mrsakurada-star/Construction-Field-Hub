@@ -1,0 +1,165 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAX送信票・送付状作成ツール</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap"
+        rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="editor-container">
+        <div class="editor-header">
+            <h1>FAX送信票・送付状作成</h1>
+            <div id="file-type-toggle">
+                <input type="radio" id="type-fax" name="docType" value="FAX送信票" checked>
+                <label for="type-fax">FAX送信票</label>
+                <input type="radio" id="type-letter" name="docType" value="書類送付状">
+                <label for="type-letter">書類送付状</label>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="input-date">日付</label>
+                <input type="date" id="input-date">
+            </div>
+            <div class="form-group">
+                <label for="input-pages">送信枚数 (本状含む)</label>
+                <input type="text" id="input-pages" placeholder="例：1 枚">
+            </div>
+            <div class="form-group">
+                <label for="input-recipient">宛先 (会社名・部署名)</label>
+                <input type="text" id="input-recipient" placeholder="例：株式会社 ○○">
+            </div>
+            <div class="form-group">
+                <label for="input-honorific">敬称</label>
+                <select id="input-honorific">
+                    <option value="御中">御中 (会社・部署宛)</option>
+                    <option value="様" selected>様 (個人宛)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="input-fax">相手先FAX番号</label>
+                <input type="text" id="input-fax" placeholder="例：00-0000-0000">
+            </div>
+            <div class="form-group full-width"
+                style="border-top: 1px dashed var(--border-color); padding-top: 15px; margin-top: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-end;">
+                    <label for="input-office-select" style="color: var(--accent-color); flex-grow: 1;">送信元事業所の選択</label>
+                    <button type="button" onclick="fetchOfficesOnline()" id="btn-update-offices"
+                        style="padding: 4px 8px; font-size: 0.8rem; background: var(--border-color); color: var(--text-color); border: none; border-radius: 4px; cursor: pointer;">
+                        🔄 最新データ取得
+                    </button>
+                </div>
+                <select id="input-office-select" style="margin-top: 5px;">
+                    <!-- Options injected via JS -->
+                </select>
+                <div id="office-update-status" style="font-size: 0.8rem; color: #666; margin-top: 4px; display: none;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="input-sender-person">差出人担当（あなた）</label>
+                <input type="text" id="input-sender-person" placeholder="あなたの名前">
+            </div>
+            <div class="form-group full-width">
+                <label for="input-subject">件名</label>
+                <input type="text" id="input-subject" placeholder="例：御見積書の送付について">
+            </div>
+            <div class="form-group full-width">
+                <label for="input-message">メッセージ正文</label>
+                <textarea id="input-message" placeholder="拝啓　時下ますますご清栄のこととお慶び申し上げます。
+平素は格別のご高配を賜り、厚く御礼申し上げます。
+さて、下記書類をFAXにて送信いたします。ご査収のほど宜しくお願い申し上げます。"></textarea>
+            </div>
+            <div class="form-group full-width">
+                <label for="input-enclosed">同封内容 (あれば追加)</label>
+                <textarea id="input-enclosed" placeholder="・御見積書　1点
+・商品カタログ　1点" style="height: 80px;"></textarea>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn-print" onclick="window.print()">印刷 / PDF保存</button>
+        </div>
+    </div>
+
+    <!-- Preview Sheet -->
+    <div class="sheet" id="print-sheet">
+        <div class="sheet-content" id="sheet-content-wrapper">
+            <div class="date-line" id="display-date">令和 年 月 日</div>
+
+            <div class="sheet-title" id="display-title">FAX送信票</div>
+
+            <div class="sheet-header-info">
+                <div class="recipient-info">
+                    <div class="recipient-name-block">
+                        <span class="recipient-name" id="display-recipient">（宛先未入力）</span>
+                        <span class="honorific" id="display-honorific">様</span>
+                    </div>
+                    <div class="transmission-details" id="display-fax-row"
+                        style="margin-top: 5mm; border: none; padding: 0;">
+                        <div class="transmission-label">FAX：</div>
+                        <div id="display-fax-number" style="font-size: 1.2rem; font-weight: 700;"></div>
+                    </div>
+                </div>
+
+                <div class="sender-info">
+                    <div id="display-sender-company" style="font-weight: 700; font-size: 1.2rem; margin-bottom: 5px;">
+                        株式会社パーパスエコテック</div>
+                    <div id="display-sender-office" style="font-size: 1rem; margin-bottom: 5px; font-weight: 700;">
+                    </div>
+                    <div style="margin-top: 8px; font-size: 0.9rem;">
+                        <span id="display-sender-zip"></span><br>
+                        <span id="display-sender-address"></span><br>
+                        <span id="display-sender-building"></span><br>
+                        TEL：<span id="display-sender-tel"></span><br>
+                        FAX：<span id="display-sender-fax"></span><br>
+                        担当：<span id="display-sender-person" style="font-weight: 700; font-size: 1rem;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subject-block">
+                <div class="subject-line" id="display-subject"></div>
+            </div>
+
+            <div class="transmission-details" id="display-pages-row">
+                <div class="transmission-label">送信枚数：</div>
+                <div id="display-pages-count">枚 (本状を含む)</div>
+            </div>
+
+            <div class="main-message" id="display-message">
+                拝啓
+
+                時下ますますご清栄のこととお慶び申し上げます。平素は格別のご高配を賜り、厚く御礼申し上げます。
+
+                さて、下記の通り書類を送付いたしましたので、ご査収のほどよろしくお願い申し上げます。
+                何卒よろしくお願いいたします。
+
+                敬具
+            </div>
+
+            <div id="enclosed-section" class="enclosed-items" style="display: none;">
+                <div class="enclosed-title">記</div>
+                <div id="display-enclosed" style="white-space: pre-wrap;"></div>
+                <div style="text-align: right; margin-top: 5px;">以上</div>
+            </div>
+        </div> <!-- End of sheet-content -->
+    </div>
+
+    <script src="js/app.js"></script>
+    <div class="no-print" style="position: absolute; bottom: 15px; left: 30px; font-size: 11px; color: #8b949e; opacity: 0.6; z-index: 10;">
+        &copy; 2026 Nozomi Sakurada. All rights reserved.
+    </div>
+</body>
+
+</html>

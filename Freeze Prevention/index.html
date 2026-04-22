@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【凍結予防方法】まとめ資料 - Construction Field Hub</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <header class="no-print">
+        <div class="header-content">
+            <div class="logo">
+                <i data-lucide="snowflake" class="logo-icon"></i>
+                <div>
+                    <h1>凍結予防方法まとめ</h1>
+                    <p>給湯器・風呂釜を寒波から守るためのガイドライン</p>
+                </div>
+            </div>
+            <nav>
+                <button id="print-all" class="btn btn-primary">
+                    <i data-lucide="printer"></i>
+                    全ての資料を印刷
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main id="content">
+        <!-- JSで動的にレンダリングされます -->
+        <div id="pages-container"></div>
+    </main>
+
+    <footer class="no-print">
+        <p>&copy; 2026 Nozomi Sakurada. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

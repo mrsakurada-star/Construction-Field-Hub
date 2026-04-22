@@ -1,0 +1,236 @@
+/* © 2026 Nozomi Sakurada. All rights reserved. */
+:root {
+  --primary: #2a2a24;
+  --bg: #f8f8f6;
+  --white: #ffffff;
+  --border: #e2e2dc;
+  --text: #1a1a18;
+  --muted: #6b6b60;
+  --accent: #3d3d35;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ===== SCREEN ===== */
+@media screen {
+  body {
+    background: var(--bg);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── トップバー ── */
+  #topbar {
+    background: var(--white);
+    color: var(--text);
+    padding: 24px 32px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  #topbar h1 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: .4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  #topbar .sub { font-size: 12px; color: var(--muted); margin-top: 5px; font-weight: 300; }
+
+  /* ── メイン2カラム ── */
+  #layout { display: flex; gap: 0; min-height: calc(100vh - 70px); }
+
+  /* ── サイドパネル ── */
+  #side {
+    width: 340px;
+    min-width: 280px;
+    background: white;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  .side-section { padding: 16px 18px; border-bottom: 1px solid #f1f5f9; }
+  .side-section h2 { font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: .6px; text-transform: uppercase; margin-bottom: 10px; }
+
+  /* ドロップゾーン */
+  #dropzone {
+    border: 2.5px dashed #94a3b8;
+    border-radius: 12px;
+    padding: 24px 14px;
+    text-align: center;
+    cursor: pointer;
+    transition: .2s;
+    background: #f8fafc;
+    position: relative;
+    margin-bottom: 12px;
+  }
+  #dropzone:hover, #dropzone.dragover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+  #dropzone input[type=file] {
+    position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  #dropzone .dz-icon { font-size: 32px; margin-bottom: 10px; color: var(--muted); }
+  #dropzone .dz-text { font-size: 13px; color: var(--text); font-weight: 500; }
+  #dropzone .dz-hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  #file-name { margin-top: 8px; font-size: 12px; color: var(--accent); font-weight: 500; word-break: break-all; }
+
+  /* 進捗 */
+  #progress-wrap { margin-top: 10px; display: none; }
+  #progress-bar-bg { background: #e2e8f0; border-radius: 99px; height: 8px; overflow: hidden; }
+  #progress-bar { height: 100%; background: var(--primary); border-radius: 99px; width: 0%; transition: width .3s; }
+  #progress-msg { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+  /* パスワード解除案内 */
+  .pwd-notice {
+    background: #fef2f2; border: 1px solid #f87171; border-radius: 8px;
+    padding: 10px 12px; font-size: 11px; color: #991b1b; line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .pwd-notice strong { display: block; margin-bottom: 4px; font-size: 12px; }
+  .pwd-img { width: 100%; max-width: 250px; border: 1px solid #ccc; border-radius: 4px; margin-top: 6px; display: block; }
+  .pwd-steps { margin-left: 18px; margin-top: 4px; padding-left: 0; }
+  .pwd-steps li { margin-bottom: 3px; }
+
+  /* パスワード解除モーダル */
+  #pwd-modal {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 1000; justify-content: center; align-items: center; padding: 20px;
+  }
+  .modal-content {
+    background: white; border-radius: 12px; max-width: 800px; width: 100%;
+    max-height: 90vh; overflow-y: auto; padding: 24px; position: relative;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 20px; font-size: 24px; cursor: pointer;
+    color: var(--muted); background: none; border: none; padding: 0; line-height: 1;
+  }
+  .modal-close:hover { color: var(--text); }
+  .modal-img { width: 100%; height: auto; border: 1px solid #ccc; border-radius: 6px; margin-top: 12px; }
+
+  /* フィルタピル（複数選択） */
+  .pills { display: flex; flex-wrap: wrap; gap: 5px; }
+  .pill {
+    padding: 5px 12px; border-radius: 20px;
+    background: #f1f5f9; color: var(--text);
+    cursor: pointer; border: 1px solid var(--border);
+    font-size: 12px; transition: .15s; user-select: none;
+  }
+  .pill:hover { background: #e2e8f0; }
+  .pill.active { background: var(--primary); color: white; border-color: var(--primary); font-weight: 700; }
+  .pill.all-pill { border-color: transparent; }
+  .pill.all-pill.active { background: #1e293b; color: white; font-weight: 700; border-color: #1e293b; }
+  .pill .cnt { font-size: 10px; margin-left: 3px; opacity: .75; }
+
+  /* 統計 */
+  #stats-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+  #stats-box strong { font-size: 22px; font-weight: 700; color: var(--text); }
+
+  /* 印刷ボタン */
+  #print-btn {
+    display: block; width: 100%;
+    padding: 12px; border: none;
+    background: var(--primary);
+    color: white; font-size: 14px; font-weight: 700;
+    border-radius: 30px; cursor: pointer;
+    transition: .2s; letter-spacing: .3px;
+  }
+  #print-btn:hover { background: var(--accent); transform: translateY(-1px); }
+  #print-btn:disabled { background: var(--border); cursor: not-allowed; transform: none; }
+
+  /* ── メインコンテンツ ── */
+  #main { flex: 1; padding: 24px 20px; overflow-y: auto; }
+
+  /* ウェルカム画面 */
+  #welcome {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    min-height: 60vh; text-align: center; color: var(--muted);
+  }
+  #welcome .wc-icon { font-size: 48px; margin-bottom: 20px; color: var(--border); }
+  #welcome h2 { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+  #welcome p { font-size: 13px; line-height: 1.8; color: var(--muted); }
+
+  /* シートグリッド */
+  #sheet-wrap { display: flex; flex-direction: column; align-items: center; gap: 28px; }
+  .sheet {
+    width: 210mm;
+    background: white;
+    box-shadow: 0 2px 20px rgba(0,0,0,.1);
+    padding: 8mm 10mm 6mm;
+    font-size: 10pt;
+    position: relative;
+    border-radius: 4px;
+  }
+}
+
+/* ===== PRINT ===== */
+@page { size: A4 portrait; margin: 6mm 8mm; }
+@media print {
+  body { font-family: 'Noto Sans JP', sans-serif; background: white; }
+  #topbar, #side, #welcome, #pwd-modal { display: none !important; }
+  #layout { display: block !important; }
+  #main { padding: 0 !important; overflow: visible !important; }
+  #sheet-wrap { display: block !important; padding: 0 !important; gap: 0 !important; }
+  .sheet {
+    width: 190mm !important;
+    height: 275mm !important;
+    padding: 5mm 7mm !important;
+    overflow: hidden !important;
+    page-break-after: always;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 auto;
+    border-radius: 0 !important;
+  }
+  .ticket-row {
+    display: block !important; /* 印刷時は確実に表示されるようブロックへ */
+    break-inside: avoid;
+  }
+  .ticket-row span, .ticket-row strong {
+    color: #000 !important; /* 印刷時は確実に黒色にする */
+    display: inline-block !important;
+    margin-right: 10px !important;
+  }
+}
+
+/* ===== SHEET SHARED ===== */
+.sheet { font-family: 'Noto Sans JP', sans-serif; line-height: 1.3; }
+
+.area-badge {
+  position: absolute; top: 0; right: 0;
+  background: #1e3a5f; color: white;
+  font-size: 9pt; font-weight: 700;
+  padding: 3px 10px; border-radius: 0 4px 0 6px;
+}
+.sheet-header {
+  text-align: center; font-size: 14pt; font-weight: 700;
+  border-bottom: 2.5px solid #000;
+  padding-bottom: 3px; margin-top: 6mm; margin-bottom: 4px;
+}
+.ticket-row {
+  display: flex; gap: 16px;
+  font-size: 9pt; margin-bottom: 5px; flex-wrap: wrap;
+}
+.ticket-row span { color: #64748b; }
+.ticket-row strong { color: #0f172a; }
+.info-table { width: 100%; border-collapse: collapse; margin-bottom: 6px; }
+.info-table th, .info-table td { border: 1px solid #333; padding: 3px 7px; font-size: 9.5pt; }
+.info-table th { background: #e8edf2; width: 22%; font-weight: 700; white-space: nowrap; }
+.info-table tr.tall td, .info-table tr.tall th { height: 22px; }
+
+.noritz-sep { border: none; border-top: 2px solid #000; margin: 5px 0 4px; }
+.noritz-title {
+  font-size: 8pt; font-weight: 700; text-align: center;
+  background: #1e3a5f; color: white; padding: 2px 0;
+  margin-bottom: 4px; letter-spacing: .5px;
+}

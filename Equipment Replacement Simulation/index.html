@@ -1,0 +1,460 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>機器取替シミュレーション v1.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+    <div class="header-title">機器取替シミュレーション</div>
+    <div class="header-actions">
+        <button class="btn screen-only" style="background:var(--bg); border:1px solid var(--border); color:var(--text2);" onclick="document.getElementById('logicModal').style.display='flex'">
+            <i data-lucide="book-open" style="width:16px; height:16px;"></i> 計算ロジック
+        </button>
+        <button class="btn" onclick="window.print()">
+            <i data-lucide="printer" style="width:16px; height:16px;"></i> PDF出力・印刷
+        </button>
+    </div>
+</header>
+
+<main>
+    <aside class="config-panel">
+        <div class="section-title">
+            <i data-lucide="settings-2" style="width:16px; height:16px;"></i> 基本条件設定
+        </div>
+        
+        <div class="form-group">
+            <label>都道府県</label>
+            <select id="pref" onchange="updateAreaSettings()">
+                <optgroup label="北海道・東北">
+                    <option value="hokkaido">北海道</option>
+                    <option value="aomori">青森県</option>
+                    <option value="iwate">岩手県</option>
+                    <option value="miyagi">宮城県</option>
+                    <option value="akita">秋田県</option>
+                    <option value="yamagata">山形県</option>
+                    <option value="fukushima">福島県</option>
+                </optgroup>
+                <optgroup label="関東">
+                    <option value="ibaraki">茨城県</option>
+                    <option value="tochigi">栃木県</option>
+                    <option value="gunma">群馬県</option>
+                    <option value="saitama">埼玉県</option>
+                    <option value="chiba">千葉県</option>
+                    <option value="tokyo" selected>東京都</option>
+                    <option value="kanagawa">神奈川県</option>
+                </optgroup>
+                <optgroup label="中部">
+                    <option value="niigata">新潟県</option>
+                    <option value="toyama">富山県</option>
+                    <option value="ishikawa">石川県</option>
+                    <option value="fukui">福井県</option>
+                    <option value="yamanashi">山梨県</option>
+                    <option value="nagano">長野県</option>
+                    <option value="gifu">岐阜県</option>
+                    <option value="shizuoka">静岡県</option>
+                    <option value="aichi">愛知県</option>
+                </optgroup>
+                <optgroup label="関西">
+                    <option value="mie">三重県</option>
+                    <option value="shiga">滋賀県</option>
+                    <option value="kyoto">京都府</option>
+                    <option value="osaka">大阪府</option>
+                    <option value="hyogo">兵庫県</option>
+                    <option value="nara">奈良県</option>
+                    <option value="wakayama">和歌山県</option>
+                </optgroup>
+                <optgroup label="中国・四国">
+                    <option value="tottori">鳥取県</option>
+                    <option value="shimane">島根県</option>
+                    <option value="okayama">岡山県</option>
+                    <option value="hiroshima">広島県</option>
+                    <option value="yamaguchi">山口県</option>
+                    <option value="tokushima">徳島県</option>
+                    <option value="kagawa">香川県</option>
+                    <option value="ehime">愛媛県</option>
+                    <option value="kochi">高知県</option>
+                </optgroup>
+                <optgroup label="九州・沖縄">
+                    <option value="fukuoka">福岡県</option>
+                    <option value="saga">佐賀県</option>
+                    <option value="nagasaki">長崎県</option>
+                    <option value="kumamoto">熊本県</option>
+                    <option value="oita">大分県</option>
+                    <option value="miyazaki">宮崎県</option>
+                    <option value="kagoshima">鹿児島県</option>
+                    <option value="okinawa">沖縄県</option>
+                </optgroup>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>電力会社</label>
+            <select id="powerCompany" onchange="updatePowerPrice()">
+                <option value="hokkaido">北海道電力</option>
+                <option value="tohoku">東北電力</option>
+                <option value="tepco" selected>東京電力エナジーパートナー</option>
+                <option value="chubu">中部電力ミライズ</option>
+                <option value="hokuriku">北陸電力</option>
+                <option value="kansai">関西電力</option>
+                <option value="chugoku">中国電力</option>
+                <option value="shikoku">四国電力</option>
+                <option value="kyushu">九州電力</option>
+                <option value="okinawa">沖縄電力</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>電気料金プラン</label>
+            <select id="powerPlan" onchange="updatePowerPrice()">
+                <option value="standard" selected>標準プラン (従量電灯相当)</option>
+                <option value="night">オール電化プラン (夜間割安タイプ)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>ガス種別</label>
+            <select id="gasType">
+                <option value="13A">都市ガス (13A)</option>
+                <option value="LPG">LPG (プロパン)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>世帯人数 / ライフスタイル</label>
+            <select id="household" onchange="calculate()">
+                <option value="2">2人世帯 (標準)</option>
+                <option value="3">3人世帯</option>
+                <option value="4" selected>4人世帯 (標準)</option>
+                <option value="5">5人以上世帯</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>現在使用している給湯器 (比較基準)</label>
+            <select id="currentType" onchange="calculate()">
+                <option value="standard">従来型ガス給湯器 (非エコジョーズ)</option>
+                <option value="ecojours">エコジョーズ (高効率ガス)</option>
+                <option value="oil">従来型石油給湯器</option>
+                <option value="electric">電気温水器</option>
+                <option value="hybrid">ハイブリッド給湯器</option>
+                <option value="ecocute">エコキュート</option>
+                <option value="enefarm">エネファーム</option>
+                <option value="ecofeel">エコフィール</option>
+            </select>
+        </div>
+
+
+        <div class="section-title" style="margin-top: 32px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div><i data-lucide="zap" style="width:16px; height:16px;"></i> 単価設定 (オプション)</div>
+            <button class="btn" style="padding: 4px 8px; font-size: 11px; height: auto;" onclick="fetchAveragePrices()">
+                <i data-lucide="refresh-cw" style="width:12px; height:12px;"></i> 地域平均を取得
+            </button>
+        </div>
+        <div style="font-size:10px; color:var(--text3); margin-bottom: 12px; line-height:1.4;">
+            ※「地域平均を取得」でセットされる単価は2026年4月時点の目安です。最新の単価に手入力で調整してください。
+        </div>
+
+        <div class="grid-cols-2" style="margin-bottom: 12px;">
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>ガス単価 (円/m³)</label>
+                <input type="number" id="gasPrice" value="160">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>電気単価・昼 (円/kWh)</label>
+                <input type="number" id="elecPriceDay" value="31">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>電気単価・夜 (円/kWh)</label>
+                <input type="number" id="elecPriceNight" value="25">
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>灯油単価 (円/L)</label>
+                <input type="number" id="oilPrice" value="110">
+            </div>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 24px;">
+            <label>単価情報基準月 (印刷表示用)</label>
+            <input type="text" id="priceRefMonth" value="2026年4月現在">
+        </div>
+
+        <div class="section-title" style="margin-top: 32px;">
+            <i data-lucide="check-square" style="width:16px; height:16px;"></i> 比較対象のグラフ表示
+        </div>
+        
+        <div class="checkbox-grid">
+            <label class="checkbox-item"><input type="checkbox" class="target-select" value="standard" checked> 従来型給湯器</label>
+            <label class="checkbox-item"><input type="checkbox" class="target-select" value="ecojours" checked> エコジョーズ</label>
+            <label class="checkbox-item"><input type="checkbox" class="target-select" value="oil"> 従来型石油</label>
+            <label class="checkbox-item"><input type="checkbox" class="target-select" value="electric"> 電気温水器</label>
+            <label class="checkbox-item"><input type="checkbox" class="target-select" value="hybrid" checked> ハイブリッド</label>
+            <label class="checkbox-item"><input type="checkbox" class="target-select" value="ecocute" checked> エコキュート</label>
+            <label class="checkbox-item"><input type="checkbox" class="target-select" value="enefarm" checked> エネファーム</label>
+            <label class="checkbox-item"><input type="checkbox" class="target-select" value="ecofeel" checked> エコフィール</label>
+        </div>
+
+        <button class="btn" style="width:100%; margin-top: 24px;" onclick="calculate()">
+            <i data-lucide="calculator" style="width:16px; height:16px;"></i> 計算を更新
+        </button>
+    </aside>
+
+    <div class="results-panel">
+        <!-- 印刷専用ヘッダー (通常は非表示) -->
+        <div class="print-report-header" style="display: none;">
+            <div class="header-left">
+                <h1>機器取替シミュレーションレポート</h1>
+                <div class="report-label">Equipment Replacement Simulation Report</div>
+            </div>
+            <div class="header-right">
+                <div class="print-date-info">作成日: <span id="currentDate"></span></div>
+                <div class="print-date-info">単価基準: <span id="print-price-month"></span></div>
+                <div class="target-info" style="margin-top:8px;">対象: <span id="print-target-info"></span></div>
+            </div>
+        </div>
+
+        <!-- 印刷用左列: 試算条件 + ヒーローカード + CSSバーチャート -->
+        <div class="print-left-col">
+        <!-- 試算条件グリッド -->
+        <section class="print-section print-conditions-grid" style="display: none;">
+            <div class="condition-item">
+                <label>対象地域</label>
+                <div class="value" id="print-pref">-</div>
+            </div>
+            <div class="condition-item">
+                <label>世帯人数</label>
+                <div class="value" id="print-household">-</div>
+            </div>
+            <div class="condition-item">
+                <label>現在の給湯器</label>
+                <div class="value" id="print-currentType">-</div>
+            </div>
+            <div class="condition-item">
+                <label>ガス種別</label>
+                <div class="value" id="print-gas">-</div>
+            </div>
+            <div class="condition-item">
+                <label>ガス単価</label>
+                <div class="value" id="print-gasPrice">-</div>
+            </div>
+            <div class="condition-item">
+                <label>電気単価 (昼/夜)</label>
+                <div class="value" id="print-elecPrice">-</div>
+            </div>
+            <div class="condition-item">
+                <label>灯油単価</label>
+                <div class="value" id="print-oilPrice">-</div>
+            </div>
+            <div class="condition-item">
+                <label>電力会社 / プラン</label>
+                <div class="value" id="print-power">-</div>
+            </div>
+        </section>
+
+        <!-- ヒーローセービングカード -->
+        <section class="print-section print-hero-cards" style="display: none;">
+            <div class="hero-card hero-current">
+                <div class="hero-label">現在の年間コスト</div>
+                <div class="hero-value" id="print-hero-current">--<span class="hero-unit">円</span></div>
+            </div>
+            <div class="hero-card hero-best">
+                <div class="hero-badge">最安</div>
+                <div class="hero-label">最安プラン導入時 (<span id="print-hero-best-name">-</span>)</div>
+                <div class="hero-value" id="print-hero-best">--<span class="hero-unit">円</span></div>
+            </div>
+            <div class="hero-card hero-savings">
+                <div class="hero-label">年間最大節約額</div>
+                <div class="hero-value"><span id="print-hero-savings-sign"></span><span id="print-hero-savings">--</span><span class="hero-unit">円/年</span></div>
+            </div>
+        </section>
+
+        <!-- CSSバーチャート -->
+        <section class="print-section print-css-chart" style="display: none;">
+            <div class="print-section-title">年間ランニングコスト比較</div>
+            <div id="print-css-bars">
+                <!-- JSで動的に追加 -->
+            </div>
+        </section>
+        </div><!-- /print-left-col -->
+
+        <!-- 印刷用右列: 詳細テーブル -->
+        <div class="print-right-col">
+
+
+        <section class="card screen-only">
+            <div class="section-title">
+                <i data-lucide="bar-chart-2" style="width:16px; height:16px;"></i> 年間ランニングコスト比較
+            </div>
+            
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-label">最大コスト</div>
+                    <div class="summary-value" id="currentCost">-- <span class="summary-unit">円</span></div>
+                </div>
+                <div class="summary-item" style="border-color: var(--success); background: #f0f5ee;">
+                    <div class="summary-label" style="color: var(--success);">最安コスト</div>
+                    <div class="summary-value" id="hybridCost" style="color: var(--success);">-- <span class="summary-unit">円</span></div>
+                </div>
+                <div class="summary-item" style="border-color: var(--accent); background: #f0f0ed;">
+                    <div class="summary-label">最大節約額 (年間)</div>
+                    <div class="summary-value" id="maxSaving">-- <span class="summary-unit">円</span></div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="costChart"></canvas>
+            </div>
+            
+            <div class="footer-note">* 本計算結果はシミュレーションであり、実際の使用環境や気象条件、契約プラン等により異なります。</div>
+        </section>
+
+        <section class="card">
+            <div class="section-title">
+                <i data-lucide="list" style="width:16px; height:16px;"></i> 詳細比較テーブル
+            </div>
+            <div class="table-wrap">
+                <table id="detailsTable">
+                    <thead>
+                        <tr>
+                            <th>給湯器タイプ</th>
+                            <th>機器本体単価 (目安)</th>
+                            <th>年間ガス代/灯油代</th>
+                            <th>年間電気代</th>
+                            <th>合計年間コスト</th>
+                            <th>従来比節約額</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- JSで動的に追加 -->
+                    </tbody>
+                </table>
+                <div class="footer-note">* 機器本体単価は全国平均の目安です。標準工事費・部材代等は含まれません。</div>
+            </div>
+        </section>
+        </div><!-- /print-right-col -->
+
+        <!-- 印刷専用: 計算ロジック下部帯 -->
+        <div class="print-logic-section print-section" style="display:none;">
+            <div class="print-logic-header">計算ロジック（試算根拠）</div>
+            <div class="print-logic-body">
+                <div class="print-logic-col">
+                    <div class="print-logic-subtitle">年間必要給湯熱量（世帯人数別）</div>
+                    <table class="print-logic-table">
+                        <thead><tr><th>世帯人数</th><th>標準熱量 (kcal)</th><th>備考</th></tr></thead>
+                        <tbody>
+                            <tr><td>2人世帯</td><td>3,500,000</td><td rowspan="4">気候係数: 北海道=1.5 / 東北=1.3〜1.4 / 東京=1.0 / 沖縄=0.7</td></tr>
+                            <tr><td>3人世帯</td><td>5,000,000</td></tr>
+                            <tr><td>4人世帯</td><td>6,500,000</td></tr>
+                            <tr><td>5人以上</td><td>8,000,000</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="print-logic-col" style="flex:2;">
+                    <div class="print-logic-subtitle">機種別 年間コスト計算式</div>
+                    <table class="print-logic-table">
+                        <thead><tr><th>機種</th><th>計算式</th><th>効率</th></tr></thead>
+                        <tbody>
+                            <tr><td><strong>従来型ガス</strong></td><td>熱量 ÷ (0.80 × 発熱量) × ガス単価 + 4,000円(電気)</td><td>80%</td></tr>
+                            <tr><td><strong>エコジョーズ</strong></td><td>熱量 ÷ (0.95 × 発熱量) × ガス単価 + 4,000円(電気)</td><td>95%</td></tr>
+                            <tr><td><strong>ハイブリッド</strong></td><td>[ガス(45%) ÷ (0.95 × 発熱量) × 単価] + [電気(55%) ÷ 3.0(COP) ÷ 860 × 単価]</td><td>複合</td></tr>
+                            <tr><td><strong>エコキュート</strong></td><td>熱量 ÷ 3.5(COP) ÷ 860 × 深夜電気単価</td><td>COP 3.5</td></tr>
+                            <tr><td><strong>エネファーム</strong></td><td>ガス代 − 発電控除((熱量/6,500,000) × 1,500kWh × 昼電単価)</td><td>—</td></tr>
+                            <tr><td><strong>エコフィール</strong></td><td>熱量 ÷ (0.95 × 8,500) × 灯油単価 + 3,000円(電気)</td><td>95%</td></tr>
+                        </tbody>
+                    </table>
+                    <div class="print-logic-note">発熱量: 都市ガス(13A)=11,000 kcal/m³ ／ LPG=24,000 kcal/m³ ／ 灯油=8,500 kcal/L</div>
+                </div>
+            </div>
+        </div>
+
+        <footer style="margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); text-align: center; font-size: 11px; color: var(--text3);" class="screen-only">
+            © 2026 Nozomi Sakurada. All rights reserved.
+        </footer>
+    </div>
+</main>
+
+
+<script src="js/app.js"></script>
+<script>
+    lucide.createIcons();
+</script>
+
+<!-- 計算ロジック モーダル (screen-only) -->
+<div id="logicModal" class="modal-overlay screen-only" onclick="if(event.target===this)this.style.display='none'">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2>計算ロジック説明</h2>
+            <button class="modal-close" onclick="document.getElementById('logicModal').style.display='none'">&times;</button>
+        </div>
+        <div class="modal-body">
+            <h3>共通前提: 年間必要給湯熱量</h3>
+            <table class="logic-table">
+                <thead><tr><th>世帯人数</th><th>標準熱量 (kcal)</th></tr></thead>
+                <tbody>
+                    <tr><td>2人世帯</td><td>3,500,000</td></tr>
+                    <tr><td>3人世帯</td><td>5,000,000</td></tr>
+                    <tr><td>4人世帯</td><td>6,500,000</td></tr>
+                    <tr><td>5人以上</td><td>8,000,000</td></tr>
+                </tbody>
+            </table>
+            <p class="logic-note">気候係数: 北海道=1.5　1東北=1.3~1.4、東京=1.0、沖縄=0.7 を乗じて調整</p>
+
+            <h3>機種別 年間コスト計算式</h3>
+            <table class="logic-table">
+                <thead><tr><th>機種</th><th>計算式</th><th>効率</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td><strong>従来型ガス</strong></td>
+                        <td>熱量 ÷ (0.80 × 発熱量) × ガス単価 + 4,000円(電気)</td>
+                        <td>80%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>エコジョーズ</strong></td>
+                        <td>熱量 ÷ (0.95 × 発熱量) × ガス単価 + 4,000円(電気)</td>
+                        <td>95%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ハイブリッド</strong></td>
+                        <td>[ガス(45%) ÷ (0.95 × 発熱量) × 単価] + [電気(55%) ÷ 3.0(COP) ÷ 860 × 単価]</td>
+                        <td>複合</td>
+                    </tr>
+                    <tr>
+                        <td><strong>エコキュート</strong></td>
+                        <td>熱量 ÷ 3.5(COP) ÷ 860 × 深夜電気単価</td>
+                        <td>COP 3.5</td>
+                    </tr>
+                    <tr>
+                        <td><strong>エネファーム</strong></td>
+                        <td>ガス代 - 発電控除((熱量/6.5M)×1500kWh×昼電単価)</td>
+                        <td>煮決計算</td>
+                    </tr>
+                    <tr>
+                        <td><strong>従来型石油</strong></td>
+                        <td>熱量 ÷ (0.85 × 8500) × 灯油単価 + 3,000円(電気)</td>
+                        <td>85%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>エコフィール</strong></td>
+                        <td>熱量 ÷ (0.95 × 8500) × 灯油単価 + 3,000円(電気)</td>
+                        <td>95%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>電気温水器</strong></td>
+                        <td>熱量 ÷ 0.9 ÷ 860 × 深夜電気単価</td>
+                        <td>90%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="logic-note">発熱量: 都市ガス(13A)=11,000 kcal/m³ / LPG=24,000 kcal/m³ / 灯油=8,500 kcal/L</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

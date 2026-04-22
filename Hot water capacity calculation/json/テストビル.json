@@ -1,0 +1,246 @@
+{
+  "version": "2.0",
+  "savedAt": "2026-03-24T09:06:21.462Z",
+  "common": {
+    "name": "テストビル",
+    "pref": "秋田県",
+    "tc": "4",
+    "th": "60",
+    "k": "1.3",
+    "facility": "hotel",
+    "author": "櫻田　希望",
+    "gasType": "13A"
+  },
+  "systems": [
+    {
+      "id": 1,
+      "name": "客室",
+      "pat": "pat2",
+      "fixtures": [
+        {
+          "id": 1,
+          "zone": "room",
+          "name": "洗面台（客室）",
+          "hq": 7.6,
+          "hqTank": 30,
+          "u": 0.25,
+          "qty": 50
+        },
+        {
+          "id": 2,
+          "zone": "room",
+          "name": "シャワー（客室）",
+          "hq": 114,
+          "hqTank": 120,
+          "u": 0.25,
+          "qty": 50
+        }
+      ],
+      "p4params": {
+        "vol": 10,
+        "qty": 1,
+        "nfilter": 6,
+        "dt2": 5,
+        "dt1": 10,
+        "tset": 42
+      },
+      "p23params": {
+        "pipelen": 100,
+        "losscoef": 10,
+        "tankvol": 1000
+      },
+      "th": 60,
+      "unitcap": 50,
+      "unitflow": 28,
+      "result": {
+        "isPat4": false,
+        "pat": "pat2",
+        "lineName": "客室",
+        "rows": [
+          {
+            "id": 1,
+            "zone": "room",
+            "name": "洗面台（客室）",
+            "hq": 7.6,
+            "hqTank": 30,
+            "u": 0.25,
+            "qty": 50,
+            "nHq": 380,
+            "design": 95
+          },
+          {
+            "id": 2,
+            "zone": "room",
+            "name": "シャワー（客室）",
+            "hq": 114,
+            "hqTank": 120,
+            "u": 0.25,
+            "qty": 50,
+            "nHq": 5700,
+            "design": 1425
+          }
+        ],
+        "totalQhm": 1520,
+        "H_base": 128.36096,
+        "Qcirc": 1,
+        "H_total": 129.36096,
+        "reqGo": 74.1669504,
+        "heatUnits": 2,
+        "peakFlowMin": 25.333333333333332,
+        "flowUnits": 1,
+        "finalUnits": 2,
+        "unitcap": 50,
+        "unitflow": 28,
+        "theorMaxFlow": 44.642857142857146,
+        "tc": 4,
+        "th": 60,
+        "K": 1.3,
+        "p23": {
+          "pipelen": 100,
+          "losscoef": 10,
+          "tankvol": 1000
+        }
+      }
+    },
+    {
+      "id": 2,
+      "name": "系統 2",
+      "pat": "pat4",
+      "fixtures": [
+        {
+          "id": 3,
+          "zone": "room",
+          "name": "洗面台（客室）",
+          "hq": 7.6,
+          "hqTank": 30,
+          "u": 0.25,
+          "qty": 1
+        },
+        {
+          "id": 4,
+          "zone": "room",
+          "name": "シャワー（客室）",
+          "hq": 114,
+          "hqTank": 120,
+          "u": 0.25,
+          "qty": 0
+        }
+      ],
+      "p4params": {
+        "vol": 2,
+        "qty": 1,
+        "nfilter": 2.5,
+        "dt2": 5,
+        "dt1": 20,
+        "tset": 42
+      },
+      "p23params": {
+        "pipelen": 100,
+        "losscoef": 10,
+        "tankvol": 1000
+      },
+      "th": 60,
+      "unitcap": 50,
+      "unitflow": 28,
+      "result": {
+        "isPat4": true,
+        "pat": "pat4",
+        "lineName": "系統 2",
+        "totalBathVol": 2000,
+        "Q_filter": 83.33333333333333,
+        "Q_hex": 29.069444444444443,
+        "Q_primary": 20.83310185185185,
+        "Q_design": 37.790277777777774,
+        "reqGo": 21.666425925925925,
+        "heatUnits": 1,
+        "peakFlowMin": 20.83310185185185,
+        "flowUnits": 1,
+        "finalUnits": 1,
+        "unitcap": 50,
+        "unitflow": 28,
+        "theorMaxFlow": 22.321428571428573,
+        "tc": 4,
+        "th": 60,
+        "K": 1.3,
+        "p": {
+          "vol": 2,
+          "qty": 1,
+          "nfilter": 2.5,
+          "dt2": 5,
+          "dt1": 20,
+          "tset": 42
+        }
+      }
+    },
+    {
+      "id": 3,
+      "name": "厨房",
+      "pat": "pat1",
+      "fixtures": [
+        {
+          "id": 7,
+          "zone": "kitchen",
+          "name": "流し台カラン（厨房）",
+          "hq": 208,
+          "hqTank": 180,
+          "u": 0.6,
+          "qty": 6
+        }
+      ],
+      "p4params": {
+        "vol": 10,
+        "qty": 1,
+        "nfilter": 6,
+        "dt2": 5,
+        "dt1": 10,
+        "tset": 42
+      },
+      "p23params": {
+        "pipelen": 100,
+        "losscoef": 10,
+        "tankvol": 1000
+      },
+      "th": 60,
+      "unitcap": 50,
+      "unitflow": 28,
+      "result": {
+        "isPat4": false,
+        "pat": "pat1",
+        "lineName": "厨房",
+        "rows": [
+          {
+            "id": 7,
+            "zone": "kitchen",
+            "name": "流し台カラン（厨房）",
+            "hq": 208,
+            "hqTank": 180,
+            "u": 0.6,
+            "qty": 6,
+            "nHq": 1248,
+            "design": 748.8
+          }
+        ],
+        "totalQhm": 748.8,
+        "H_base": 63.2346624,
+        "Qcirc": 0,
+        "H_total": 63.2346624,
+        "reqGo": 36.254539776,
+        "heatUnits": 1,
+        "peakFlowMin": 12.479999999999999,
+        "flowUnits": 1,
+        "finalUnits": 1,
+        "unitcap": 50,
+        "unitflow": 28,
+        "theorMaxFlow": 22.321428571428573,
+        "tc": 4,
+        "th": 60,
+        "K": 1.3,
+        "p23": {
+          "pipelen": 100,
+          "losscoef": 10,
+          "tankvol": 1000
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construction Field Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="css/portal.css">
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="portal-header">
+        <div class="header-inner">
+            <div class="header-eyebrow">Construction Field Hub</div>
+            <h1 class="header-title"><span class="beta-badge">BETA</span></h1>
+            <p class="header-subtitle">各ツールをクリックして開いてください。</p>
+            <div class="header-meta">
+                <div class="tool-count">
+                    <span class="tool-count-num" id="toolCountNum">0</span>
+                    <span>ツール登録済み</span>
+                </div>
+                <div style="margin-left: auto;">
+                    <a href="機能説明書.md" target="_blank" class="manual-btn">
+                        <i data-lucide="file-text" style="width: 16px; height: 16px;"></i> 機能説明書を開く
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main -->
+    <main class="portal-main">
+        <div class="section-label">ツール一覧</div>
+
+        <div class="tools-grid" id="toolsGrid">
+            <!-- ツールカードは js/tools.js と js/app.js によって動的に生成されます -->
+        </div>
+
+        <!-- 最近のアップデート -->
+        <div class="updates-section">
+            <div class="section-label">最近のアップデート</div>
+            <div class="updates-list" id="updatesList">
+                <!-- アップデート履歴は js/updates.js と js/app.js によって動的に生成されます -->
+            </div>
+        </div>
+    </main>
+
+    <!-- カスタマイズガイド（折りたたみ） -->
+    <div class="guide-wrap">
+        <button class="guide-toggle" id="guideToggle" onclick="toggleGuide()">
+            <i class="guide-caret">›</i> 使い方・ツール追加方法
+        </button>
+        <div class="guide-panel" id="guidePanel">
+            <h3>カスタマイズガイド</h3>
+            <ul>
+                <li>ツールを追加・編集するには、<code>js/tools.js</code> の配列データを書き換えてください。</li>
+                <li>新しいHTMLファイルは関連するフォルダに置き、<code>tools.js</code> の <code>url</code> に相対パスで指定してください。</li>
+                <li>設定を保存してページをリロードすると、自動的にカードが生成・カウントされます。</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="portal-footer">
+        Construction Field Hub &nbsp;|&nbsp; 各ツールはローカルフォルダ内のHTMLファイルを参照しています &nbsp;|&nbsp; &copy; 2026 Nozomi Sakurada
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/tools.js"></script>
+    <script src="js/updates.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+
+</html>
