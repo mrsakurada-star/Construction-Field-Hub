@@ -21,8 +21,7 @@ function getCoverIllustration(facilityType) {
   };
 
   const filename = fileMap[facilityType] || 'ホテル';
-  const bgImageUrl = encodeURI(`./media/${filename}.png`);
-  return `<div class="cover-bg-illustration" style="background-image: url('${bgImageUrl}');"></div>`;
+  return encodeURI(`./media/${filename}.png`);
 }
 
 function generateReport() {
@@ -55,7 +54,7 @@ function generateReport() {
 
   // ===== 表紙 =====
   let html = `<div class="report-page cover-page">
-    <div class="cover-bg-illustration" aria-hidden="true">${coverIllustration}</div>
+    <div class="cover-bg-illustration" aria-hidden="true" style="background-image: url('${coverIllustration}');"></div>
 
     <div class="cover-topbar">
       <span class="cover-topbar-co">${co.name || '―'}</span>
