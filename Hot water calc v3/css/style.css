@@ -433,18 +433,26 @@ body {
 /* Cover page — background illustration */
 .cover-bg-illustration {
   position: absolute;
-  inset: 0;
-  opacity: 0.4;
+  top: 4%;
+  right: -10%;
+  width: 60%;
+  height: 88%;
+  opacity: 0.13;
   pointer-events: none;
   z-index: 0;
-  background-size: cover;
+  background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  transform: rotate(5deg);
 }
 .cover-page > *:not(.cover-bg-illustration) { position: relative; z-index: 1; }
 
 @media print {
-  .cover-bg-illustration { opacity: 0.05; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cover-bg-illustration {
+    opacity: 0.09;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
   .cover-page {
     height: 277mm;
     padding: 20mm 15mm 15mm;
