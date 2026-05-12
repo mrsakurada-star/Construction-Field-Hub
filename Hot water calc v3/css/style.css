@@ -446,6 +446,10 @@ body {
 
 @media print {
   .cover-bg-illustration { opacity: 0.05; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cover-page {
+    height: 277mm;
+    padding: 20mm 15mm 15mm;
+  }
 }
 
 /* Cover — catalog style */
