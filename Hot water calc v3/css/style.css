@@ -445,7 +445,7 @@ body {
 .cover-page > *:not(.cover-bg-illustration) { position: relative; z-index: 1; }
 
 @media print {
-  .cover-bg-illustration { opacity: 0.05; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cover-bg-illustration { opacity: 0.05; -webkit-print-color-adjust: exact; print-color-adjust: exact; top: calc(50% - 20mm); }
   .cover-page {
     height: 277mm;
     padding: 20mm 15mm 15mm;
