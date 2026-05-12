@@ -433,19 +433,25 @@ body {
 /* Cover page — background illustration */
 .cover-bg-illustration {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 115%;
-  transform: translate(-50%, -50%) rotate(15deg);
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   opacity: 0.06;
   pointer-events: none;
   z-index: 0;
 }
-.cover-bg-illustration svg { width: 100%; height: auto; display: block; color: var(--text); }
+.cover-bg-illustration svg {
+  width: 115%;
+  flex-shrink: 0;
+  display: block;
+  color: var(--text);
+  transform: rotate(15deg);
+}
 .cover-page > *:not(.cover-bg-illustration) { position: relative; z-index: 1; }
 
 @media print {
-  .cover-bg-illustration { opacity: 0.05; -webkit-print-color-adjust: exact; print-color-adjust: exact; top: calc(50% - 20mm); }
+  .cover-bg-illustration { opacity: 0.05; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .cover-page {
     height: 277mm;
     padding: 20mm 15mm 15mm;
