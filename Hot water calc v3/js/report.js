@@ -5,22 +5,24 @@ const PAT_LABELS = {
   pat3:'貯湯タンク方式', pat4:'ろ過昇温方式', multi:'業務用マルチ方式'
 };
 
-// ===== 施設種別カバーイラスト =====
+// ===== 施設種別カバーイラスト（PNG版） =====
 function getCoverIllustration(facilityType) {
-  const A = 'fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"';
-  const s = {
-    hotel: `<svg viewBox="0 0 200 200" ${A}><circle cx="72" cy="100" r="52" stroke-width="12"/><circle cx="72" cy="100" r="18" stroke-width="8"/><line x1="124" y1="100" x2="190" y2="100" stroke-width="12"/><line x1="158" y1="100" x2="158" y2="126" stroke-width="10"/><line x1="178" y1="100" x2="178" y2="116" stroke-width="10"/></svg>`,
-    bizhotel: `<svg viewBox="0 0 200 200" ${A}><rect x="72" y="12" width="56" height="58" rx="4" stroke-width="12"/><rect x="50" y="66" width="100" height="54" rx="4" stroke-width="12"/><rect x="22" y="116" width="156" height="72" rx="4" stroke-width="12"/><line x1="100" y1="12" x2="100" y2="2" stroke-width="8"/></svg>`,
-    hospital: `<svg viewBox="0 0 200 200" ${A}><path d="M78 10 H122 V78 H190 V122 H122 V190 H78 V122 H10 V78 H78 Z" stroke-width="10" stroke-linejoin="round"/></svg>`,
-    nursing: `<svg viewBox="0 0 200 200" ${A}><path d="M100 170 C55 145 5 105 5 62 C5 28 32 5 62 5 C78 5 92 14 100 25 C108 14 122 5 138 5 C168 5 195 28 195 62 C195 105 145 145 100 170 Z" stroke-width="12"/></svg>`,
-    sports: `<svg viewBox="0 0 200 200" ${A}><circle cx="138" cy="28" r="20" stroke-width="10"/><line x1="130" y1="48" x2="88" y2="118" stroke-width="14"/><line x1="118" y1="72" x2="65" y2="95" stroke-width="12"/><line x1="120" y1="68" x2="155" y2="42" stroke-width="12"/><line x1="88" y1="118" x2="42" y2="178" stroke-width="14"/><path d="M88 118 Q130 148 155 140" stroke-width="14"/></svg>`,
-    school: `<svg viewBox="0 0 200 200" ${A}><line x1="100" y1="28" x2="100" y2="172" stroke-width="10"/><line x1="100" y1="28" x2="15" y2="52" stroke-width="10"/><line x1="15" y1="52" x2="15" y2="162" stroke-width="10"/><line x1="15" y1="162" x2="100" y2="172" stroke-width="10"/><line x1="100" y1="28" x2="185" y2="52" stroke-width="10"/><line x1="185" y1="52" x2="185" y2="162" stroke-width="10"/><line x1="185" y1="162" x2="100" y2="172" stroke-width="10"/><line x1="26" y1="82" x2="90" y2="74" stroke-width="6" opacity="0.7"/><line x1="26" y1="102" x2="90" y2="96" stroke-width="6" opacity="0.7"/><line x1="26" y1="122" x2="90" y2="118" stroke-width="6" opacity="0.7"/><line x1="110" y1="74" x2="174" y2="82" stroke-width="6" opacity="0.7"/><line x1="110" y1="96" x2="174" y2="102" stroke-width="6" opacity="0.7"/><line x1="110" y1="118" x2="174" y2="122" stroke-width="6" opacity="0.7"/></svg>`,
-    factory: `<svg viewBox="0 0 200 200" ${A}><rect x="18" y="128" width="164" height="64" rx="4" stroke-width="10"/><rect x="32" y="55" width="26" height="76" rx="3" stroke-width="10"/><rect x="87" y="68" width="26" height="63" rx="3" stroke-width="10"/><rect x="142" y="80" width="26" height="51" rx="3" stroke-width="10"/><path d="M35 48 Q45 30 58 48" stroke-width="7" stroke-dasharray="6 5"/><path d="M90 62 Q100 44 113 62" stroke-width="7" stroke-dasharray="6 5"/><path d="M145 74 Q155 56 168 74" stroke-width="7" stroke-dasharray="6 5"/></svg>`,
-    apartment: `<svg viewBox="0 0 200 200" ${A}><polyline points="100,12 188,86 12,86" stroke-width="12" stroke-linejoin="round"/><rect x="18" y="82" width="164" height="110" rx="4" stroke-width="12"/><rect x="30" y="96" width="40" height="34" rx="3" stroke-width="9"/><rect x="130" y="96" width="40" height="34" rx="3" stroke-width="9"/><rect x="30" y="142" width="40" height="34" rx="3" stroke-width="9"/><rect x="130" y="142" width="40" height="34" rx="3" stroke-width="9"/><rect x="82" y="150" width="36" height="42" rx="6" stroke-width="9"/></svg>`,
-    office: `<svg viewBox="0 0 200 200" ${A}><rect x="14" y="72" width="172" height="118" rx="10" stroke-width="12"/><path d="M68 72 C68 36 132 36 132 72" stroke-width="12"/><rect x="84" y="122" width="32" height="22" rx="4" stroke-width="9"/><line x1="14" y1="118" x2="186" y2="118" stroke-width="8" opacity="0.7"/></svg>`
+  const fileMap = {
+    hotel: 'ホテル',
+    bizhotel: 'ホテル',
+    leisurehotel: 'ホテル',
+    hospital: '病院',
+    nursing: '介護施設',
+    sports: 'スポーツ施設',
+    school: '学校',
+    factory: '工場',
+    apartment: 'ホテル',
+    office: 'ホテル'
   };
-  const alias = { leisurehotel: 'hotel' };
-  return s[alias[facilityType] || facilityType] || s.office;
+
+  const filename = fileMap[facilityType] || 'ホテル';
+  const bgImageUrl = `./media/${filename}.png`;
+  return `<div class="cover-bg-illustration" style="background-image: url('${bgImageUrl}');"></div>`;
 }
 
 function generateReport() {
