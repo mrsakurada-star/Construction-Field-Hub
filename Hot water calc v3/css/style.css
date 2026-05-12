@@ -433,10 +433,10 @@ body {
 /* Cover page — background illustration */
 .cover-bg-illustration {
   position: absolute;
-  top: 4%;
-  right: -10%;
-  width: 60%;
-  height: 88%;
+  top: 2%;
+  right: -15%;
+  width: 72%;
+  height: 96%;
   opacity: 0.13;
   pointer-events: none;
   z-index: 0;
