@@ -434,7 +434,7 @@ body {
 .cover-bg-illustration {
   position: absolute;
   inset: 0;
-  opacity: 0.06;
+  opacity: 0.4;
   pointer-events: none;
   z-index: 0;
   background-size: cover;

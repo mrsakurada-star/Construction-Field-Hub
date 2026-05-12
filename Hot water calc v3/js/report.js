@@ -21,7 +21,7 @@ function getCoverIllustration(facilityType) {
   };
 
   const filename = fileMap[facilityType] || 'ホテル';
-  const bgImageUrl = `./media/${filename}.png`;
+  const bgImageUrl = encodeURI(`./media/${filename}.png`);
   return `<div class="cover-bg-illustration" style="background-image: url('${bgImageUrl}');"></div>`;
 }
 
