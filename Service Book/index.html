@@ -35,13 +35,44 @@
 
   <main>
     <section id="page-intake" class="page active"></section>
-    <section id="page-customers" class="page"></section>
+    <section id="page-customers" class="page">
+      <div class="page-head">
+        <h2>顧客管理</h2>
+        <div class="page-actions">
+          <input id="customer-search" class="search" type="search" placeholder="顧客名・住所・連絡先で検索">
+          <button class="btn btn-primary" type="button" onclick="openCustomerModal()">顧客を追加</button>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>顧客名</th><th>連絡先</th><th>住所</th><th>ハウスメーカー</th><th>操作</th></tr></thead>
+        <tbody id="customer-list"></tbody>
+      </table>
+    </section>
     <section id="page-equipments" class="page"></section>
     <section id="page-records" class="page"></section>
     <section id="page-print" class="page"></section>
   </main>
 
-  <div id="modal-root"></div>
+  <div id="modal-root">
+    <div id="customer-modal" class="modal">
+      <div class="modal-box">
+        <h3 id="customer-modal-title">顧客を追加</h3>
+        <input type="hidden" id="customer-id">
+        <label>顧客名<input id="customer-name" type="text"></label>
+        <label>フリガナ<input id="customer-kana" type="text"></label>
+        <label>連絡先（担当・TEL）<input id="customer-contact" type="text"></label>
+        <label>住所<input id="customer-address" type="text"></label>
+        <label>依頼元 / 販売店<input id="customer-dealerName" type="text"></label>
+        <label>ハウスメーカー<input id="customer-houseMaker" type="text"></label>
+        <label>特記事項（報告書に印刷）<textarea id="customer-printNote"></textarea></label>
+        <label>備考（社内用・印刷されません）<textarea id="customer-memo"></textarea></label>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" type="button" onclick="closeModal('customer-modal')">キャンセル</button>
+          <button class="btn btn-success" type="button" onclick="saveCustomer()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="toast" class="toast"></div>
 
   <script src="https://unpkg.com/lucide@latest"></script>

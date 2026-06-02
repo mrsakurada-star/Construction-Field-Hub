@@ -23,8 +23,64 @@ function fmtDate(s){
 }
 function fmtYen(n){if(n===null||n===undefined||n==='')return '¥0';return '¥'+Math.round(Number(n)).toLocaleString('ja-JP');}
 
+// === 顧客管理 ===
+let _equipFilterCustomerId = null;
+const CUSTOMER_FIELDS = ['name','kana','contact','address','dealerName','houseMaker','printNote','memo'];
+
+async function loadCustomers(filterText=''){
+  const all = await dbGetAll('customers');
+  const filtered = filterText
+    ? all.filter(c => fuzzyMatch(filterText, c.name, c.address, c.contact, c.kana))
+    : all;
+  const tbody = document.getElementById('customer-list');
+  tbody.innerHTML = filtered.length===0
+    ? `<tr><td colspan="5" class="text-center" style="padding:32px;color:var(--text3)">顧客が登録されていません</td></tr>`
+    : filtered.map(c=>`<tr>
+        <td><strong style="cursor:pointer;color:var(--info);text-decoration:underline" onclick="goEquipmentsOf(${c.id})">${escHtml(c.name)}</strong>
+            <div style="font-size:11px;color:var(--text3)">${escHtml(c.kana||'')}</div></td>
+        <td>${escHtml(c.contact||'')}</td>
+        <td>${escHtml(c.address||'')}</td>
+        <td>${escHtml(c.houseMaker||'')}</td>
+        <td><div style="display:flex;gap:6px">
+          <button class="btn btn-xs btn-secondary" type="button" onclick="openCustomerModal(${c.id})">編集</button>
+          <button class="btn btn-xs btn-danger" type="button" onclick="deleteCustomer(${c.id})">削除</button>
+        </div></td>
+      </tr>`).join('');
+}
+function goEquipmentsOf(customerId){ _equipFilterCustomerId = customerId; navigateTo('equipments'); }
+
+async function openCustomerModal(id=null){
+  let data={};
+  if(id){ data = await dbGet('customers', id) || {}; }
+  document.getElementById('customer-modal-title').textContent = id?'顧客を編集':'顧客を追加';
+  document.getElementById('customer-id').value = id || '';
+  CUSTOMER_FIELDS.forEach(f=>{ document.getElementById('customer-'+f).value = data[f] || ''; });
+  openModal('customer-modal');
+}
+
+async function saveCustomer(){
+  const id = document.getElementById('customer-id').value;
+  const name = normalizeFieldValue(document.getElementById('customer-name').value);
+  if(!name){ alert('顧客名を入力してください'); return; }
+  const data = {};
+  CUSTOMER_FIELDS.forEach(f=>{ data[f] = normalizeFieldValue(document.getElementById('customer-'+f).value); });
+  if(id){ data.id = parseInt(id); await dbPut('customers', data); }
+  else { await dbAdd('customers', data); }
+  closeModal('customer-modal');
+  await onCustomersChanged();
+  showToast('顧客情報を保存しました');
+  loadCustomers();
+}
+
+async function deleteCustomer(id){
+  if(!window.confirm('この顧客を削除しますか？（関連する機器・記録は残りますが紐付けが切れます）')) return;
+  await dbDelete('customers', id);
+  await onCustomersChanged();
+  showToast('削除しました','danger');
+  loadCustomers();
+}
+
 // 後続タスクで本実装に差し替えるスタブ
-function loadCustomers(){}
 function loadEquipments(){}
 function loadRecords(){}
 function loadIntake(){}
@@ -338,5 +394,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
     el.addEventListener('click',()=>navigateTo(el.dataset.page));
   });
+  document.getElementById('customer-search').addEventListener('input', e=>loadCustomers(e.target.value));
   if(window.lucide) lucide.createIcons();
 });
