@@ -153,8 +153,177 @@ async function deleteEquipment(id){
   loadEquipments(document.getElementById('equipment-search').value);
 }
 
+// === サービス記録 ===
+const STALE_DAYS = 14; // 2週間。閾値はここで調整。
+function staleDaysOf(rec){
+  if(rec.status==='completed') return null;
+  const base = rec.updatedAt || rec.createdAt;
+  if(!base) return null;
+  const days = Math.floor((Date.now() - new Date(base).getTime())/(1000*60*60*24));
+  return days >= STALE_DAYS ? days : null;
+}
+
+async function loadRecords(){
+  const [recs, equips, customers] = await Promise.all([
+    dbGetAll('serviceRecords'), dbGetAll('equipments'), dbGetAll('customers')]);
+  const emap = Object.fromEntries(equips.map(e=>[e.id,e]));
+  const cmap = Object.fromEntries(customers.map(c=>[c.id,c]));
+
+  const fsel = document.getElementById('record-equipment-filter');
+  fsel.innerHTML = `<option value="">全機器</option>` + equips.map(e=>{
+    const c = cmap[e.customerId];
+    return `<option value="${e.id}" ${_recordFilterEquipmentId==e.id?'selected':''}>${escHtml((c?c.name+' / ':'')+(e.modelNo||''))}</option>`;
+  }).join('');
+
+  let list = [...recs];
+  if(_recordFilterEquipmentId) list = list.filter(r=>r.equipmentId==_recordFilterEquipmentId);
+  list.sort((a,b)=>(b.receivedDate||b.createdAt||'')>(a.receivedDate||a.createdAt||'')?1:-1);
+
+  const staleCount = recs.filter(r=>staleDaysOf(r)!==null).length;
+  const navBadge = document.getElementById('nav-badge-stale');
+  navBadge.textContent = staleCount; navBadge.style.display = staleCount>0?'':'none';
+  const sum = document.getElementById('stale-summary');
+  sum.textContent = `放置案件 ${staleCount}件`; sum.style.display = staleCount>0?'':'none';
+
+  const tbody = document.getElementById('record-list');
+  tbody.innerHTML = list.length===0
+    ? `<tr><td colspan="7" class="text-center" style="padding:32px;color:var(--text3)">記録がありません</td></tr>`
+    : list.map(r=>{
+        const e = emap[r.equipmentId];
+        const c = e?cmap[e.customerId]:null;
+        const stale = staleDaysOf(r);
+        const rowStyle = stale!==null ? 'background:#fff1f0' : '';
+        const statusBadge = r.status==='completed'
+          ? `<span class="badge badge-active">完了</span>`
+          : stale!==null
+            ? `<span class="badge badge-expired">放置 ${stale}日</span>`
+            : `<span class="badge badge-warning">進行中</span>`;
+        return `<tr style="${rowStyle}">
+          <td>${statusBadge}</td>
+          <td>${fmtDate(r.receivedDate)}<br><span style="font-size:11px;color:var(--text3)">${fmtDate(r.serviceDate)}</span></td>
+          <td>${escHtml(r.mgmtNo||'')}</td>
+          <td>${c?escHtml(c.name):'—'}<br><span style="font-size:11px;color:var(--text3)">${e?escHtml(e.modelNo||''):''}</span></td>
+          <td>${escHtml(r.workType||'')}</td>
+          <td>${escHtml(r.staff||'')}</td>
+          <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-xs btn-secondary" type="button" onclick="openRecordModal(${r.id})">編集</button>
+            <button class="btn btn-xs btn-primary" type="button" onclick="openPrint(${r.id})">報告書</button>
+            <button class="btn btn-xs btn-danger" type="button" onclick="deleteRecord(${r.id})">削除</button>
+          </div></td>
+        </tr>`;
+      }).join('');
+}
+
+let _partRows = [];
+function renderParts(){
+  const tbody = document.getElementById('record-parts');
+  tbody.innerHTML = _partRows.map((p,i)=>`<tr>
+    <td><input type="text" value="${escHtml(p.name||'')}" oninput="updatePart(${i},'name',this.value)"></td>
+    <td><input type="number" value="${p.qty??''}" style="width:70px" oninput="updatePart(${i},'qty',this.value)"></td>
+    <td><input type="number" value="${p.unitPrice??''}" style="width:100px" oninput="updatePart(${i},'unitPrice',this.value)"></td>
+    <td><button class="btn btn-xs btn-danger" type="button" onclick="removePart(${i})">×</button></td>
+  </tr>`).join('');
+  recalcFee();
+}
+function addPartRow(){ _partRows.push({name:'',qty:1,unitPrice:0}); renderParts(); }
+function updatePart(i,f,v){
+  _partRows[i][f] = (f==='name')?v:(parseFloat(v)||0);
+  if(f!=='name') recalcFee();
+}
+function removePart(i){ _partRows.splice(i,1); renderParts(); }
+function recalcFee(){
+  const partsFee = _partRows.reduce((s,p)=>s+(Number(p.qty)||0)*(Number(p.unitPrice)||0),0);
+  const visit = parseFloat(document.getElementById('record-visitFee').value)||0;
+  const labor = parseFloat(document.getElementById('record-laborFee').value)||0;
+  document.getElementById('record-partsFee').textContent = fmtYen(partsFee);
+  document.getElementById('record-total').textContent = fmtYen(visit+labor+partsFee);
+}
+
+async function nextMgmtNo(){
+  const recs = await dbGetAll('serviceRecords');
+  const prefix = 'SB-' + today().replace(/-/g,'') + '-';
+  const todays = recs.filter(r=>(r.mgmtNo||'').startsWith(prefix));
+  const seq = String(todays.length+1).padStart(2,'0');
+  return prefix + seq;
+}
+
+async function openRecordModal(id=null){
+  const equips = await dbGetAll('equipments');
+  const customers = await dbGetAll('customers');
+  const cmap = Object.fromEntries(customers.map(c=>[c.id,c]));
+  let data = {};
+  if(id){ data = await dbGet('serviceRecords', id) || {}; }
+  document.getElementById('record-modal-title').textContent = id?'記録を編集':'記録を追加';
+  document.getElementById('record-id').value = id || '';
+  const sel = document.getElementById('record-equipmentId');
+  sel.innerHTML = `<option value="">— 機器を選択 —</option>` + equips.map(e=>{
+    const c=cmap[e.customerId]; return `<option value="${e.id}" ${data.equipmentId==e.id?'selected':''}>${escHtml((c?c.name+' / ':'')+(e.modelNo||''))}</option>`;
+  }).join('');
+  if(!id && _recordFilterEquipmentId) sel.value = _recordFilterEquipmentId;
+  ['mgmtNo','receptionist','staff','callContent','remarks','customerReport'].forEach(f=>{
+    document.getElementById('record-'+f).value = data[f]||''; });
+  ['receivedDate','requestedDate','serviceDate','completionDate'].forEach(f=>{
+    document.getElementById('record-'+f).value = data[f]||''; });
+  document.getElementById('record-workType').value = data.workType || '定期点検';
+  document.getElementById('record-visitFee').value = data.fee?.visitFee ?? '';
+  document.getElementById('record-laborFee').value = data.fee?.laborFee ?? '';
+  if(!data.mgmtNo && !id) document.getElementById('record-mgmtNo').value = await nextMgmtNo();
+  _partRows = Array.isArray(data.parts) ? data.parts.map(p=>({...p})) : [];
+  renderParts();
+  openModal('record-modal');
+}
+
+async function saveRecord(){
+  const id = document.getElementById('record-id').value;
+  const equipmentId = parseInt(document.getElementById('record-equipmentId').value)||null;
+  if(!equipmentId){ alert('機器を選択してください'); return; }
+  const completionDate = document.getElementById('record-completionDate').value;
+  const parts = _partRows.filter(p=>p.name||p.qty||p.unitPrice)
+    .map(p=>({name:normalizeFieldValue(p.name), qty:Number(p.qty)||0, unitPrice:Number(p.unitPrice)||0}));
+  const partsFee = parts.reduce((s,p)=>s+p.qty*p.unitPrice,0);
+  const visitFee = parseFloat(document.getElementById('record-visitFee').value)||0;
+  const laborFee = parseFloat(document.getElementById('record-laborFee').value)||0;
+  const now = today();
+  const base = id ? (await dbGet('serviceRecords', parseInt(id))) || {} : {};
+  const data = {
+    ...base,
+    equipmentId,
+    mgmtNo: normalizeFieldValue(document.getElementById('record-mgmtNo').value),
+    receivedDate: document.getElementById('record-receivedDate').value,
+    receptionist: normalizeFieldValue(document.getElementById('record-receptionist').value),
+    requestedDate: document.getElementById('record-requestedDate').value,
+    serviceDate: document.getElementById('record-serviceDate').value,
+    completionDate,
+    staff: normalizeFieldValue(document.getElementById('record-staff').value),
+    workType: document.getElementById('record-workType').value,
+    callContent: document.getElementById('record-callContent').value.trim(),
+    remarks: document.getElementById('record-remarks').value.trim(),
+    customerReport: document.getElementById('record-customerReport').value.trim(),
+    parts,
+    fee: { visitFee, laborFee, partsFee, total: visitFee+laborFee+partsFee },
+    status: completionDate ? 'completed' : 'open',
+    createdAt: base.createdAt || now,
+    updatedAt: now
+  };
+  if(id){ data.id = parseInt(id); await dbPut('serviceRecords', data); }
+  else { await dbAdd('serviceRecords', data); }
+  closeModal('record-modal');
+  await onRecordsChanged();
+  showToast('記録を保存しました');
+  loadRecords();
+}
+
+async function deleteRecord(id){
+  if(!window.confirm('この記録を削除しますか？')) return;
+  await dbDelete('serviceRecords', id);
+  await onRecordsChanged();
+  showToast('削除しました','danger');
+  loadRecords();
+}
+
+function openPrint(){}
+
 // 後続タスクで本実装に差し替えるスタブ
-function loadRecords(){}
 function loadIntake(){}
 
 // =====================
@@ -469,5 +638,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('customer-search').addEventListener('input', e=>loadCustomers(e.target.value));
   document.getElementById('equipment-search').addEventListener('input', e=>loadEquipments(e.target.value));
   document.getElementById('equipment-customer-filter').addEventListener('change', e=>{ _equipFilterCustomerId = e.target.value?parseInt(e.target.value):null; loadEquipments(document.getElementById('equipment-search').value); });
+  document.getElementById('record-visitFee').addEventListener('input', recalcFee);
+  document.getElementById('record-laborFee').addEventListener('input', recalcFee);
+  document.getElementById('record-equipment-filter').addEventListener('change', e=>{ _recordFilterEquipmentId = e.target.value?parseInt(e.target.value):null; loadRecords(); });
   if(window.lucide) lucide.createIcons();
 });

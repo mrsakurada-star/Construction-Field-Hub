@@ -53,7 +53,7 @@
         <h2>機器管理</h2>
         <div class="page-actions">
           <select id="equipment-customer-filter"></select>
-          <input id="equipment-search" class="search" type="search" placeholder="型式・メーカー・用途で検索">
+          <input id="equipment-search" class="search" type="search" placeholder="型式・メーカー・用途・ロットで検索">
           <button class="btn btn-primary" type="button" onclick="openEquipmentModal()">機器を追加</button>
         </div>
       </div>
@@ -62,7 +62,20 @@
         <tbody id="equipment-list"></tbody>
       </table>
     </section>
-    <section id="page-records" class="page"></section>
+    <section id="page-records" class="page">
+      <div class="page-head">
+        <h2>サービス記録</h2>
+        <div class="page-actions">
+          <select id="record-equipment-filter"></select>
+          <span id="stale-summary" class="badge badge-expired" style="display:none"></span>
+          <button class="btn btn-primary" type="button" onclick="openRecordModal()">記録を追加</button>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>状態</th><th>受付日 / 対応日</th><th>管理番号</th><th>機器</th><th>作業種別</th><th>担当</th><th>操作</th></tr></thead>
+        <tbody id="record-list"></tbody>
+      </table>
+    </section>
     <section id="page-print" class="page"></section>
   </main>
 
@@ -101,6 +114,42 @@
         <div class="modal-actions">
           <button class="btn btn-secondary" type="button" onclick="closeModal('equipment-modal')">キャンセル</button>
           <button class="btn btn-success" type="button" onclick="saveEquipment()">保存</button>
+        </div>
+      </div>
+    </div>
+    <div id="record-modal" class="modal">
+      <div class="modal-box modal-wide">
+        <h3 id="record-modal-title">記録を追加</h3>
+        <input type="hidden" id="record-id">
+        <label>機器<select id="record-equipmentId"></select></label>
+        <div class="grid2">
+          <label>管理番号<input id="record-mgmtNo" type="text"></label>
+          <label>作業種別<select id="record-workType">
+            <option>定期点検</option><option>故障修理</option><option>アラーム対応</option><option>設置</option>
+          </select></label>
+          <label>受付日<input id="record-receivedDate" type="date"></label>
+          <label>受付者<input id="record-receptionist" type="text"></label>
+          <label>希望日<input id="record-requestedDate" type="date"></label>
+          <label>対応日<input id="record-serviceDate" type="date"></label>
+          <label>完了日<input id="record-completionDate" type="date"></label>
+          <label>担当者<input id="record-staff" type="text"></label>
+        </div>
+        <label>コール内容<textarea id="record-callContent"></textarea></label>
+        <label>担当者所見<textarea id="record-remarks"></textarea></label>
+        <label>お客様への報告<textarea id="record-customerReport"></textarea></label>
+        <h4>交換部品</h4>
+        <table class="data-table"><thead><tr><th>品名</th><th>数量</th><th>単価</th><th></th></tr></thead>
+          <tbody id="record-parts"></tbody></table>
+        <button class="btn btn-xs btn-secondary" type="button" onclick="addPartRow()">部品を追加</button>
+        <div class="grid2" style="margin-top:12px">
+          <label>出張料<input id="record-visitFee" type="number"></label>
+          <label>技術料<input id="record-laborFee" type="number"></label>
+          <div>部品代: <span id="record-partsFee">¥0</span></div>
+          <div>合計: <strong id="record-total">¥0</strong></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" type="button" onclick="closeModal('record-modal')">キャンセル</button>
+          <button class="btn btn-success" type="button" onclick="saveRecord()">保存</button>
         </div>
       </div>
     </div>
