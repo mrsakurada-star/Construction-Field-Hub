@@ -243,8 +243,11 @@ async function nextMgmtNo(){
   const recs = await dbGetAll('serviceRecords');
   const prefix = 'SB-' + today().replace(/-/g,'') + '-';
   const todays = recs.filter(r=>(r.mgmtNo||'').startsWith(prefix));
-  const seq = String(todays.length+1).padStart(2,'0');
-  return prefix + seq;
+  const maxSeq = todays.reduce((m,r)=>{
+    const n = parseInt(r.mgmtNo.slice(prefix.length)) || 0;
+    return Math.max(m, n);
+  }, 0);
+  return prefix + String(maxSeq + 1).padStart(2,'0');
 }
 
 async function openRecordModal(id=null){
