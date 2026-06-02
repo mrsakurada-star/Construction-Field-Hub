@@ -48,7 +48,20 @@
         <tbody id="customer-list"></tbody>
       </table>
     </section>
-    <section id="page-equipments" class="page"></section>
+    <section id="page-equipments" class="page">
+      <div class="page-head">
+        <h2>機器管理</h2>
+        <div class="page-actions">
+          <select id="equipment-customer-filter"></select>
+          <input id="equipment-search" class="search" type="search" placeholder="型式・メーカー・用途で検索">
+          <button class="btn btn-primary" type="button" onclick="openEquipmentModal()">機器を追加</button>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>顧客</th><th>メーカー / 型式</th><th>製品ロット</th><th>用途</th><th>設置日</th><th>操作</th></tr></thead>
+        <tbody id="equipment-list"></tbody>
+      </table>
+    </section>
     <section id="page-records" class="page"></section>
     <section id="page-print" class="page"></section>
   </main>
@@ -69,6 +82,25 @@
         <div class="modal-actions">
           <button class="btn btn-secondary" type="button" onclick="closeModal('customer-modal')">キャンセル</button>
           <button class="btn btn-success" type="button" onclick="saveCustomer()">保存</button>
+        </div>
+      </div>
+    </div>
+    <div id="equipment-modal" class="modal">
+      <div class="modal-box">
+        <h3 id="equipment-modal-title">機器を追加</h3>
+        <input type="hidden" id="equipment-id">
+        <label>顧客<select id="equipment-customerId"></select></label>
+        <label>メーカー<input id="equipment-maker" type="text" placeholder="パーパス / ノーリツ / リンナイ / パロマ"></label>
+        <label>型式<input id="equipment-modelNo" type="text"></label>
+        <label>製品ロット / 製造番号<input id="equipment-lotNo" type="text"></label>
+        <label>機器区分<input id="equipment-category" type="text" placeholder="給湯器 / 風呂釜 / レンジフード"></label>
+        <label>ガス種別<input id="equipment-gasType" type="text" placeholder="都市ガス / LPG"></label>
+        <label>設置日<input id="equipment-installDate" type="date"></label>
+        <label>用途<input id="equipment-usage" type="text" placeholder="浴室給湯 / 厨房給湯 / 暖房"></label>
+        <label>備考<textarea id="equipment-memo"></textarea></label>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" type="button" onclick="closeModal('equipment-modal')">キャンセル</button>
+          <button class="btn btn-success" type="button" onclick="saveEquipment()">保存</button>
         </div>
       </div>
     </div>

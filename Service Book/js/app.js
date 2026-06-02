@@ -80,8 +80,80 @@ async function deleteCustomer(id){
   loadCustomers(document.getElementById('customer-search').value);
 }
 
+// === 機器管理 ===
+let _recordFilterEquipmentId = null;
+const EQUIP_TEXT_FIELDS = ['maker','modelNo','lotNo','category','gasType','usage','memo'];
+
+async function loadEquipments(filterText=''){
+  const [equips, customers] = await Promise.all([dbGetAll('equipments'), dbGetAll('customers')]);
+  const cmap = Object.fromEntries(customers.map(c=>[c.id,c]));
+
+  const fsel = document.getElementById('equipment-customer-filter');
+  fsel.innerHTML = `<option value="">全顧客</option>` + customers.map(c=>
+    `<option value="${c.id}" ${_equipFilterCustomerId==c.id?'selected':''}>${escHtml(c.name)}</option>`).join('');
+
+  let list = equips;
+  if(_equipFilterCustomerId) list = list.filter(e=>e.customerId==_equipFilterCustomerId);
+  if(filterText) list = list.filter(e=>fuzzyMatch(filterText, e.modelNo, e.maker, e.usage, e.lotNo));
+
+  const tbody = document.getElementById('equipment-list');
+  tbody.innerHTML = list.length===0
+    ? `<tr><td colspan="6" class="text-center" style="padding:32px;color:var(--text3)">機器が登録されていません</td></tr>`
+    : list.map(e=>`<tr>
+        <td>${cmap[e.customerId]?escHtml(cmap[e.customerId].name):'—'}</td>
+        <td>${escHtml(e.maker||'')}<br><strong>${escHtml(e.modelNo||'')}</strong></td>
+        <td>${escHtml(e.lotNo||'')}</td>
+        <td>${escHtml(e.usage||'')}</td>
+        <td>${fmtDate(e.installDate)}</td>
+        <td><div style="display:flex;gap:6px">
+          <button class="btn btn-xs btn-secondary" type="button" onclick="goRecordsOf(${e.id})">記録</button>
+          <button class="btn btn-xs btn-secondary" type="button" onclick="openEquipmentModal(${e.id})">編集</button>
+          <button class="btn btn-xs btn-danger" type="button" onclick="deleteEquipment(${e.id})">削除</button>
+        </div></td>
+      </tr>`).join('');
+}
+function goRecordsOf(equipmentId){ _recordFilterEquipmentId = equipmentId; navigateTo('records'); }
+
+async function openEquipmentModal(id=null){
+  const customers = await dbGetAll('customers');
+  let data = {};
+  if(id){ data = await dbGet('equipments', id) || {}; }
+  document.getElementById('equipment-modal-title').textContent = id?'機器を編集':'機器を追加';
+  document.getElementById('equipment-id').value = id || '';
+  const sel = document.getElementById('equipment-customerId');
+  sel.innerHTML = `<option value="">— 顧客を選択 —</option>` + customers.map(c=>
+    `<option value="${c.id}" ${data.customerId==c.id?'selected':''}>${escHtml(c.name)}</option>`).join('');
+  if(!id && _equipFilterCustomerId) sel.value = _equipFilterCustomerId;
+  EQUIP_TEXT_FIELDS.forEach(f=>{ document.getElementById('equipment-'+f).value = data[f]||''; });
+  document.getElementById('equipment-installDate').value = data.installDate || '';
+  openModal('equipment-modal');
+}
+
+async function saveEquipment(){
+  const id = document.getElementById('equipment-id').value;
+  const customerId = parseInt(document.getElementById('equipment-customerId').value) || null;
+  if(!customerId){ alert('顧客を選択してください'); return; }
+  const modelNo = normalizeFieldValue(document.getElementById('equipment-modelNo').value);
+  if(!modelNo){ alert('型式を入力してください'); return; }
+  const data = { customerId, installDate: document.getElementById('equipment-installDate').value };
+  EQUIP_TEXT_FIELDS.forEach(f=>{ data[f] = normalizeFieldValue(document.getElementById('equipment-'+f).value); });
+  if(id){ data.id = parseInt(id); await dbPut('equipments', data); }
+  else { await dbAdd('equipments', data); }
+  closeModal('equipment-modal');
+  await onEquipmentsChanged();
+  showToast('機器情報を保存しました');
+  loadEquipments(document.getElementById('equipment-search').value);
+}
+
+async function deleteEquipment(id){
+  if(!window.confirm('この機器を削除しますか？')) return;
+  await dbDelete('equipments', id);
+  await onEquipmentsChanged();
+  showToast('削除しました','danger');
+  loadEquipments(document.getElementById('equipment-search').value);
+}
+
 // 後続タスクで本実装に差し替えるスタブ
-function loadEquipments(){}
 function loadRecords(){}
 function loadIntake(){}
 
@@ -395,5 +467,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     el.addEventListener('click',()=>navigateTo(el.dataset.page));
   });
   document.getElementById('customer-search').addEventListener('input', e=>loadCustomers(e.target.value));
+  document.getElementById('equipment-search').addEventListener('input', e=>loadEquipments(e.target.value));
+  document.getElementById('equipment-customer-filter').addEventListener('change', e=>{ _equipFilterCustomerId = e.target.value?parseInt(e.target.value):null; loadEquipments(document.getElementById('equipment-search').value); });
   if(window.lucide) lucide.createIcons();
 });
