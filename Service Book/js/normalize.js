@@ -33,7 +33,7 @@ function normalizeFieldValue(str){
  */
 function normalizeForSearch(str){
   let s = toFullWidthKana(toHalfWidthAscii(str)).toLowerCase();
-  return s.replace(/[\s\-ー‐-―~～]/g,''); // 空白・各種ハイフン・長音・チルダを除去
+  return s.replace(/[\s\-ー‐-―~～〜]/g,''); // 空白・各種ハイフン・長音・チルダ・波ダッシュを除去
 }
 
 /** あいまい一致: クエリ正規化キーが対象いずれかの正規化キーに部分一致 */
