@@ -30,7 +30,7 @@ const CUSTOMER_FIELDS = ['name','kana','contact','address','dealerName','houseMa
 async function loadCustomers(filterText=''){
   const all = await dbGetAll('customers');
   const filtered = filterText
-    ? all.filter(c => fuzzyMatch(filterText, c.name, c.address, c.contact, c.kana))
+    ? all.filter(c => fuzzyMatch(filterText, c.name, c.address, c.contact, c.kana, c.houseMaker, c.dealerName))
     : all;
   const tbody = document.getElementById('customer-list');
   tbody.innerHTML = filtered.length===0
@@ -69,7 +69,7 @@ async function saveCustomer(){
   closeModal('customer-modal');
   await onCustomersChanged();
   showToast('顧客情報を保存しました');
-  loadCustomers();
+  loadCustomers(document.getElementById('customer-search').value);
 }
 
 async function deleteCustomer(id){
@@ -77,7 +77,7 @@ async function deleteCustomer(id){
   await dbDelete('customers', id);
   await onCustomersChanged();
   showToast('削除しました','danger');
-  loadCustomers();
+  loadCustomers(document.getElementById('customer-search').value);
 }
 
 // 後続タスクで本実装に差し替えるスタブ
