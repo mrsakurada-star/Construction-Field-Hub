@@ -51,6 +51,7 @@ let _dirHandle = null;
 async function onCustomersChanged()  { await saveToLocalFile('customers'); }
 async function onEquipmentsChanged() { await saveToLocalFile('equipments'); }
 async function onRecordsChanged()    { await saveToLocalFile('records'); }
+// 複数ストアにまたがる操作のとき全ファイルを保存するユーティリティ
 async function onDataChanged() {
   for (const k of Object.keys(SYNC_CONFIG)) await saveToLocalFile(k);
 }
@@ -209,9 +210,10 @@ async function loadFromLocalFile(dbKey) {
     const data = JSON.parse(text);
     await dbImportPartial(data, SYNC_CONFIG[dbKey].stores);
     // 表示中のページを更新
-    if(dbKey==='customers'  && document.getElementById('page-customers').classList.contains('active'))  loadCustomers();
-    if(dbKey==='equipments' && document.getElementById('page-equipments').classList.contains('active')) loadEquipments();
-    if(dbKey==='records'    && document.getElementById('page-records').classList.contains('active'))    loadRecords();
+    const activePage = (id)=>{ const el=document.getElementById(id); return el && el.classList.contains('active'); };
+    if(dbKey==='customers' && activePage('page-customers')) loadCustomers();
+    if(dbKey==='equipments' && activePage('page-equipments')) loadEquipments();
+    if(dbKey==='records' && activePage('page-records')) loadRecords();
   } catch (err) {
     console.error(`[sync] load failed [${dbKey}]:`, err);
   }
