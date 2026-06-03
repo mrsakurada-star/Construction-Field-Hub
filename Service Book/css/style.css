@@ -743,7 +743,8 @@ textarea { resize: vertical; min-height: 72px; }
 .settings-form { display: flex; flex-direction: column; gap: 12px; }
 .settings-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; }
 .settings-form input { font-size: 14px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; }
-.col-amount { width: 130px; }
+.col-qty { width: 70px; }
+.col-amount { width: 120px; }
 .col-op { width: 40px; }
 .mt-4 { margin-top: 4px; }
 .fee-summary { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; font-size: 13px; padding: 8px 0; }

@@ -210,22 +210,24 @@ let _currentTaxRate = 10;
 function renderFeeItems(){
   const tbody = document.getElementById('record-fee-items');
   tbody.innerHTML = _feeItems.length === 0
-    ? `<tr><td colspan="3" class="text-center" style="padding:12px;color:var(--text3)">明細なし</td></tr>`
+    ? `<tr><td colspan="5" class="text-center" style="padding:12px;color:var(--text3)">明細なし</td></tr>`
     : _feeItems.map((item,i)=>`<tr>
     <td><input type="text" value="${escHtml(item.name||'')}" oninput="updateFeeItem(${i},'name',this.value)" placeholder="品目名"></td>
+    <td><input type="number" value="${item.qty??1}" oninput="updateFeeItem(${i},'qty',this.value)" placeholder="1"></td>
     <td><input type="number" value="${item.amount??''}" oninput="updateFeeItem(${i},'amount',this.value)" placeholder="0"></td>
+    <td class="text-right">${fmtYen((Number(item.qty)||1)*(Number(item.amount)||0))}</td>
     <td><button class="btn btn-xs btn-danger" type="button" onclick="removeFeeItem(${i})">×</button></td>
   </tr>`).join('');
   recalcTotal();
 }
-function addFeeItem(){ _feeItems.push({name:'',amount:0}); renderFeeItems(); }
+function addFeeItem(){ _feeItems.push({name:'',qty:1,amount:0}); renderFeeItems(); }
 function updateFeeItem(i,f,v){
   _feeItems[i][f] = f==='name' ? v : (parseFloat(v)||0);
-  if(f!=='name') recalcTotal();
+  recalcTotal(); if(f!=='name') renderFeeItems();
 }
 function removeFeeItem(i){ _feeItems.splice(i,1); renderFeeItems(); }
 function recalcTotal(){
-  const subtotal = _feeItems.reduce((s,item)=>s+(Number(item.amount)||0), 0);
+  const subtotal = _feeItems.reduce((s,item)=>s+(Number(item.qty)||1)*(Number(item.amount)||0), 0);
   const tax = Math.round(subtotal * _currentTaxRate / 100);
   const total = subtotal + tax;
   document.getElementById('record-subtotal').textContent = fmtYen(subtotal);
@@ -284,11 +286,10 @@ async function openRecordModal(id=null){
     _feeItems = data.feeItems.map(f=>({...f}));
   } else {
     _feeItems = [];
-    if(data.fee?.visitFee) _feeItems.push({name:'出張料', amount: data.fee.visitFee});
-    if(data.fee?.laborFee) _feeItems.push({name:'技術料', amount: data.fee.laborFee});
+    if(data.fee?.visitFee) _feeItems.push({name:'出張料', qty:1, amount: data.fee.visitFee});
+    if(data.fee?.laborFee) _feeItems.push({name:'技術料', qty:1, amount: data.fee.laborFee});
     if(Array.isArray(data.parts)) data.parts.forEach(p=>{
-      const amt = (Number(p.qty)||0)*(Number(p.unitPrice)||0);
-      if(p.name||amt) _feeItems.push({name:p.name||'', amount:amt});
+      if(p.name||p.unitPrice) _feeItems.push({name:p.name||'', qty:Number(p.qty)||1, amount:Number(p.unitPrice)||0});
     });
   }
   renderFeeItems();
@@ -300,8 +301,8 @@ async function saveRecord(){
   const equipmentId = parseInt(document.getElementById('record-equipmentId').value)||null;
   const completionDate = document.getElementById('record-completionDate').value;
   const feeItems = _feeItems.filter(f=>f.name||f.amount)
-    .map(f=>({name:normalizeFieldValue(f.name), amount:Number(f.amount)||0}));
-  const subtotal = feeItems.reduce((s,f)=>s+f.amount, 0);
+    .map(f=>({name:normalizeFieldValue(f.name), qty:Number(f.qty)||1, amount:Number(f.amount)||0}));
+  const subtotal = feeItems.reduce((s,f)=>s+(f.qty*f.amount), 0);
   const tax = Math.round(subtotal * _currentTaxRate / 100);
   const now = today();
   const base = id ? (await dbGet('serviceRecords', parseInt(id))) || {} : {};
@@ -368,20 +369,22 @@ async function openPrint(id){
   if(Array.isArray(r.feeItems) && r.feeItems.length){
     printFeeItems = r.feeItems;
   } else {
-    if(r.fee?.visitFee) printFeeItems.push({name:'出張料', amount: r.fee.visitFee});
-    if(r.fee?.laborFee) printFeeItems.push({name:'技術料', amount: r.fee.laborFee});
+    if(r.fee?.visitFee) printFeeItems.push({name:'出張料', qty:1, amount: r.fee.visitFee});
+    if(r.fee?.laborFee) printFeeItems.push({name:'技術料', qty:1, amount: r.fee.laborFee});
     if(Array.isArray(r.parts)) r.parts.forEach(p=>{
-      const amt = (Number(p.qty)||0)*(Number(p.unitPrice)||0);
-      if(p.name||amt) printFeeItems.push({name:p.name||'', amount:amt});
+      if(p.name||p.unitPrice) printFeeItems.push({name:p.name||'', qty:Number(p.qty)||1, amount:Number(p.unitPrice)||0});
     });
   }
   const taxRate = r.fee?.taxRate ?? parseFloat(co.taxRate??10);
-  const subtotal = printFeeItems.reduce((s,f)=>s+(Number(f.amount)||0), 0);
+  const subtotal = printFeeItems.reduce((s,f)=>s+(Number(f.qty)||1)*(Number(f.amount)||0), 0);
   const taxAmt = Math.round(subtotal * taxRate / 100);
   const total = subtotal + taxAmt;
   const feeItemRows = printFeeItems.length
-    ? printFeeItems.map(f=>`<tr><td>${escHtml(f.name||'')}</td><td class="text-right">${fmtYen(f.amount)}</td></tr>`).join('')
-    : `<tr><td colspan="2" class="text-center" style="color:#999">明細なし</td></tr>`;
+    ? printFeeItems.map(f=>{
+        const lineTotal = (Number(f.qty)||1)*(Number(f.amount)||0);
+        return `<tr><td>${escHtml(f.name||'')}</td><td class="text-center">${f.qty??1}</td><td class="text-right">${fmtYen(f.amount)}</td><td class="text-right">${fmtYen(lineTotal)}</td></tr>`;
+      }).join('')
+    : `<tr><td colspan="4" class="text-center" style="color:#999">明細なし</td></tr>`;
   const billingLabel2 = r.billingTarget==='dealer' ? (m.dealerName||'依頼元') :
                         r.billingTarget==='custom'  ? (r.billingCustom||'') :
                                                       (m.customerName||'客先');
@@ -416,13 +419,13 @@ async function openPrint(id){
     </table>
     <h3 style="font-size:12px;margin:10px 0 2px">料金明細</h3>
     <table class="sheet-table fee-detail-table">
-      <thead><tr><th>品目</th><th class="text-right">金額</th></tr></thead>
+      <thead><tr><th>品目</th><th class="text-center">数量</th><th class="text-right">単価</th><th class="text-right">金額</th></tr></thead>
       <tbody>${feeItemRows}</tbody>
       <tfoot>
-        <tr><th>小計</th><td class="text-right">${fmtYen(subtotal)}</td></tr>
-        <tr><th>消費税（${taxRate}%）</th><td class="text-right">${fmtYen(taxAmt)}</td></tr>
-        <tr class="fee-total-row"><th>合計</th><td class="text-right"><strong>${fmtYen(total)}</strong></td></tr>
-        <tr><th>請求先</th><td>${escHtml(billingLabel2)}</td></tr>
+        <tr><th colspan="3">小計</th><td class="text-right">${fmtYen(subtotal)}</td></tr>
+        <tr><th colspan="3">消費税（${taxRate}%）</th><td class="text-right">${fmtYen(taxAmt)}</td></tr>
+        <tr class="fee-total-row"><th colspan="3">合計</th><td class="text-right"><strong>${fmtYen(total)}</strong></td></tr>
+        <tr><th colspan="3">請求先</th><td>${escHtml(billingLabel2)}</td></tr>
       </tfoot>
     </table>
     <div class="sheet-footer">© 2026 Nozomi Sakurada. All rights reserved.</div>`;
