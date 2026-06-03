@@ -565,8 +565,8 @@ textarea { resize: vertical; min-height: 72px; }
     * { box-sizing: border-box; }
     body {
         background: #fff !important;
-        print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
         font-size: 9pt;
     }
     .app-header, .sidebar, .screen-only, .btn, .modal-overlay { display: none !important; }
