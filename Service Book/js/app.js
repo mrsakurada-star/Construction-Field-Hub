@@ -4,8 +4,6 @@ function navigateTo(pageId){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+pageId)?.classList.add('active');
   document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
-  if(pageId==='customers') loadCustomers();
-  if(pageId==='equipments') loadEquipments();
   if(pageId==='records') loadRecords(document.getElementById('record-search')?.value||'');
   if(pageId==='intake') loadIntake();
 }
@@ -257,10 +255,15 @@ async function openRecordModal(id=null){
   document.getElementById('record-modal-title').textContent = id?'記録を編集':'記録を追加';
   document.getElementById('record-id').value = id || '';
   document.getElementById('record-equipmentId').value = data.equipmentId || '';
-  ['customerName','customerContact','customerAddress','dealerName','houseMaker','printNote',
+  ['dealerName','dealerStaff','dealerPhone','dealerAddress',
+   'customerName','customerContact','customerAddress','houseMaker','printNote',
    'equipmentMaker','equipmentModelNo','equipmentLotNo','equipmentUsage'].forEach(f=>{
-    document.getElementById('record-'+f).value = data[f] || prefill[f] || '';
+    document.getElementById('record-'+f).value = data[f] ?? prefill[f] ?? '';
   });
+  // 請求先ラジオ
+  const billingVal = data.billingTarget || 'customer';
+  document.querySelectorAll('input[name="record-billing"]').forEach(r=>{ r.checked = r.value===billingVal; });
+  document.getElementById('record-billingCustom').value = data.billingCustom || '';
   ['mgmtNo','receptionist','staff','callContent','remarks','customerReport'].forEach(f=>{
     document.getElementById('record-'+f).value = data[f]||''; });
   ['receivedDate','requestedDate','serviceDate','completionDate'].forEach(f=>{
@@ -289,16 +292,21 @@ async function saveRecord(){
   const data = {
     ...base,
     equipmentId,
-    customerName: fv('customerName'),
-    customerContact: fv('customerContact'),
-    customerAddress: fv('customerAddress'),
     dealerName: fv('dealerName'),
+    dealerStaff: fv('dealerStaff'),
+    dealerPhone: fv('dealerPhone'),
+    dealerAddress: fv('dealerAddress'),
+    customerName: fv('customerName'),
+    customerContact: document.getElementById('record-customerContact').value.trim(),
+    customerAddress: fv('customerAddress'),
     houseMaker: fv('houseMaker'),
     printNote: document.getElementById('record-printNote').value.trim(),
     equipmentMaker: fv('equipmentMaker'),
     equipmentModelNo: fv('equipmentModelNo'),
     equipmentLotNo: fv('equipmentLotNo'),
     equipmentUsage: fv('equipmentUsage'),
+    billingTarget: document.querySelector('input[name="record-billing"]:checked')?.value || 'customer',
+    billingCustom: document.getElementById('record-billingCustom').value.trim(),
     mgmtNo: fv('mgmtNo'),
     receivedDate: document.getElementById('record-receivedDate').value,
     receptionist: fv('receptionist'),
@@ -343,13 +351,17 @@ async function openPrint(id){
       <td class="text-right">${fmtYen((p.qty||0)*(p.unitPrice||0))}</td></tr>`).join('')
     || `<tr><td colspan="4" class="text-center" style="color:#999">交換部品なし</td></tr>`;
   const fee = r.fee||{visitFee:0,laborFee:0,partsFee:0,total:0};
+  const billingLabel2 = r.billingTarget==='dealer' ? (m.dealerName||'依頼元') :
+                        r.billingTarget==='custom'  ? (r.billingCustom||'') :
+                                                      (m.customerName||'客先');
   document.getElementById('print-area').innerHTML = `
-    <div class="sheet-header"><h1>サービス報告書</h1>
+    <div class="sheet-header"><h1>アフターサービス連絡表</h1>
       <div class="sheet-meta">管理番号: ${escHtml(r.mgmtNo||'—')}<br>対応日: ${fmtDate(r.serviceDate)}<br>完了日: ${fmtDate(r.completionDate)}</div></div>
     <table class="sheet-table">
-      <tr><th>依頼元 / 販売店</th><td colspan="3">${escHtml(m.dealerName)}</td></tr>
-      <tr><th>お客様</th><td colspan="3">${escHtml(m.customerName)}${m.houseMaker?'（'+escHtml(m.houseMaker)+'）':''}</td></tr>
-      <tr><th>住所</th><td>${escHtml(m.customerAddress)}</td><th>連絡先</th><td>${escHtml(m.customerContact)}</td></tr>
+      <tr><th>依頼元 / 販売店</th><td>${escHtml(m.dealerName)}</td><th>担当者</th><td>${escHtml(m.dealerStaff)}</td></tr>
+      <tr><th>依頼元 連絡先</th><td>${escHtml(m.dealerPhone)}</td><th>依頼元 住所</th><td>${escHtml(m.dealerAddress)}</td></tr>
+      <tr><th>お客様</th><td>${escHtml(m.customerName)}${m.houseMaker?'（'+escHtml(m.houseMaker)+'）':''}</td><th>連絡先</th><td class="cell-multiline">${escHtml(m.customerContact)}</td></tr>
+      <tr><th>住所</th><td colspan="3">${escHtml(m.customerAddress)}</td></tr>
       ${m.printNote?`<tr><th>特記事項</th><td colspan="3">${escHtml(m.printNote)}</td></tr>`:''}
       <tr><th>機種</th><td colspan="3">${escHtml(m.equipmentMaker)} ${escHtml(m.equipmentModelNo)}${m.equipmentLotNo?' / ロット:'+escHtml(m.equipmentLotNo):''}${m.equipmentUsage?' / 用途:'+escHtml(m.equipmentUsage):''}</td></tr>
       <tr><th>作業種別</th><td>${escHtml(r.workType||'')}</td><th>担当者</th><td>${escHtml(r.staff||'')}</td></tr>
@@ -364,10 +376,7 @@ async function openPrint(id){
       <tr><th>出張料</th><td class="text-right">${fmtYen(fee.visitFee)}</td>
           <th>技術料</th><td class="text-right">${fmtYen(fee.laborFee)}</td></tr>
       <tr><th>部品代</th><td class="text-right">${fmtYen(fee.partsFee)}</td>
-          <th>合計</th><td class="text-right"><strong>${fmtYen(fee.total)}</strong></td></tr>
-    </table>
-    <table class="sheet-table blank" style="margin-top:20px">
-      <tr><th style="width:140px">お客様確認サイン</th><td style="height:60px"></td></tr>
+          <th>合計 / 請求先</th><td class="text-right"><strong>${fmtYen(fee.total)}</strong> — ${escHtml(billingLabel2)}</td></tr>
     </table>
     <div class="sheet-footer">© 2026 Nozomi Sakurada. All rights reserved.</div>`;
   navigateTo('print');
@@ -448,7 +457,8 @@ async function copyAndIssue(srcId){
   closeModal('copy-picker-modal');
   await openRecordModal();
   document.getElementById('record-modal-title').textContent = '新規依頼発行（コピー）';
-  ['customerName','customerContact','customerAddress','dealerName','houseMaker','printNote',
+  ['dealerName','dealerStaff','dealerPhone','dealerAddress',
+   'customerName','customerContact','customerAddress','houseMaker','printNote',
    'equipmentMaker','equipmentModelNo','equipmentLotNo','equipmentUsage'].forEach(f=>{
     document.getElementById('record-'+f).value = base[f]||'';
   });
@@ -471,10 +481,13 @@ async function loadRecordWithRefs(id){
   const e = r.equipmentId ? await dbGet('equipments', r.equipmentId) : null;
   const c = e?.customerId ? await dbGet('customers', e.customerId) : null;
   const m = {
+    dealerName:      r.dealerName      || c?.dealerName|| '',
+    dealerStaff:     r.dealerStaff     || '',
+    dealerPhone:     r.dealerPhone     || '',
+    dealerAddress:   r.dealerAddress   || '',
     customerName:    r.customerName    || c?.name      || '',
     customerAddress: r.customerAddress || c?.address   || '',
     customerContact: r.customerContact || c?.contact   || '',
-    dealerName:      r.dealerName      || c?.dealerName|| '',
     houseMaker:      r.houseMaker      || c?.houseMaker|| '',
     printNote:       r.printNote       || c?.printNote || '',
     equipmentMaker:  r.equipmentMaker  || e?.maker     || '',
@@ -489,16 +502,19 @@ async function openRequestSlip(id){
   const ref = await loadRecordWithRefs(id);
   if(!ref){ alert('記録が見つかりません'); return; }
   const {r,m} = ref;
+  const billingLabel = r.billingTarget==='dealer' ? (m.dealerName||'依頼元') :
+                       r.billingTarget==='custom'  ? (r.billingCustom||'') :
+                                                     (m.customerName||'客先');
   document.getElementById('print-area').innerHTML = `
     <div class="sheet-header"><h1>作業依頼票</h1>
       <div class="sheet-meta">管理番号: ${escHtml(r.mgmtNo||'—')}<br>受付日: ${fmtDate(r.receivedDate)}</div></div>
     <table class="sheet-table">
       <tr><th>受付者</th><td>${escHtml(r.receptionist||'')}</td><th>希望日</th><td>${fmtDate(r.requestedDate)}</td></tr>
-      <tr><th>作業種別</th><td colspan="3">${escHtml(r.workType||'')}</td></tr>
-      <tr><th>依頼元 / 販売店</th><td colspan="3">${escHtml(m.dealerName)}</td></tr>
-      <tr><th>お客様</th><td colspan="3">${escHtml(m.customerName)}${m.houseMaker?'（'+escHtml(m.houseMaker)+'）':''}</td></tr>
+      <tr><th>作業種別</th><td>${escHtml(r.workType||'')}</td><th>請求先</th><td>${escHtml(billingLabel)}</td></tr>
+      <tr><th>依頼元 / 販売店</th><td>${escHtml(m.dealerName)}</td><th>担当者</th><td>${escHtml(m.dealerStaff)}</td></tr>
+      <tr><th>依頼元 連絡先</th><td>${escHtml(m.dealerPhone)}</td><th>依頼元 住所</th><td>${escHtml(m.dealerAddress)}</td></tr>
+      <tr><th>お客様</th><td>${escHtml(m.customerName)}${m.houseMaker?'（'+escHtml(m.houseMaker)+'）':''}</td><th>連絡先</th><td class="cell-multiline">${escHtml(m.customerContact)}</td></tr>
       <tr><th>住所</th><td colspan="3">${escHtml(m.customerAddress)}</td></tr>
-      <tr><th>連絡先</th><td colspan="3">${escHtml(m.customerContact)}</td></tr>
       ${m.printNote?`<tr><th>特記事項</th><td colspan="3">${escHtml(m.printNote)}</td></tr>`:''}
       <tr><th>機種</th><td colspan="3">${escHtml(m.equipmentMaker)} ${escHtml(m.equipmentModelNo)}${m.equipmentLotNo?' / ロット:'+escHtml(m.equipmentLotNo):''}${m.equipmentUsage?' / 用途:'+escHtml(m.equipmentUsage):''}</td></tr>
       <tr><th>コール内容</th><td colspan="3" class="cell-multiline">${escHtml(r.callContent||'')}</td></tr>
@@ -821,9 +837,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
     el.addEventListener('click',()=>navigateTo(el.dataset.page));
   });
-  document.getElementById('customer-search').addEventListener('input', e=>loadCustomers(e.target.value));
-  document.getElementById('equipment-search').addEventListener('input', e=>loadEquipments(e.target.value));
-  document.getElementById('equipment-customer-filter').addEventListener('change', e=>{ _equipFilterCustomerId = e.target.value?parseInt(e.target.value):null; loadEquipments(document.getElementById('equipment-search').value); });
   document.getElementById('record-visitFee').addEventListener('input', recalcFee);
   document.getElementById('record-laborFee').addEventListener('input', recalcFee);
   document.getElementById('record-search').addEventListener('input', e=>loadRecords(e.target.value));

@@ -731,6 +731,9 @@ textarea { resize: vertical; min-height: 72px; }
 .hidden { display: none !important; }
 .form-section { margin: 8px 0 4px; font-size: 13px; font-weight: 700; color: var(--text2); border-bottom: 1px solid var(--border); padding-bottom: 4px; }
 .span2 { grid-column: span 2; }
+.billing-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+.billing-opt { display: flex; align-items: center; gap: 4px; font-size: 14px; cursor: pointer; }
+.billing-custom { width: 180px; margin-left: 4px; }
 .flex-wrap-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .mt-16 { margin-top: 16px; }
 .mt-12 { margin-top: 12px; }
