@@ -729,6 +729,8 @@ textarea { resize: vertical; min-height: 72px; }
 
 /* === ユーティリティ === */
 .hidden { display: none !important; }
+.form-section { margin: 8px 0 4px; font-size: 13px; font-weight: 700; color: var(--text2); border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+.span2 { grid-column: span 2; }
 .flex-wrap-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .mt-16 { margin-top: 16px; }
 .mt-12 { margin-top: 12px; }

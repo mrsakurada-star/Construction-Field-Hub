@@ -83,7 +83,6 @@
         <h2>サービス記録</h2>
         <div class="page-actions">
           <input id="record-search" class="search" type="search" placeholder="顧客名・管理番号・型式・担当者で検索">
-          <select id="record-equipment-filter" aria-label="機器フィルター"></select>
           <span id="stale-summary" class="badge badge-expired hidden"></span>
           <button class="btn btn-primary" type="button" onclick="openRecordModal()">記録を追加</button>
         </div>
@@ -144,7 +143,24 @@
       <div class="modal-box modal-wide">
         <h3 id="record-modal-title">記録を追加</h3>
         <input type="hidden" id="record-id">
-        <label>機器<select id="record-equipmentId"></select></label>
+        <input type="hidden" id="record-equipmentId">
+        <h4 class="form-section">顧客情報</h4>
+        <div class="grid2">
+          <label>顧客名<input id="record-customerName" type="text"></label>
+          <label>連絡先（担当・TEL）<input id="record-customerContact" type="text"></label>
+          <label class="span2">住所<input id="record-customerAddress" type="text"></label>
+          <label>依頼元 / 販売店<input id="record-dealerName" type="text"></label>
+          <label>ハウスメーカー<input id="record-houseMaker" type="text"></label>
+          <label class="span2">特記事項（報告書に印刷）<textarea id="record-printNote"></textarea></label>
+        </div>
+        <h4 class="form-section">機器情報</h4>
+        <div class="grid2">
+          <label>メーカー<input id="record-equipmentMaker" type="text" placeholder="パーパス / ノーリツ / リンナイ / パロマ"></label>
+          <label>型式<input id="record-equipmentModelNo" type="text"></label>
+          <label>製品ロット / 製造番号<input id="record-equipmentLotNo" type="text"></label>
+          <label>用途<input id="record-equipmentUsage" type="text" placeholder="浴室給湯 / 厨房給湯 / 暖房"></label>
+        </div>
+        <h4 class="form-section">依頼内容</h4>
         <div class="grid2">
           <label>管理番号<input id="record-mgmtNo" type="text"></label>
           <label>作業種別<select id="record-workType">

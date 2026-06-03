@@ -164,24 +164,11 @@ function staleDaysOf(rec){
 }
 
 async function loadRecords(q=''){
-  const [recs, equips, customers] = await Promise.all([
-    dbGetAll('serviceRecords'), dbGetAll('equipments'), dbGetAll('customers')]);
-  const emap = Object.fromEntries(equips.map(e=>[e.id,e]));
-  const cmap = Object.fromEntries(customers.map(c=>[c.id,c]));
-
-  const fsel = document.getElementById('record-equipment-filter');
-  fsel.innerHTML = `<option value="">全機器</option>` + equips.map(e=>{
-    const c = cmap[e.customerId];
-    return `<option value="${e.id}" ${_recordFilterEquipmentId==e.id?'selected':''}>${escHtml((c?c.name+' / ':'')+(e.modelNo||''))}</option>`;
-  }).join('');
+  const recs = await dbGetAll('serviceRecords');
 
   let list = [...recs];
-  if(_recordFilterEquipmentId) list = list.filter(r=>r.equipmentId==_recordFilterEquipmentId);
-  if(q) list = list.filter(r=>{
-    const e = emap[r.equipmentId];
-    const c = e ? cmap[e.customerId] : null;
-    return fuzzyMatch(q, r.mgmtNo||'', r.staff||'', e?e.modelNo||'':'', c?c.name||'':'', c?c.kana||'':'');
-  });
+  if(q) list = list.filter(r=>fuzzyMatch(q, r.mgmtNo||'', r.staff||'',
+      r.customerName||'', r.equipmentModelNo||'', r.workType||''));
   list.sort((a,b)=>(b.receivedDate||b.createdAt||'')>(a.receivedDate||a.createdAt||'')?1:-1);
 
   const staleCount = recs.filter(r=>staleDaysOf(r)!==null).length;
@@ -194,8 +181,7 @@ async function loadRecords(q=''){
   tbody.innerHTML = list.length===0
     ? `<tr><td colspan="7" class="text-center" style="padding:32px;color:var(--text3)">記録がありません</td></tr>`
     : list.map(r=>{
-        const e = emap[r.equipmentId];
-        const c = e?cmap[e.customerId]:null;
+        const {name,model} = recInfo(r);
         const stale = staleDaysOf(r);
         const rowStyle = stale!==null ? 'background:#fff1f0' : '';
         const statusBadge = r.status==='completed'
@@ -207,10 +193,10 @@ async function loadRecords(q=''){
           <td>${statusBadge}</td>
           <td>${fmtDate(r.receivedDate)}<br><span style="font-size:11px;color:var(--text3)">${fmtDate(r.serviceDate)}</span></td>
           <td>${escHtml(r.mgmtNo||'')}</td>
-          <td>${c?escHtml(c.name):'—'}<br><span style="font-size:11px;color:var(--text3)">${e?escHtml(e.modelNo||''):''}</span></td>
+          <td>${escHtml(name)}<br><span style="font-size:11px;color:var(--text3)">${escHtml(model)}</span></td>
           <td>${escHtml(r.workType||'')}</td>
           <td>${escHtml(r.staff||'')}</td>
-          <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+          <td><div class="flex-wrap-row">
             <button class="btn btn-xs btn-secondary" type="button" onclick="openRecordModal(${r.id})">編集</button>
             <button class="btn btn-xs btn-primary" type="button" onclick="openPrint(${r.id})">報告書</button>
             <button class="btn btn-xs btn-danger" type="button" onclick="deleteRecord(${r.id})">削除</button>
@@ -256,18 +242,25 @@ async function nextMgmtNo(){
 }
 
 async function openRecordModal(id=null){
-  const equips = await dbGetAll('equipments');
-  const customers = await dbGetAll('customers');
-  const cmap = Object.fromEntries(customers.map(c=>[c.id,c]));
   let data = {};
   if(id){ data = await dbGet('serviceRecords', id) || {}; }
+  // 後方互換: equipmentId のみ持つ旧レコードは機器/顧客DBから補完
+  let prefill = {};
+  if(id && data.equipmentId && !data.customerName && !data.equipmentModelNo){
+    const e = await dbGet('equipments', data.equipmentId);
+    const c = e?.customerId ? await dbGet('customers', e.customerId) : null;
+    if(c) prefill = { customerName:c.name, customerContact:c.contact, customerAddress:c.address,
+                      dealerName:c.dealerName, houseMaker:c.houseMaker, printNote:c.printNote };
+    if(e) prefill = { ...prefill, equipmentMaker:e.maker, equipmentModelNo:e.modelNo,
+                      equipmentLotNo:e.lotNo, equipmentUsage:e.usage };
+  }
   document.getElementById('record-modal-title').textContent = id?'記録を編集':'記録を追加';
   document.getElementById('record-id').value = id || '';
-  const sel = document.getElementById('record-equipmentId');
-  sel.innerHTML = `<option value="">— 機器を選択 —</option>` + equips.map(e=>{
-    const c=cmap[e.customerId]; return `<option value="${e.id}" ${data.equipmentId==e.id?'selected':''}>${escHtml((c?c.name+' / ':'')+(e.modelNo||''))}</option>`;
-  }).join('');
-  if(!id && _recordFilterEquipmentId) sel.value = _recordFilterEquipmentId;
+  document.getElementById('record-equipmentId').value = data.equipmentId || '';
+  ['customerName','customerContact','customerAddress','dealerName','houseMaker','printNote',
+   'equipmentMaker','equipmentModelNo','equipmentLotNo','equipmentUsage'].forEach(f=>{
+    document.getElementById('record-'+f).value = data[f] || prefill[f] || '';
+  });
   ['mgmtNo','receptionist','staff','callContent','remarks','customerReport'].forEach(f=>{
     document.getElementById('record-'+f).value = data[f]||''; });
   ['receivedDate','requestedDate','serviceDate','completionDate'].forEach(f=>{
@@ -284,7 +277,6 @@ async function openRecordModal(id=null){
 async function saveRecord(){
   const id = document.getElementById('record-id').value;
   const equipmentId = parseInt(document.getElementById('record-equipmentId').value)||null;
-  if(!equipmentId){ alert('機器を選択してください'); return; }
   const completionDate = document.getElementById('record-completionDate').value;
   const parts = _partRows.filter(p=>p.name||p.qty||p.unitPrice)
     .map(p=>({name:normalizeFieldValue(p.name), qty:Number(p.qty)||0, unitPrice:Number(p.unitPrice)||0}));
@@ -293,16 +285,27 @@ async function saveRecord(){
   const laborFee = parseFloat(document.getElementById('record-laborFee').value)||0;
   const now = today();
   const base = id ? (await dbGet('serviceRecords', parseInt(id))) || {} : {};
+  const fv = f => normalizeFieldValue(document.getElementById('record-'+f).value);
   const data = {
     ...base,
     equipmentId,
-    mgmtNo: normalizeFieldValue(document.getElementById('record-mgmtNo').value),
+    customerName: fv('customerName'),
+    customerContact: fv('customerContact'),
+    customerAddress: fv('customerAddress'),
+    dealerName: fv('dealerName'),
+    houseMaker: fv('houseMaker'),
+    printNote: document.getElementById('record-printNote').value.trim(),
+    equipmentMaker: fv('equipmentMaker'),
+    equipmentModelNo: fv('equipmentModelNo'),
+    equipmentLotNo: fv('equipmentLotNo'),
+    equipmentUsage: fv('equipmentUsage'),
+    mgmtNo: fv('mgmtNo'),
     receivedDate: document.getElementById('record-receivedDate').value,
-    receptionist: normalizeFieldValue(document.getElementById('record-receptionist').value),
+    receptionist: fv('receptionist'),
     requestedDate: document.getElementById('record-requestedDate').value,
     serviceDate: document.getElementById('record-serviceDate').value,
     completionDate,
-    staff: normalizeFieldValue(document.getElementById('record-staff').value),
+    staff: fv('staff'),
     workType: document.getElementById('record-workType').value,
     callContent: document.getElementById('record-callContent').value.trim(),
     remarks: document.getElementById('record-remarks').value.trim(),
@@ -333,7 +336,7 @@ async function deleteRecord(id){
 async function openPrint(id){
   const ref = await loadRecordWithRefs(id);
   if(!ref){ alert('記録が見つかりません'); return; }
-  const {r,e,c} = ref;
+  const {r,m} = ref;
   const partsRows = (r.parts||[]).map(p=>`<tr>
       <td>${escHtml(p.name||'')}</td><td class="text-center">${p.qty||0}</td>
       <td class="text-right">${fmtYen(p.unitPrice)}</td>
@@ -344,11 +347,11 @@ async function openPrint(id){
     <div class="sheet-header"><h1>サービス報告書</h1>
       <div class="sheet-meta">管理番号: ${escHtml(r.mgmtNo||'—')}<br>対応日: ${fmtDate(r.serviceDate)}<br>完了日: ${fmtDate(r.completionDate)}</div></div>
     <table class="sheet-table">
-      <tr><th>依頼元 / 販売店</th><td colspan="3">${escHtml(c?.dealerName||'')}</td></tr>
-      <tr><th>お客様</th><td colspan="3">${escHtml(c?.name||'')}（${escHtml(c?.houseMaker||'')}）</td></tr>
-      <tr><th>住所</th><td>${escHtml(c?.address||'')}</td><th>連絡先</th><td>${escHtml(c?.contact||'')}</td></tr>
-      ${c?.printNote?`<tr><th>特記事項</th><td colspan="3">${escHtml(c.printNote)}</td></tr>`:''}
-      <tr><th>機種</th><td colspan="3">${escHtml(e?.maker||'')} ${escHtml(e?.modelNo||'')} / ロット:${escHtml(e?.lotNo||'')} / 用途:${escHtml(e?.usage||'')}</td></tr>
+      <tr><th>依頼元 / 販売店</th><td colspan="3">${escHtml(m.dealerName)}</td></tr>
+      <tr><th>お客様</th><td colspan="3">${escHtml(m.customerName)}${m.houseMaker?'（'+escHtml(m.houseMaker)+'）':''}</td></tr>
+      <tr><th>住所</th><td>${escHtml(m.customerAddress)}</td><th>連絡先</th><td>${escHtml(m.customerContact)}</td></tr>
+      ${m.printNote?`<tr><th>特記事項</th><td colspan="3">${escHtml(m.printNote)}</td></tr>`:''}
+      <tr><th>機種</th><td colspan="3">${escHtml(m.equipmentMaker)} ${escHtml(m.equipmentModelNo)}${m.equipmentLotNo?' / ロット:'+escHtml(m.equipmentLotNo):''}${m.equipmentUsage?' / 用途:'+escHtml(m.equipmentUsage):''}</td></tr>
       <tr><th>作業種別</th><td>${escHtml(r.workType||'')}</td><th>担当者</th><td>${escHtml(r.staff||'')}</td></tr>
       <tr><th>コール内容</th><td colspan="3" class="cell-multiline">${escHtml(r.callContent||'')}</td></tr>
       <tr><th>担当者所見</th><td colspan="3" class="cell-multiline">${escHtml(r.remarks||'')}</td></tr>
@@ -371,24 +374,23 @@ async function openPrint(id){
 }
 
 // === 新規依頼発行 ===
+function recInfo(r){ return { name: r.customerName||'—', model: r.equipmentModelNo||'—' }; }
+
 async function loadIntake(){
-  const [recs, equips, customers] = await Promise.all([
-    dbGetAll('serviceRecords'), dbGetAll('equipments'), dbGetAll('customers')]);
-  const emap = Object.fromEntries(equips.map(e=>[e.id,e]));
-  const cmap = Object.fromEntries(customers.map(c=>[c.id,c]));
+  const recs = await dbGetAll('serviceRecords');
   const open = recs.filter(r=>r.status!=='completed')
     .sort((a,b)=>(b.receivedDate||'')>(a.receivedDate||'')?1:-1);
   const tbody = document.getElementById('intake-open-list');
   tbody.innerHTML = open.length===0
     ? `<tr><td colspan="5" class="text-center" style="padding:24px;color:var(--text3)">未完了の依頼はありません</td></tr>`
     : open.map(r=>{
-        const e=emap[r.equipmentId]; const c=e?cmap[e.customerId]:null;
+        const {name,model} = recInfo(r);
         return `<tr>
           <td>${escHtml(r.mgmtNo||'')}</td>
           <td>${fmtDate(r.receivedDate)}</td>
-          <td>${c?escHtml(c.name):'—'} / ${e?escHtml(e.modelNo||''):'—'}</td>
+          <td>${escHtml(name)} / ${escHtml(model)}</td>
           <td>${escHtml(r.workType||'')}</td>
-          <td><div style="display:flex;gap:6px">
+          <td><div class="flex-wrap-row">
             <button class="btn btn-xs btn-secondary" type="button" onclick="openRecordModal(${r.id})">編集</button>
             <button class="btn btn-xs btn-primary" type="button" onclick="openRequestSlip(${r.id})">依頼票</button>
           </div></td>
@@ -409,26 +411,20 @@ async function openCopyPicker(){
 }
 
 async function renderCopyPicker(filterText){
-  const [recs, equips, customers] = await Promise.all([
-    dbGetAll('serviceRecords'), dbGetAll('equipments'), dbGetAll('customers')]);
-  const emap = Object.fromEntries(equips.map(e=>[e.id,e]));
-  const cmap = Object.fromEntries(customers.map(c=>[c.id,c]));
+  const recs = await dbGetAll('serviceRecords');
   let list = [...recs].sort((a,b)=>(b.receivedDate||b.createdAt||'')>(a.receivedDate||a.createdAt||'')?1:-1);
   if(filterText){
-    list = list.filter(r=>{
-      const e=emap[r.equipmentId]; const c=e?cmap[e.customerId]:null;
-      return fuzzyMatch(filterText, c?.name, e?.modelNo, r.mgmtNo);
-    });
+    list = list.filter(r=>fuzzyMatch(filterText, r.customerName, r.equipmentModelNo, r.mgmtNo, r.workType));
   }
   const tbody = document.getElementById('copy-picker-list');
   tbody.innerHTML = list.length===0
     ? `<tr><td colspan="5" class="text-center" style="padding:24px;color:var(--text3)">該当する記録がありません</td></tr>`
     : list.map(r=>{
-        const e=emap[r.equipmentId]; const c=e?cmap[e.customerId]:null;
+        const {name,model} = recInfo(r);
         return `<tr>
           <td>${fmtDate(r.receivedDate)}</td>
           <td>${escHtml(r.mgmtNo||'')}</td>
-          <td>${c?escHtml(c.name):'—'} / ${e?escHtml(e.modelNo||''):'—'}</td>
+          <td>${escHtml(name)} / ${escHtml(model)}</td>
           <td>${escHtml(r.workType||'')}</td>
           <td><button class="btn btn-xs btn-primary" type="button" onclick="copyAndIssue(${r.id})">この内容でコピー発行</button></td>
         </tr>`;
@@ -438,16 +434,28 @@ async function renderCopyPicker(filterText){
 async function copyAndIssue(srcId){
   const src = await dbGet('serviceRecords', srcId);
   if(!src){ alert('元の記録が見つかりません'); return; }
+  // 旧レコードは equipmentId から情報補完
+  let base = src;
+  if(src.equipmentId && !src.customerName && !src.equipmentModelNo){
+    const e = await dbGet('equipments', src.equipmentId);
+    const c = e?.customerId ? await dbGet('customers', e.customerId) : null;
+    base = { ...src,
+      customerName: c?.name||'', customerContact: c?.contact||'', customerAddress: c?.address||'',
+      dealerName: c?.dealerName||'', houseMaker: c?.houseMaker||'', printNote: c?.printNote||'',
+      equipmentMaker: e?.maker||'', equipmentModelNo: e?.modelNo||'',
+      equipmentLotNo: e?.lotNo||'', equipmentUsage: e?.usage||'' };
+  }
   closeModal('copy-picker-modal');
   await openRecordModal();
   document.getElementById('record-modal-title').textContent = '新規依頼発行（コピー）';
-  document.getElementById('record-equipmentId').value = src.equipmentId || '';
+  ['customerName','customerContact','customerAddress','dealerName','houseMaker','printNote',
+   'equipmentMaker','equipmentModelNo','equipmentLotNo','equipmentUsage'].forEach(f=>{
+    document.getElementById('record-'+f).value = base[f]||'';
+  });
   document.getElementById('record-workType').value = src.workType || '定期点検';
   document.getElementById('record-receivedDate').value = today();
-  ['requestedDate','serviceDate','completionDate','staff','receptionist'].forEach(f=>{
-    document.getElementById('record-'+f).value = '';
-  });
-  ['callContent','remarks','customerReport'].forEach(f=>{
+  ['requestedDate','serviceDate','completionDate','staff','receptionist',
+   'callContent','remarks','customerReport'].forEach(f=>{
     document.getElementById('record-'+f).value = '';
   });
   document.getElementById('record-visitFee').value = '';
@@ -461,26 +469,38 @@ async function loadRecordWithRefs(id){
   const r = await dbGet('serviceRecords', id);
   if(!r) return null;
   const e = r.equipmentId ? await dbGet('equipments', r.equipmentId) : null;
-  const c = e && e.customerId ? await dbGet('customers', e.customerId) : null;
-  return { r, e, c };
+  const c = e?.customerId ? await dbGet('customers', e.customerId) : null;
+  const m = {
+    customerName:    r.customerName    || c?.name      || '',
+    customerAddress: r.customerAddress || c?.address   || '',
+    customerContact: r.customerContact || c?.contact   || '',
+    dealerName:      r.dealerName      || c?.dealerName|| '',
+    houseMaker:      r.houseMaker      || c?.houseMaker|| '',
+    printNote:       r.printNote       || c?.printNote || '',
+    equipmentMaker:  r.equipmentMaker  || e?.maker     || '',
+    equipmentModelNo:r.equipmentModelNo|| e?.modelNo   || '',
+    equipmentLotNo:  r.equipmentLotNo  || e?.lotNo     || '',
+    equipmentUsage:  r.equipmentUsage  || e?.usage     || '',
+  };
+  return { r, e, c, m };
 }
 
 async function openRequestSlip(id){
   const ref = await loadRecordWithRefs(id);
   if(!ref){ alert('記録が見つかりません'); return; }
-  const {r,e,c} = ref;
+  const {r,m} = ref;
   document.getElementById('print-area').innerHTML = `
     <div class="sheet-header"><h1>作業依頼票</h1>
       <div class="sheet-meta">管理番号: ${escHtml(r.mgmtNo||'—')}<br>受付日: ${fmtDate(r.receivedDate)}</div></div>
     <table class="sheet-table">
       <tr><th>受付者</th><td>${escHtml(r.receptionist||'')}</td><th>希望日</th><td>${fmtDate(r.requestedDate)}</td></tr>
       <tr><th>作業種別</th><td colspan="3">${escHtml(r.workType||'')}</td></tr>
-      <tr><th>依頼元 / 販売店</th><td colspan="3">${escHtml(c?.dealerName||'')}</td></tr>
-      <tr><th>お客様</th><td colspan="3">${escHtml(c?.name||'')}（${escHtml(c?.houseMaker||'')}）</td></tr>
-      <tr><th>住所</th><td colspan="3">${escHtml(c?.address||'')}</td></tr>
-      <tr><th>連絡先</th><td colspan="3">${escHtml(c?.contact||'')}</td></tr>
-      ${c?.printNote?`<tr><th>特記事項</th><td colspan="3">${escHtml(c.printNote)}</td></tr>`:''}
-      <tr><th>機種</th><td colspan="3">${escHtml(e?.maker||'')} ${escHtml(e?.modelNo||'')} / ロット:${escHtml(e?.lotNo||'')} / 用途:${escHtml(e?.usage||'')}</td></tr>
+      <tr><th>依頼元 / 販売店</th><td colspan="3">${escHtml(m.dealerName)}</td></tr>
+      <tr><th>お客様</th><td colspan="3">${escHtml(m.customerName)}${m.houseMaker?'（'+escHtml(m.houseMaker)+'）':''}</td></tr>
+      <tr><th>住所</th><td colspan="3">${escHtml(m.customerAddress)}</td></tr>
+      <tr><th>連絡先</th><td colspan="3">${escHtml(m.customerContact)}</td></tr>
+      ${m.printNote?`<tr><th>特記事項</th><td colspan="3">${escHtml(m.printNote)}</td></tr>`:''}
+      <tr><th>機種</th><td colspan="3">${escHtml(m.equipmentMaker)} ${escHtml(m.equipmentModelNo)}${m.equipmentLotNo?' / ロット:'+escHtml(m.equipmentLotNo):''}${m.equipmentUsage?' / 用途:'+escHtml(m.equipmentUsage):''}</td></tr>
       <tr><th>コール内容</th><td colspan="3" class="cell-multiline">${escHtml(r.callContent||'')}</td></tr>
     </table>
     <h3>現場記入欄</h3>
@@ -807,7 +827,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('record-visitFee').addEventListener('input', recalcFee);
   document.getElementById('record-laborFee').addEventListener('input', recalcFee);
   document.getElementById('record-search').addEventListener('input', e=>loadRecords(e.target.value));
-  document.getElementById('record-equipment-filter').addEventListener('change', e=>{ _recordFilterEquipmentId = e.target.value?parseInt(e.target.value):null; loadRecords(document.getElementById('record-search').value); });
   document.getElementById('copy-picker-search').addEventListener('input', e=>renderCopyPicker(e.target.value));
   if(window.lucide) lucide.createIcons();
 });
