@@ -356,9 +356,24 @@ async function openPrint(id){
   const billingLabel2 = r.billingTarget==='dealer' ? (m.dealerName||'依頼元') :
                         r.billingTarget==='custom'  ? (r.billingCustom||'') :
                                                       (m.customerName||'客先');
+  const issuerHtml = co.companyName ? `
+    <div class="sheet-issuer">
+      <div class="sheet-issuer-name">${escHtml(co.companyName)}</div>
+      ${co.companyAddress?`<div class="sheet-issuer-sub">${escHtml(co.companyAddress)}</div>`:''}
+      ${(co.companyTel||co.companyFax)?`<div class="sheet-issuer-sub">${co.companyTel?'TEL '+escHtml(co.companyTel):''}${co.companyTel&&co.companyFax?'　':''}${co.companyFax?'FAX '+escHtml(co.companyFax):''}</div>`:''}
+    </div>` : '';
   document.getElementById('print-area').innerHTML = `
-    <div class="sheet-header"><h1>アフターサービス連絡表</h1>
-      <div class="sheet-meta">管理番号: ${escHtml(r.mgmtNo||'—')}<br>対応日: ${fmtDate(r.serviceDate)}<br>完了日: ${fmtDate(r.completionDate)}</div></div>
+    <div class="sheet-header">
+      <h1>アフターサービスレポート</h1>
+      ${issuerHtml}
+    </div>
+    <div class="sheet-submeta">
+      <span>管理番号：${escHtml(r.mgmtNo||'—')}</span>
+      <span>対応日：${fmtDate(r.serviceDate)}</span>
+      <span>完了日：${fmtDate(r.completionDate)}</span>
+      <span>作業種別：${escHtml(r.workType||'')}</span>
+      <span>担当：${escHtml(r.staff||'')}</span>
+    </div>
     <table class="sheet-table">
       <tr><th>依頼元 / 販売店</th><td>${escHtml(m.dealerName)}</td><th>担当者</th><td>${escHtml(m.dealerStaff)}</td></tr>
       <tr><th>依頼元 連絡先</th><td>${escHtml(m.dealerPhone)}</td><th>依頼元 住所</th><td>${escHtml(m.dealerAddress)}</td></tr>
@@ -366,21 +381,20 @@ async function openPrint(id){
       <tr><th>住所</th><td colspan="3">${escHtml(m.customerAddress)}</td></tr>
       ${m.printNote?`<tr><th>特記事項</th><td colspan="3">${escHtml(m.printNote)}</td></tr>`:''}
       <tr><th>機種</th><td colspan="3">${escHtml(m.equipmentMaker)} ${escHtml(m.equipmentModelNo)}${m.equipmentLotNo?' / ロット:'+escHtml(m.equipmentLotNo):''}${m.equipmentUsage?' / 用途:'+escHtml(m.equipmentUsage):''}</td></tr>
-      <tr><th>作業種別</th><td>${escHtml(r.workType||'')}</td><th>担当者</th><td>${escHtml(r.staff||'')}</td></tr>
       <tr><th>コール内容</th><td colspan="3" class="cell-multiline">${escHtml(r.callContent||'')}</td></tr>
       <tr><th>担当者所見</th><td colspan="3" class="cell-multiline">${escHtml(r.remarks||'')}</td></tr>
       <tr><th>お客様への報告</th><td colspan="3" class="cell-multiline">${escHtml(r.customerReport||'')}</td></tr>
     </table>
-    <h3>交換部品</h3>
+    <h3 style="font-size:12px;margin:10px 0 2px">交換部品</h3>
     <table class="sheet-table"><thead><tr><th>品名</th><th>数量</th><th>単価</th><th>金額</th></tr></thead><tbody>${partsRows}</tbody></table>
-    <h3>料金明細</h3>
-    <table class="sheet-table">
+    <table class="sheet-table" style="margin-top:6px">
       <tr><th>出張料</th><td class="text-right">${fmtYen(fee.visitFee)}</td>
-          <th>技術料</th><td class="text-right">${fmtYen(fee.laborFee)}</td></tr>
-      <tr><th>部品代</th><td class="text-right">${fmtYen(fee.partsFee)}</td>
-          <th>合計 / 請求先</th><td class="text-right"><strong>${fmtYen(fee.total)}</strong> — ${escHtml(billingLabel2)}</td></tr>
+          <th>技術料</th><td class="text-right">${fmtYen(fee.laborFee)}</td>
+          <th>部品代</th><td class="text-right">${fmtYen(fee.partsFee)}</td>
+          <th>合計</th><td class="text-right"><strong>${fmtYen(fee.total)}</strong></td>
+          <th>請求先</th><td>${escHtml(billingLabel2)}</td></tr>
     </table>
-    <div class="sheet-footer">${co.companyName?escHtml(co.companyName)+'　':''}${co.companyAddress?escHtml(co.companyAddress)+'　':''}${co.companyTel?'TEL '+escHtml(co.companyTel)+'　':''}${co.companyFax?'FAX '+escHtml(co.companyFax):''}　© 2026 Nozomi Sakurada. All rights reserved.</div>`;
+    <div class="sheet-footer">© 2026 Nozomi Sakurada. All rights reserved.</div>`;
   navigateTo('print');
 }
 
@@ -508,12 +522,26 @@ async function openRequestSlip(id){
   const billingLabel = r.billingTarget==='dealer' ? (m.dealerName||'依頼元') :
                        r.billingTarget==='custom'  ? (r.billingCustom||'') :
                                                      (m.customerName||'客先');
+  const issuerHtmlSlip = co.companyName ? `
+    <div class="sheet-issuer">
+      <div class="sheet-issuer-name">${escHtml(co.companyName)}</div>
+      ${co.companyAddress?`<div class="sheet-issuer-sub">${escHtml(co.companyAddress)}</div>`:''}
+      ${(co.companyTel||co.companyFax)?`<div class="sheet-issuer-sub">${co.companyTel?'TEL '+escHtml(co.companyTel):''}${co.companyTel&&co.companyFax?'　':''}${co.companyFax?'FAX '+escHtml(co.companyFax):''}</div>`:''}
+    </div>` : '';
   document.getElementById('print-area').innerHTML = `
-    <div class="sheet-header"><h1>作業依頼票</h1>
-      <div class="sheet-meta">管理番号: ${escHtml(r.mgmtNo||'—')}<br>受付日: ${fmtDate(r.receivedDate)}</div></div>
+    <div class="sheet-header">
+      <h1>作業依頼票</h1>
+      ${issuerHtmlSlip}
+    </div>
+    <div class="sheet-submeta">
+      <span>管理番号：${escHtml(r.mgmtNo||'—')}</span>
+      <span>受付日：${fmtDate(r.receivedDate)}</span>
+      <span>希望日：${fmtDate(r.requestedDate)}</span>
+      <span>受付者：${escHtml(r.receptionist||'')}</span>
+      <span>作業種別：${escHtml(r.workType||'')}</span>
+      <span>請求先：${escHtml(billingLabel)}</span>
+    </div>
     <table class="sheet-table">
-      <tr><th>受付者</th><td>${escHtml(r.receptionist||'')}</td><th>希望日</th><td>${fmtDate(r.requestedDate)}</td></tr>
-      <tr><th>作業種別</th><td>${escHtml(r.workType||'')}</td><th>請求先</th><td>${escHtml(billingLabel)}</td></tr>
       <tr><th>依頼元 / 販売店</th><td>${escHtml(m.dealerName)}</td><th>担当者</th><td>${escHtml(m.dealerStaff)}</td></tr>
       <tr><th>依頼元 連絡先</th><td>${escHtml(m.dealerPhone)}</td><th>依頼元 住所</th><td>${escHtml(m.dealerAddress)}</td></tr>
       <tr><th>お客様</th><td>${escHtml(m.customerName)}${m.houseMaker?'（'+escHtml(m.houseMaker)+'）':''}</td><th>連絡先</th><td class="cell-multiline">${escHtml(m.customerContact)}</td></tr>
@@ -522,12 +550,12 @@ async function openRequestSlip(id){
       <tr><th>機種</th><td colspan="3">${escHtml(m.equipmentMaker)} ${escHtml(m.equipmentModelNo)}${m.equipmentLotNo?' / ロット:'+escHtml(m.equipmentLotNo):''}${m.equipmentUsage?' / 用途:'+escHtml(m.equipmentUsage):''}</td></tr>
       <tr><th>コール内容</th><td colspan="3" class="cell-multiline">${escHtml(r.callContent||'')}</td></tr>
     </table>
-    <h3>現場記入欄</h3>
+    <h3 style="font-size:12px;margin:10px 0 2px">現場記入欄</h3>
     <table class="sheet-table blank">
       <tr><th>対応日</th><td></td><th>担当者</th><td></td></tr>
       <tr><th>作業内容</th><td colspan="3" style="height:120px"></td></tr>
     </table>
-    <div class="sheet-footer">${co.companyName?escHtml(co.companyName)+'　':''}${co.companyAddress?escHtml(co.companyAddress)+'　':''}${co.companyTel?'TEL '+escHtml(co.companyTel)+'　':''}${co.companyFax?'FAX '+escHtml(co.companyFax):''}　© 2026 Nozomi Sakurada</div>`;
+    <div class="sheet-footer">© 2026 Nozomi Sakurada</div>`;
   navigateTo('print');
 }
 
