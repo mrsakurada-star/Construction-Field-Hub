@@ -73,6 +73,7 @@
           <label>所在地<input id="setting-companyAddress" type="text"></label>
           <label>TEL<input id="setting-companyTel" type="text"></label>
           <label>FAX<input id="setting-companyFax" type="text"></label>
+          <label>消費税率（%）<input id="setting-taxRate" type="number" min="0" max="100" step="1" placeholder="10"></label>
         </div>
         <div class="mt-16">
           <button class="btn btn-primary" type="button" onclick="saveSettings()">保存</button>
@@ -137,15 +138,16 @@
         <label>担当者所見<textarea id="record-remarks"></textarea></label>
         <label>お客様への報告<textarea id="record-customerReport"></textarea></label>
 
-        <h4>交換部品</h4>
-        <table class="data-table"><thead><tr><th>品名</th><th>数量</th><th>単価</th><th>操作</th></tr></thead>
-          <tbody id="record-parts"></tbody></table>
-        <button class="btn btn-xs btn-secondary" type="button" onclick="addPartRow()">部品を追加</button>
-        <div class="grid2 mt-12">
-          <label>出張料<input id="record-visitFee" type="number"></label>
-          <label>技術料<input id="record-laborFee" type="number"></label>
-          <div>部品代: <span id="record-partsFee">¥0</span></div>
-          <div>合計: <strong id="record-total">¥0</strong></div>
+        <h4 class="form-section">料金明細</h4>
+        <table class="data-table">
+          <thead><tr><th>品目</th><th class="col-amount">金額（マイナス可）</th><th class="col-op">操作</th></tr></thead>
+          <tbody id="record-fee-items"></tbody>
+        </table>
+        <button class="btn btn-xs btn-secondary mt-4" type="button" onclick="addFeeItem()">明細を追加</button>
+        <div class="fee-summary mt-12">
+          <div>小計: <span id="record-subtotal">¥0</span></div>
+          <div>消費税（<span id="fee-tax-rate-label">10</span>%）: <span id="record-tax">¥0</span></div>
+          <div class="fee-total">合計: <strong id="record-total">¥0</strong></div>
         </div>
 
         <h4 class="form-section">請求先</h4>

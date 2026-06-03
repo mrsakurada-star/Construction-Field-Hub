@@ -724,6 +724,9 @@ textarea { resize: vertical; min-height: 72px; }
 .sheet-table .cell-multiline{ white-space:pre-wrap; }
 .sheet-table.blank td{ height:32px; }
 .sheet-footer{ margin-top:12px; font-size:10px; color:#aaa; text-align:right; }
+.fee-detail-table { max-width:320px; margin-left:auto; }
+.fee-detail-table th { background:#f3f3f3; width:120px; }
+.fee-total-row td, .fee-total-row th { border-top:2px solid #555; background:#f9f9f9; }
 @media print{
   .print-sheet{ padding:0; max-width:none; }
 }
@@ -740,6 +743,11 @@ textarea { resize: vertical; min-height: 72px; }
 .settings-form { display: flex; flex-direction: column; gap: 12px; }
 .settings-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; font-weight: 600; }
 .settings-form input { font-size: 14px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; }
+.col-amount { width: 130px; }
+.col-op { width: 40px; }
+.mt-4 { margin-top: 4px; }
+.fee-summary { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; font-size: 13px; padding: 8px 0; }
+.fee-summary .fee-total { font-size: 15px; border-top: 1px solid var(--border); padding-top: 4px; margin-top: 2px; }
 .billing-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
 .billing-opt { display: flex; align-items: center; gap: 4px; font-size: 14px; cursor: pointer; }
 .billing-custom { width: 180px; margin-left: 4px; }

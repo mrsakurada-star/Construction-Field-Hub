@@ -204,29 +204,34 @@ async function loadRecords(q=''){
       }).join('');
 }
 
-let _partRows = [];
-function renderParts(){
-  const tbody = document.getElementById('record-parts');
-  tbody.innerHTML = _partRows.map((p,i)=>`<tr>
-    <td><input type="text" value="${escHtml(p.name||'')}" oninput="updatePart(${i},'name',this.value)"></td>
-    <td><input type="number" value="${p.qty??''}" style="width:70px" oninput="updatePart(${i},'qty',this.value)"></td>
-    <td><input type="number" value="${p.unitPrice??''}" style="width:100px" oninput="updatePart(${i},'unitPrice',this.value)"></td>
-    <td><button class="btn btn-xs btn-danger" type="button" onclick="removePart(${i})">×</button></td>
+let _feeItems = [];
+let _currentTaxRate = 10;
+
+function renderFeeItems(){
+  const tbody = document.getElementById('record-fee-items');
+  tbody.innerHTML = _feeItems.length === 0
+    ? `<tr><td colspan="3" class="text-center" style="padding:12px;color:var(--text3)">明細なし</td></tr>`
+    : _feeItems.map((item,i)=>`<tr>
+    <td><input type="text" value="${escHtml(item.name||'')}" oninput="updateFeeItem(${i},'name',this.value)" placeholder="品目名"></td>
+    <td><input type="number" value="${item.amount??''}" oninput="updateFeeItem(${i},'amount',this.value)" placeholder="0"></td>
+    <td><button class="btn btn-xs btn-danger" type="button" onclick="removeFeeItem(${i})">×</button></td>
   </tr>`).join('');
-  recalcFee();
+  recalcTotal();
 }
-function addPartRow(){ _partRows.push({name:'',qty:1,unitPrice:0}); renderParts(); }
-function updatePart(i,f,v){
-  _partRows[i][f] = (f==='name')?v:(parseFloat(v)||0);
-  if(f!=='name') recalcFee();
+function addFeeItem(){ _feeItems.push({name:'',amount:0}); renderFeeItems(); }
+function updateFeeItem(i,f,v){
+  _feeItems[i][f] = f==='name' ? v : (parseFloat(v)||0);
+  if(f!=='name') recalcTotal();
 }
-function removePart(i){ _partRows.splice(i,1); renderParts(); }
-function recalcFee(){
-  const partsFee = _partRows.reduce((s,p)=>s+(Number(p.qty)||0)*(Number(p.unitPrice)||0),0);
-  const visit = parseFloat(document.getElementById('record-visitFee').value)||0;
-  const labor = parseFloat(document.getElementById('record-laborFee').value)||0;
-  document.getElementById('record-partsFee').textContent = fmtYen(partsFee);
-  document.getElementById('record-total').textContent = fmtYen(visit+labor+partsFee);
+function removeFeeItem(i){ _feeItems.splice(i,1); renderFeeItems(); }
+function recalcTotal(){
+  const subtotal = _feeItems.reduce((s,item)=>s+(Number(item.amount)||0), 0);
+  const tax = Math.round(subtotal * _currentTaxRate / 100);
+  const total = subtotal + tax;
+  document.getElementById('record-subtotal').textContent = fmtYen(subtotal);
+  document.getElementById('fee-tax-rate-label').textContent = _currentTaxRate;
+  document.getElementById('record-tax').textContent = fmtYen(tax);
+  document.getElementById('record-total').textContent = fmtYen(total);
 }
 
 async function nextMgmtNo(){
@@ -270,11 +275,23 @@ async function openRecordModal(id=null){
   ['receivedDate','requestedDate','serviceDate','completionDate'].forEach(f=>{
     document.getElementById('record-'+f).value = data[f]||''; });
   document.getElementById('record-workType').value = data.workType || '定期点検';
-  document.getElementById('record-visitFee').value = data.fee?.visitFee ?? '';
-  document.getElementById('record-laborFee').value = data.fee?.laborFee ?? '';
   if(!data.mgmtNo && !id) document.getElementById('record-mgmtNo').value = await nextMgmtNo();
-  _partRows = Array.isArray(data.parts) ? data.parts.map(p=>({...p})) : [];
-  renderParts();
+  // 消費税率を設定から取得
+  const co = await getCompanyInfo();
+  _currentTaxRate = parseFloat(co.taxRate ?? 10);
+  // 料金明細: 新形式(feeItems)優先、旧形式(parts/fee)はマイグレーション
+  if(Array.isArray(data.feeItems)){
+    _feeItems = data.feeItems.map(f=>({...f}));
+  } else {
+    _feeItems = [];
+    if(data.fee?.visitFee) _feeItems.push({name:'出張料', amount: data.fee.visitFee});
+    if(data.fee?.laborFee) _feeItems.push({name:'技術料', amount: data.fee.laborFee});
+    if(Array.isArray(data.parts)) data.parts.forEach(p=>{
+      const amt = (Number(p.qty)||0)*(Number(p.unitPrice)||0);
+      if(p.name||amt) _feeItems.push({name:p.name||'', amount:amt});
+    });
+  }
+  renderFeeItems();
   openModal('record-modal');
 }
 
@@ -282,11 +299,10 @@ async function saveRecord(){
   const id = document.getElementById('record-id').value;
   const equipmentId = parseInt(document.getElementById('record-equipmentId').value)||null;
   const completionDate = document.getElementById('record-completionDate').value;
-  const parts = _partRows.filter(p=>p.name||p.qty||p.unitPrice)
-    .map(p=>({name:normalizeFieldValue(p.name), qty:Number(p.qty)||0, unitPrice:Number(p.unitPrice)||0}));
-  const partsFee = parts.reduce((s,p)=>s+p.qty*p.unitPrice,0);
-  const visitFee = parseFloat(document.getElementById('record-visitFee').value)||0;
-  const laborFee = parseFloat(document.getElementById('record-laborFee').value)||0;
+  const feeItems = _feeItems.filter(f=>f.name||f.amount)
+    .map(f=>({name:normalizeFieldValue(f.name), amount:Number(f.amount)||0}));
+  const subtotal = feeItems.reduce((s,f)=>s+f.amount, 0);
+  const tax = Math.round(subtotal * _currentTaxRate / 100);
   const now = today();
   const base = id ? (await dbGet('serviceRecords', parseInt(id))) || {} : {};
   const fv = f => normalizeFieldValue(document.getElementById('record-'+f).value);
@@ -319,8 +335,8 @@ async function saveRecord(){
     callContent: document.getElementById('record-callContent').value.trim(),
     remarks: document.getElementById('record-remarks').value.trim(),
     customerReport: document.getElementById('record-customerReport').value.trim(),
-    parts,
-    fee: { visitFee, laborFee, partsFee, total: visitFee+laborFee+partsFee },
+    feeItems,
+    fee: { subtotal, tax, taxRate: _currentTaxRate, total: subtotal + tax },
     status: completionDate ? 'completed' : 'open',
     createdAt: base.createdAt || now,
     updatedAt: now
@@ -347,12 +363,25 @@ async function openPrint(id){
   if(!ref){ alert('記録が見つかりません'); return; }
   const co = await getCompanyInfo();
   const {r,m} = ref;
-  const partsRows = (r.parts||[]).map(p=>`<tr>
-      <td>${escHtml(p.name||'')}</td><td class="text-center">${p.qty||0}</td>
-      <td class="text-right">${fmtYen(p.unitPrice)}</td>
-      <td class="text-right">${fmtYen((p.qty||0)*(p.unitPrice||0))}</td></tr>`).join('')
-    || `<tr><td colspan="4" class="text-center" style="color:#999">交換部品なし</td></tr>`;
-  const fee = r.fee||{visitFee:0,laborFee:0,partsFee:0,total:0};
+  // 料金: 新形式(feeItems)優先、旧形式(parts/fee)はマイグレーション表示
+  let printFeeItems = [];
+  if(Array.isArray(r.feeItems) && r.feeItems.length){
+    printFeeItems = r.feeItems;
+  } else {
+    if(r.fee?.visitFee) printFeeItems.push({name:'出張料', amount: r.fee.visitFee});
+    if(r.fee?.laborFee) printFeeItems.push({name:'技術料', amount: r.fee.laborFee});
+    if(Array.isArray(r.parts)) r.parts.forEach(p=>{
+      const amt = (Number(p.qty)||0)*(Number(p.unitPrice)||0);
+      if(p.name||amt) printFeeItems.push({name:p.name||'', amount:amt});
+    });
+  }
+  const taxRate = r.fee?.taxRate ?? parseFloat(co.taxRate??10);
+  const subtotal = printFeeItems.reduce((s,f)=>s+(Number(f.amount)||0), 0);
+  const taxAmt = Math.round(subtotal * taxRate / 100);
+  const total = subtotal + taxAmt;
+  const feeItemRows = printFeeItems.length
+    ? printFeeItems.map(f=>`<tr><td>${escHtml(f.name||'')}</td><td class="text-right">${fmtYen(f.amount)}</td></tr>`).join('')
+    : `<tr><td colspan="2" class="text-center" style="color:#999">明細なし</td></tr>`;
   const billingLabel2 = r.billingTarget==='dealer' ? (m.dealerName||'依頼元') :
                         r.billingTarget==='custom'  ? (r.billingCustom||'') :
                                                       (m.customerName||'客先');
@@ -385,14 +414,16 @@ async function openPrint(id){
       <tr><th>担当者所見</th><td colspan="3" class="cell-multiline">${escHtml(r.remarks||'')}</td></tr>
       <tr><th>お客様への報告</th><td colspan="3" class="cell-multiline">${escHtml(r.customerReport||'')}</td></tr>
     </table>
-    <h3 style="font-size:12px;margin:10px 0 2px">交換部品</h3>
-    <table class="sheet-table"><thead><tr><th>品名</th><th>数量</th><th>単価</th><th>金額</th></tr></thead><tbody>${partsRows}</tbody></table>
-    <table class="sheet-table" style="margin-top:6px">
-      <tr><th>出張料</th><td class="text-right">${fmtYen(fee.visitFee)}</td>
-          <th>技術料</th><td class="text-right">${fmtYen(fee.laborFee)}</td>
-          <th>部品代</th><td class="text-right">${fmtYen(fee.partsFee)}</td>
-          <th>合計</th><td class="text-right"><strong>${fmtYen(fee.total)}</strong></td>
-          <th>請求先</th><td>${escHtml(billingLabel2)}</td></tr>
+    <h3 style="font-size:12px;margin:10px 0 2px">料金明細</h3>
+    <table class="sheet-table fee-detail-table">
+      <thead><tr><th>品目</th><th class="text-right">金額</th></tr></thead>
+      <tbody>${feeItemRows}</tbody>
+      <tfoot>
+        <tr><th>小計</th><td class="text-right">${fmtYen(subtotal)}</td></tr>
+        <tr><th>消費税（${taxRate}%）</th><td class="text-right">${fmtYen(taxAmt)}</td></tr>
+        <tr class="fee-total-row"><th>合計</th><td class="text-right"><strong>${fmtYen(total)}</strong></td></tr>
+        <tr><th>請求先</th><td>${escHtml(billingLabel2)}</td></tr>
+      </tfoot>
     </table>
     <div class="sheet-footer">© 2026 Nozomi Sakurada. All rights reserved.</div>`;
   navigateTo('print');
@@ -484,9 +515,7 @@ async function copyAndIssue(srcId){
    'callContent','remarks','customerReport'].forEach(f=>{
     document.getElementById('record-'+f).value = '';
   });
-  document.getElementById('record-visitFee').value = '';
-  document.getElementById('record-laborFee').value = '';
-  _partRows = [];
+  _feeItems = [];
   renderParts();
 }
 
@@ -859,7 +888,7 @@ async function reconnectAllFiles() {
 // =====================
 // 設定
 // =====================
-const SETTING_FIELDS = ['companyName','companyAddress','companyTel','companyFax'];
+const SETTING_FIELDS = ['companyName','companyAddress','companyTel','companyFax','taxRate'];
 
 async function loadSettings(){
   const s = await dbGet('appSettings','company') || {};
@@ -890,8 +919,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
     el.addEventListener('click',()=>navigateTo(el.dataset.page));
   });
-  document.getElementById('record-visitFee').addEventListener('input', recalcFee);
-  document.getElementById('record-laborFee').addEventListener('input', recalcFee);
   document.getElementById('record-search').addEventListener('input', e=>loadRecords(e.target.value));
   document.getElementById('copy-picker-search').addEventListener('input', e=>renderCopyPicker(e.target.value));
   if(window.lucide) lucide.createIcons();
