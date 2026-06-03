@@ -181,9 +181,9 @@ async function loadRecords(){
 
   const staleCount = recs.filter(r=>staleDaysOf(r)!==null).length;
   const navBadge = document.getElementById('nav-badge-stale');
-  navBadge.textContent = staleCount; navBadge.style.display = staleCount>0?'':'none';
+  navBadge.textContent = staleCount; navBadge.classList.toggle('hidden', staleCount===0);
   const sum = document.getElementById('stale-summary');
-  sum.textContent = `放置案件 ${staleCount}件`; sum.style.display = staleCount>0?'':'none';
+  sum.textContent = `放置案件 ${staleCount}件`; sum.classList.toggle('hidden', staleCount===0);
 
   const tbody = document.getElementById('record-list');
   tbody.innerHTML = list.length===0
@@ -689,11 +689,11 @@ function updateFolderStatus() {
 
   // 接続済みバナー
   const banner = document.getElementById('folder-connected-banner');
-  if (banner) banner.style.display = connected ? 'flex' : 'none';
+  if (banner) banner.classList.toggle('hidden', !connected);
 
   // 未接続バナー
   const noBanner = document.getElementById('folder-disconnected-banner');
-  if (noBanner) noBanner.style.display = connected ? 'none' : 'flex';
+  if (noBanner) noBanner.classList.toggle('hidden', connected);
 
   // フォルダ名表示
   const nameEl = document.getElementById('folder-connected-name');
@@ -732,7 +732,7 @@ async function checkAutoSync() {
         if (oldHandle) { foundOld = true; break; }
       }
       const alertEl = document.getElementById('global-sync-alert');
-      if (alertEl) alertEl.style.display = foundOld ? 'flex' : 'none';
+      if (alertEl) alertEl.classList.toggle('hidden', !foundOld);
       updateFolderStatus();
       return;
     }
@@ -743,12 +743,12 @@ async function checkAutoSync() {
       await _initDirHandle(dir, false);
       console.log('[sync] Auto-connected:', dir.name);
       const alertEl = document.getElementById('global-sync-alert');
-      if (alertEl) alertEl.style.display = 'none';
+      if (alertEl) alertEl.classList.add('hidden');
     } else {
       // パーミッションが必要 → 再接続ボタンを表示
       _dirHandle = dir; // ハンドル自体は保持しておく
       const alertEl = document.getElementById('global-sync-alert');
-      if (alertEl) alertEl.style.display = 'flex';
+      if (alertEl) alertEl.classList.remove('hidden');
       console.log('[sync] Permission required for folder:', dir.name);
     }
   } catch (err) {
@@ -772,7 +772,7 @@ async function reconnectAllFiles() {
       await _initDirHandle(dir, false);
       showToast('データフォルダへの接続が完了しました');
       const alertEl = document.getElementById('global-sync-alert');
-      if (alertEl) alertEl.style.display = 'none';
+      if (alertEl) alertEl.classList.add('hidden');
     } else {
       showToast('アクセスが拒否されました', 'danger');
     }

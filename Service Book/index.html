@@ -11,15 +11,15 @@
   <header class="app-header">
     <div class="top-label-en">Service Book</div>
     <h1>サービス報告書・点検履歴台帳</h1>
-    <div id="folder-disconnected-banner" class="banner" style="display:none">
+    <div id="folder-disconnected-banner" class="banner hidden">
       <span>dataフォルダ未接続</span>
       <button class="btn btn-sm btn-primary" type="button" onclick="connectDataFolder()">フォルダを接続</button>
     </div>
-    <div id="folder-connected-banner" class="banner" style="display:none">
+    <div id="folder-connected-banner" class="banner hidden">
       <span>同期中: <strong id="folder-connected-name">—</strong></span>
       <button class="btn btn-sm btn-secondary" type="button" onclick="disconnectDataFolder()">解除</button>
     </div>
-    <div id="global-sync-alert" class="banner" style="display:none">
+    <div id="global-sync-alert" class="banner hidden">
       <span>フォルダの再接続が必要です</span>
       <button class="btn btn-sm btn-primary" type="button" onclick="reconnectAllFiles()">再接続</button>
     </div>
@@ -29,7 +29,7 @@
     <button class="nav-item active" data-page="intake" type="button">新規依頼発行</button>
     <button class="nav-item" data-page="customers" type="button">顧客管理</button>
     <button class="nav-item" data-page="equipments" type="button">機器管理</button>
-    <button class="nav-item" data-page="records" type="button">サービス記録 <span id="nav-badge-stale" class="badge badge-expired" style="display:none">0</span></button>
+    <button class="nav-item" data-page="records" type="button">サービス記録 <span id="nav-badge-stale" class="badge badge-expired hidden">0</span></button>
     <button class="nav-item" data-page="print" type="button">報告書印刷</button>
   </nav>
 
@@ -38,11 +38,11 @@
       <div class="page-head"><h2>新規依頼発行</h2></div>
       <div class="intake-card">
         <p>受付情報を入力して依頼（未完了のサービス記録）を起こします。保存後に依頼票を印刷できます。</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <div class="flex-wrap-row">
           <button class="btn btn-primary btn-lg" type="button" onclick="openIntake()">新規依頼を起こす</button>
           <button class="btn btn-secondary btn-lg" type="button" onclick="openCopyPicker()">過去履歴からコピーして発行</button>
         </div>
-        <div style="margin-top:16px">
+        <div class="mt-16">
           <h3>未完了の依頼</h3>
           <table class="data-table">
             <thead><tr><th>管理番号</th><th>受付日</th><th>顧客 / 機器</th><th>作業種別</th><th>操作</th></tr></thead>
@@ -83,7 +83,7 @@
         <h2>サービス記録</h2>
         <div class="page-actions">
           <select id="record-equipment-filter" aria-label="機器フィルター"></select>
-          <span id="stale-summary" class="badge badge-expired" style="display:none"></span>
+          <span id="stale-summary" class="badge badge-expired hidden"></span>
           <button class="btn btn-primary" type="button" onclick="openRecordModal()">記録を追加</button>
         </div>
       </div>
@@ -163,7 +163,7 @@
         <table class="data-table"><thead><tr><th>品名</th><th>数量</th><th>単価</th><th></th></tr></thead>
           <tbody id="record-parts"></tbody></table>
         <button class="btn btn-xs btn-secondary" type="button" onclick="addPartRow()">部品を追加</button>
-        <div class="grid2" style="margin-top:12px">
+        <div class="grid2 mt-12">
           <label>出張料<input id="record-visitFee" type="number"></label>
           <label>技術料<input id="record-laborFee" type="number"></label>
           <div>部品代: <span id="record-partsFee">¥0</span></div>

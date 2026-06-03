@@ -699,3 +699,9 @@ textarea { resize: vertical; min-height: 72px; }
 @media print {
   .nav, #toast { display: none !important; }
 }
+
+/* === ユーティリティ === */
+.hidden { display: none !important; }
+.flex-wrap-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.mt-16 { margin-top: 16px; }
+.mt-12 { margin-top: 12px; }
