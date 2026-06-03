@@ -325,7 +325,45 @@ async function deleteRecord(id){
   loadRecords();
 }
 
-function openPrint(){}
+async function openPrint(id){
+  const ref = await loadRecordWithRefs(id);
+  if(!ref){ alert('記録が見つかりません'); return; }
+  const {r,e,c} = ref;
+  const partsRows = (r.parts||[]).map(p=>`<tr>
+      <td>${escHtml(p.name||'')}</td><td class="text-center">${p.qty||0}</td>
+      <td class="text-right">${fmtYen(p.unitPrice)}</td>
+      <td class="text-right">${fmtYen((p.qty||0)*(p.unitPrice||0))}</td></tr>`).join('')
+    || `<tr><td colspan="4" class="text-center" style="color:#999">交換部品なし</td></tr>`;
+  const fee = r.fee||{visitFee:0,laborFee:0,partsFee:0,total:0};
+  document.getElementById('print-area').innerHTML = `
+    <div class="sheet-header"><h1>サービス報告書</h1>
+      <div class="sheet-meta">管理番号: ${escHtml(r.mgmtNo||'—')}<br>対応日: ${fmtDate(r.serviceDate)}<br>完了日: ${fmtDate(r.completionDate)}</div></div>
+    <table class="sheet-table">
+      <tr><th>依頼元 / 販売店</th><td colspan="3">${escHtml(c?.dealerName||'')}</td></tr>
+      <tr><th>お客様</th><td colspan="3">${escHtml(c?.name||'')}（${escHtml(c?.houseMaker||'')}）</td></tr>
+      <tr><th>住所</th><td>${escHtml(c?.address||'')}</td><th>連絡先</th><td>${escHtml(c?.contact||'')}</td></tr>
+      ${c?.printNote?`<tr><th>特記事項</th><td colspan="3">${escHtml(c.printNote)}</td></tr>`:''}
+      <tr><th>機種</th><td colspan="3">${escHtml(e?.maker||'')} ${escHtml(e?.modelNo||'')} / ロット:${escHtml(e?.lotNo||'')} / 用途:${escHtml(e?.usage||'')}</td></tr>
+      <tr><th>作業種別</th><td>${escHtml(r.workType||'')}</td><th>担当者</th><td>${escHtml(r.staff||'')}</td></tr>
+      <tr><th>コール内容</th><td colspan="3" class="cell-multiline">${escHtml(r.callContent||'')}</td></tr>
+      <tr><th>担当者所見</th><td colspan="3" class="cell-multiline">${escHtml(r.remarks||'')}</td></tr>
+      <tr><th>お客様への報告</th><td colspan="3" class="cell-multiline">${escHtml(r.customerReport||'')}</td></tr>
+    </table>
+    <h3>交換部品</h3>
+    <table class="sheet-table"><thead><tr><th>品名</th><th>数量</th><th>単価</th><th>金額</th></tr></thead><tbody>${partsRows}</tbody></table>
+    <h3>料金明細</h3>
+    <table class="sheet-table">
+      <tr><th>出張料</th><td class="text-right">${fmtYen(fee.visitFee)}</td>
+          <th>技術料</th><td class="text-right">${fmtYen(fee.laborFee)}</td></tr>
+      <tr><th>部品代</th><td class="text-right">${fmtYen(fee.partsFee)}</td>
+          <th>合計</th><td class="text-right"><strong>${fmtYen(fee.total)}</strong></td></tr>
+    </table>
+    <table class="sheet-table blank" style="margin-top:20px">
+      <tr><th style="width:140px">お客様確認サイン</th><td style="height:60px"></td></tr>
+    </table>
+    <div class="sheet-footer">© 2026 Nozomi Sakurada. All rights reserved.</div>`;
+  navigateTo('print');
+}
 
 // === 新規依頼発行 ===
 async function loadIntake(){
