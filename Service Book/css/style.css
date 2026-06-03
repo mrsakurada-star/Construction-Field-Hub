@@ -696,3 +696,6 @@ textarea { resize: vertical; min-height: 72px; }
 @media print{
   .print-sheet{ padding:0; max-width:none; }
 }
+@media print {
+  .nav, #toast { display: none !important; }
+}
