@@ -6,6 +6,7 @@ function navigateTo(pageId){
   document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
   if(pageId==='records') loadRecords(document.getElementById('record-search')?.value||'');
   if(pageId==='intake') loadIntake();
+  if(pageId==='settings') loadSettings();
 }
 function showToast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast toast-${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
 function escHtml(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -344,6 +345,7 @@ async function deleteRecord(id){
 async function openPrint(id){
   const ref = await loadRecordWithRefs(id);
   if(!ref){ alert('記録が見つかりません'); return; }
+  const co = await getCompanyInfo();
   const {r,m} = ref;
   const partsRows = (r.parts||[]).map(p=>`<tr>
       <td>${escHtml(p.name||'')}</td><td class="text-center">${p.qty||0}</td>
@@ -378,7 +380,7 @@ async function openPrint(id){
       <tr><th>部品代</th><td class="text-right">${fmtYen(fee.partsFee)}</td>
           <th>合計 / 請求先</th><td class="text-right"><strong>${fmtYen(fee.total)}</strong> — ${escHtml(billingLabel2)}</td></tr>
     </table>
-    <div class="sheet-footer">© 2026 Nozomi Sakurada. All rights reserved.</div>`;
+    <div class="sheet-footer">${co.companyName?escHtml(co.companyName)+'　':''}${co.companyAddress?escHtml(co.companyAddress)+'　':''}${co.companyTel?'TEL '+escHtml(co.companyTel)+'　':''}${co.companyFax?'FAX '+escHtml(co.companyFax):''}　© 2026 Nozomi Sakurada. All rights reserved.</div>`;
   navigateTo('print');
 }
 
@@ -501,6 +503,7 @@ async function loadRecordWithRefs(id){
 async function openRequestSlip(id){
   const ref = await loadRecordWithRefs(id);
   if(!ref){ alert('記録が見つかりません'); return; }
+  const co = await getCompanyInfo();
   const {r,m} = ref;
   const billingLabel = r.billingTarget==='dealer' ? (m.dealerName||'依頼元') :
                        r.billingTarget==='custom'  ? (r.billingCustom||'') :
@@ -524,7 +527,7 @@ async function openRequestSlip(id){
       <tr><th>対応日</th><td></td><th>担当者</th><td></td></tr>
       <tr><th>作業内容</th><td colspan="3" style="height:120px"></td></tr>
     </table>
-    <div class="sheet-footer">© 2026 Nozomi Sakurada</div>`;
+    <div class="sheet-footer">${co.companyName?escHtml(co.companyName)+'　':''}${co.companyAddress?escHtml(co.companyAddress)+'　':''}${co.companyTel?'TEL '+escHtml(co.companyTel)+'　':''}${co.companyFax?'FAX '+escHtml(co.companyFax):''}　© 2026 Nozomi Sakurada</div>`;
   navigateTo('print');
 }
 
@@ -826,12 +829,34 @@ async function reconnectAllFiles() {
 }
 
 // =====================
+// 設定
+// =====================
+const SETTING_FIELDS = ['companyName','companyAddress','companyTel','companyFax'];
+
+async function loadSettings(){
+  const s = await dbGet('appSettings','company') || {};
+  SETTING_FIELDS.forEach(f=>{ const el=document.getElementById('setting-'+f); if(el) el.value=s[f]||''; });
+}
+
+async function saveSettings(){
+  const s = {};
+  SETTING_FIELDS.forEach(f=>{ s[f]=document.getElementById('setting-'+f).value.trim(); });
+  await dbPut('appSettings', s, 'company');
+  showToast('設定を保存しました');
+}
+
+async function getCompanyInfo(){
+  return await dbGet('appSettings','company') || {};
+}
+
+// =====================
 // 初期化
 // =====================
 window.addEventListener('DOMContentLoaded', async () => {
   await openDB();
   await checkAutoSync();
   updateFolderStatus();
+  await loadSettings();
   navigateTo('intake');
 
   document.querySelectorAll('.nav-item[data-page]').forEach(el=>{

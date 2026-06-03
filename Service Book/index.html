@@ -29,6 +29,7 @@
     <button class="nav-item active" data-page="intake" type="button">新規依頼発行</button>
     <button class="nav-item" data-page="records" type="button">サービス記録 <span id="nav-badge-stale" class="badge badge-expired hidden">0</span></button>
     <button class="nav-item" data-page="print" type="button">報告書印刷</button>
+    <button class="nav-item" data-page="settings" type="button">設定</button>
   </nav>
 
   <main>
@@ -62,6 +63,21 @@
         <thead><tr><th>状態</th><th>受付日 / 対応日</th><th>管理番号</th><th>顧客 / 機器</th><th>作業種別</th><th>担当</th><th>操作</th></tr></thead>
         <tbody id="record-list"></tbody>
       </table>
+    </section>
+    <section id="page-settings" class="page">
+      <div class="page-head"><h2>設定</h2></div>
+      <div class="settings-card">
+        <h3>自社情報（連絡表フッターに印刷）</h3>
+        <div class="settings-form">
+          <label>法人名<input id="setting-companyName" type="text"></label>
+          <label>所在地<input id="setting-companyAddress" type="text"></label>
+          <label>TEL<input id="setting-companyTel" type="text"></label>
+          <label>FAX<input id="setting-companyFax" type="text"></label>
+        </div>
+        <div class="mt-16">
+          <button class="btn btn-primary" type="button" onclick="saveSettings()">保存</button>
+        </div>
+      </div>
     </section>
     <section id="page-print" class="page">
       <div class="page-head no-print">
