@@ -569,7 +569,7 @@ textarea { resize: vertical; min-height: 72px; }
         print-color-adjust: exact;
         font-size: 9pt;
     }
-    .app-header, .sidebar, .screen-only, .btn, .modal-overlay { display: none !important; }
+    .app-header, .sidebar, .screen-only, .btn, .modal-overlay, .modal { display: none !important; }
     .app-layout { display: block !important; }
     .main-content { padding: 0 !important; }
     .page { display: block !important; }
@@ -611,6 +611,33 @@ textarea { resize: vertical; min-height: 72px; }
     .no-print { display: none !important; }
 }
 .print-only { display: none; }
+
+/* === Service Book モーダル構造 (.modal=overlay, .modal-box=内容) === */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 500;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 48px 24px;
+  overflow-y: auto;
+}
+.modal.open { display: flex; }
+.modal-box {
+  background: var(--white);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 640px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+  margin: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.modal-box.modal-wide { max-width: 900px; }
 
 /* === Service Book shell layout === */
 .app-header {

@@ -6,7 +6,7 @@ function navigateTo(pageId){
   document.querySelector(`.nav-item[data-page="${pageId}"]`)?.classList.add('active');
   if(pageId==='customers') loadCustomers();
   if(pageId==='equipments') loadEquipments();
-  if(pageId==='records') loadRecords();
+  if(pageId==='records') loadRecords(document.getElementById('record-search')?.value||'');
   if(pageId==='intake') loadIntake();
 }
 function showToast(msg,type='success'){const t=document.getElementById('toast');t.textContent=msg;t.className=`toast toast-${type} show`;setTimeout(()=>t.classList.remove('show'),3000);}
@@ -163,7 +163,7 @@ function staleDaysOf(rec){
   return days >= STALE_DAYS ? days : null;
 }
 
-async function loadRecords(){
+async function loadRecords(q=''){
   const [recs, equips, customers] = await Promise.all([
     dbGetAll('serviceRecords'), dbGetAll('equipments'), dbGetAll('customers')]);
   const emap = Object.fromEntries(equips.map(e=>[e.id,e]));
@@ -177,6 +177,11 @@ async function loadRecords(){
 
   let list = [...recs];
   if(_recordFilterEquipmentId) list = list.filter(r=>r.equipmentId==_recordFilterEquipmentId);
+  if(q) list = list.filter(r=>{
+    const e = emap[r.equipmentId];
+    const c = e ? cmap[e.customerId] : null;
+    return fuzzyMatch(q, r.mgmtNo||'', r.staff||'', e?e.modelNo||'':'', c?c.name||'':'', c?c.kana||'':'');
+  });
   list.sort((a,b)=>(b.receivedDate||b.createdAt||'')>(a.receivedDate||a.createdAt||'')?1:-1);
 
   const staleCount = recs.filter(r=>staleDaysOf(r)!==null).length;
@@ -801,7 +806,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('equipment-customer-filter').addEventListener('change', e=>{ _equipFilterCustomerId = e.target.value?parseInt(e.target.value):null; loadEquipments(document.getElementById('equipment-search').value); });
   document.getElementById('record-visitFee').addEventListener('input', recalcFee);
   document.getElementById('record-laborFee').addEventListener('input', recalcFee);
-  document.getElementById('record-equipment-filter').addEventListener('change', e=>{ _recordFilterEquipmentId = e.target.value?parseInt(e.target.value):null; loadRecords(); });
+  document.getElementById('record-search').addEventListener('input', e=>loadRecords(e.target.value));
+  document.getElementById('record-equipment-filter').addEventListener('change', e=>{ _recordFilterEquipmentId = e.target.value?parseInt(e.target.value):null; loadRecords(document.getElementById('record-search').value); });
   document.getElementById('copy-picker-search').addEventListener('input', e=>renderCopyPicker(e.target.value));
   if(window.lucide) lucide.createIcons();
 });

@@ -82,6 +82,7 @@
       <div class="page-head">
         <h2>サービス記録</h2>
         <div class="page-actions">
+          <input id="record-search" class="search" type="search" placeholder="顧客名・管理番号・型式・担当者で検索">
           <select id="record-equipment-filter" aria-label="機器フィルター"></select>
           <span id="stale-summary" class="badge badge-expired hidden"></span>
           <button class="btn btn-primary" type="button" onclick="openRecordModal()">記録を追加</button>
@@ -160,7 +161,7 @@
         <label>担当者所見<textarea id="record-remarks"></textarea></label>
         <label>お客様への報告<textarea id="record-customerReport"></textarea></label>
         <h4>交換部品</h4>
-        <table class="data-table"><thead><tr><th>品名</th><th>数量</th><th>単価</th><th></th></tr></thead>
+        <table class="data-table"><thead><tr><th>品名</th><th>数量</th><th>単価</th><th>操作</th></tr></thead>
           <tbody id="record-parts"></tbody></table>
         <button class="btn btn-xs btn-secondary" type="button" onclick="addPartRow()">部品を追加</button>
         <div class="grid2 mt-12">
@@ -180,7 +181,7 @@
         <h3>過去履歴からコピー</h3>
         <input id="copy-picker-search" class="search" type="search" placeholder="顧客名・型式・管理番号で検索">
         <table class="data-table">
-          <thead><tr><th>受付日</th><th>管理番号</th><th>顧客 / 機器</th><th>作業種別</th><th></th></tr></thead>
+          <thead><tr><th>受付日</th><th>管理番号</th><th>顧客 / 機器</th><th>作業種別</th><th>操作</th></tr></thead>
           <tbody id="copy-picker-list"></tbody>
         </table>
         <div class="modal-actions">
