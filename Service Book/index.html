@@ -92,7 +92,13 @@
         <tbody id="record-list"></tbody>
       </table>
     </section>
-    <section id="page-print" class="page"></section>
+    <section id="page-print" class="page">
+      <div class="page-head no-print">
+        <button class="btn btn-secondary" type="button" onclick="navigateTo('records')">← 戻る</button>
+        <button class="btn btn-primary" type="button" onclick="window.print()">印刷 / PDF</button>
+      </div>
+      <div id="print-area" class="print-sheet"></div>
+    </section>
   </main>
 
   <div id="modal-root">

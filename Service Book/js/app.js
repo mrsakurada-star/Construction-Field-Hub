@@ -413,8 +413,41 @@ async function copyAndIssue(srcId){
   renderParts();
 }
 
-// Task 8 が本実装に差し替えるスタブ
-function openRequestSlip(){}
+// === 印刷 ===
+async function loadRecordWithRefs(id){
+  const r = await dbGet('serviceRecords', id);
+  if(!r) return null;
+  const e = r.equipmentId ? await dbGet('equipments', r.equipmentId) : null;
+  const c = e && e.customerId ? await dbGet('customers', e.customerId) : null;
+  return { r, e, c };
+}
+
+async function openRequestSlip(id){
+  const ref = await loadRecordWithRefs(id);
+  if(!ref){ alert('記録が見つかりません'); return; }
+  const {r,e,c} = ref;
+  document.getElementById('print-area').innerHTML = `
+    <div class="sheet-header"><h1>作業依頼票</h1>
+      <div class="sheet-meta">管理番号: ${escHtml(r.mgmtNo||'—')}<br>受付日: ${fmtDate(r.receivedDate)}</div></div>
+    <table class="sheet-table">
+      <tr><th>受付者</th><td>${escHtml(r.receptionist||'')}</td><th>希望日</th><td>${fmtDate(r.requestedDate)}</td></tr>
+      <tr><th>作業種別</th><td colspan="3">${escHtml(r.workType||'')}</td></tr>
+      <tr><th>依頼元 / 販売店</th><td colspan="3">${escHtml(c?.dealerName||'')}</td></tr>
+      <tr><th>お客様</th><td colspan="3">${escHtml(c?.name||'')}（${escHtml(c?.houseMaker||'')}）</td></tr>
+      <tr><th>住所</th><td colspan="3">${escHtml(c?.address||'')}</td></tr>
+      <tr><th>連絡先</th><td colspan="3">${escHtml(c?.contact||'')}</td></tr>
+      ${c?.printNote?`<tr><th>特記事項</th><td colspan="3">${escHtml(c.printNote)}</td></tr>`:''}
+      <tr><th>機種</th><td colspan="3">${escHtml(e?.maker||'')} ${escHtml(e?.modelNo||'')} / ロット:${escHtml(e?.lotNo||'')} / 用途:${escHtml(e?.usage||'')}</td></tr>
+      <tr><th>コール内容</th><td colspan="3" class="cell-multiline">${escHtml(r.callContent||'')}</td></tr>
+    </table>
+    <h3>現場記入欄</h3>
+    <table class="sheet-table blank">
+      <tr><th>対応日</th><td></td><th>担当者</th><td></td></tr>
+      <tr><th>作業内容</th><td colspan="3" style="height:120px"></td></tr>
+    </table>
+    <div class="sheet-footer">© 2026 Nozomi Sakurada</div>`;
+  navigateTo('print');
+}
 
 // =====================
 // データ管理・外部ファイル連携 (フォルダ一括接続方式)
