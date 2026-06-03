@@ -314,6 +314,7 @@ async function saveRecord(){
   await onRecordsChanged();
   showToast('記録を保存しました');
   loadRecords();
+  if(document.getElementById('page-intake').classList.contains('active')) loadIntake();
 }
 
 async function deleteRecord(id){
@@ -326,8 +327,94 @@ async function deleteRecord(id){
 
 function openPrint(){}
 
-// 後続タスクで本実装に差し替えるスタブ
-function loadIntake(){}
+// === 新規依頼発行 ===
+async function loadIntake(){
+  const [recs, equips, customers] = await Promise.all([
+    dbGetAll('serviceRecords'), dbGetAll('equipments'), dbGetAll('customers')]);
+  const emap = Object.fromEntries(equips.map(e=>[e.id,e]));
+  const cmap = Object.fromEntries(customers.map(c=>[c.id,c]));
+  const open = recs.filter(r=>r.status!=='completed')
+    .sort((a,b)=>(b.receivedDate||'')>(a.receivedDate||'')?1:-1);
+  const tbody = document.getElementById('intake-open-list');
+  tbody.innerHTML = open.length===0
+    ? `<tr><td colspan="5" class="text-center" style="padding:24px;color:var(--text3)">未完了の依頼はありません</td></tr>`
+    : open.map(r=>{
+        const e=emap[r.equipmentId]; const c=e?cmap[e.customerId]:null;
+        return `<tr>
+          <td>${escHtml(r.mgmtNo||'')}</td>
+          <td>${fmtDate(r.receivedDate)}</td>
+          <td>${c?escHtml(c.name):'—'} / ${e?escHtml(e.modelNo||''):'—'}</td>
+          <td>${escHtml(r.workType||'')}</td>
+          <td><div style="display:flex;gap:6px">
+            <button class="btn btn-xs btn-secondary" type="button" onclick="openRecordModal(${r.id})">編集</button>
+            <button class="btn btn-xs btn-primary" type="button" onclick="openRequestSlip(${r.id})">依頼票</button>
+          </div></td>
+        </tr>`;
+      }).join('');
+}
+
+async function openIntake(){
+  await openRecordModal();
+  document.getElementById('record-receivedDate').value = today();
+  document.getElementById('record-modal-title').textContent = '新規依頼発行';
+}
+
+async function openCopyPicker(){
+  document.getElementById('copy-picker-search').value = '';
+  await renderCopyPicker('');
+  openModal('copy-picker-modal');
+}
+
+async function renderCopyPicker(filterText){
+  const [recs, equips, customers] = await Promise.all([
+    dbGetAll('serviceRecords'), dbGetAll('equipments'), dbGetAll('customers')]);
+  const emap = Object.fromEntries(equips.map(e=>[e.id,e]));
+  const cmap = Object.fromEntries(customers.map(c=>[c.id,c]));
+  let list = [...recs].sort((a,b)=>(b.receivedDate||b.createdAt||'')>(a.receivedDate||a.createdAt||'')?1:-1);
+  if(filterText){
+    list = list.filter(r=>{
+      const e=emap[r.equipmentId]; const c=e?cmap[e.customerId]:null;
+      return fuzzyMatch(filterText, c?.name, e?.modelNo, r.mgmtNo);
+    });
+  }
+  const tbody = document.getElementById('copy-picker-list');
+  tbody.innerHTML = list.length===0
+    ? `<tr><td colspan="5" class="text-center" style="padding:24px;color:var(--text3)">該当する記録がありません</td></tr>`
+    : list.map(r=>{
+        const e=emap[r.equipmentId]; const c=e?cmap[e.customerId]:null;
+        return `<tr>
+          <td>${fmtDate(r.receivedDate)}</td>
+          <td>${escHtml(r.mgmtNo||'')}</td>
+          <td>${c?escHtml(c.name):'—'} / ${e?escHtml(e.modelNo||''):'—'}</td>
+          <td>${escHtml(r.workType||'')}</td>
+          <td><button class="btn btn-xs btn-primary" type="button" onclick="copyAndIssue(${r.id})">この内容でコピー発行</button></td>
+        </tr>`;
+      }).join('');
+}
+
+async function copyAndIssue(srcId){
+  const src = await dbGet('serviceRecords', srcId);
+  if(!src){ alert('元の記録が見つかりません'); return; }
+  closeModal('copy-picker-modal');
+  await openRecordModal();
+  document.getElementById('record-modal-title').textContent = '新規依頼発行（コピー）';
+  document.getElementById('record-equipmentId').value = src.equipmentId || '';
+  document.getElementById('record-workType').value = src.workType || '定期点検';
+  document.getElementById('record-receivedDate').value = today();
+  ['requestedDate','serviceDate','completionDate','staff','receptionist'].forEach(f=>{
+    document.getElementById('record-'+f).value = '';
+  });
+  ['callContent','remarks','customerReport'].forEach(f=>{
+    document.getElementById('record-'+f).value = '';
+  });
+  document.getElementById('record-visitFee').value = '';
+  document.getElementById('record-laborFee').value = '';
+  _partRows = [];
+  renderParts();
+}
+
+// Task 8 が本実装に差し替えるスタブ
+function openRequestSlip(){}
 
 // =====================
 // データ管理・外部ファイル連携 (フォルダ一括接続方式)
@@ -644,5 +731,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('record-visitFee').addEventListener('input', recalcFee);
   document.getElementById('record-laborFee').addEventListener('input', recalcFee);
   document.getElementById('record-equipment-filter').addEventListener('change', e=>{ _recordFilterEquipmentId = e.target.value?parseInt(e.target.value):null; loadRecords(); });
+  document.getElementById('copy-picker-search').addEventListener('input', e=>renderCopyPicker(e.target.value));
   if(window.lucide) lucide.createIcons();
 });
