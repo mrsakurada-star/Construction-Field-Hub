@@ -6,7 +6,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Construction Field Hub</title>
-    <link href="https://fonts.googleapis.com/css2?family=DotGothic16&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="css/portal.css">
 </head>
@@ -35,10 +34,36 @@
 
     <!-- Main -->
     <main class="portal-main">
-        <div class="section-label">ツール一覧</div>
+        <!-- セクション1：現場管理 -->
+        <div class="tools-section">
+            <div class="section-label">SITE MANAGEMENT</div>
+            <div class="tools-grid" id="toolsGrid-siteManagement">
+                <!-- ツールカードは js/tools.js と js/app.js によって動的に生成されます -->
+            </div>
+        </div>
 
-        <div class="tools-grid" id="toolsGrid">
-            <!-- ツールカードは js/tools.js と js/app.js によって動的に生成されます -->
+        <!-- セクション2：計算・シミュレーション -->
+        <div class="tools-section">
+            <div class="section-label">CALCULATION & SIMULATION</div>
+            <div class="tools-grid" id="toolsGrid-calculation">
+                <!-- ツールカードは js/tools.js と js/app.js によって動的に生成されます -->
+            </div>
+        </div>
+
+        <!-- セクション3：メンテナンス・営業資料 -->
+        <div class="tools-section">
+            <div class="section-label">MAINTENANCE & SALES</div>
+            <div class="tools-grid" id="toolsGrid-maintenance">
+                <!-- ツールカードは js/tools.js と js/app.js によって動的に生成されます -->
+            </div>
+        </div>
+
+        <!-- セクション4：業務・販売管理 -->
+        <div class="tools-section">
+            <div class="section-label">BUSINESS TOOLS</div>
+            <div class="tools-grid" id="toolsGrid-bizTools">
+                <!-- ツールカードは js/tools.js と js/app.js によって動的に生成されます -->
+            </div>
         </div>
 
         <!-- 最近のアップデート -->

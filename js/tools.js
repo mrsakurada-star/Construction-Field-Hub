@@ -2,82 +2,119 @@
 const PORTAL_TOOLS = [
     {
         id: "checklists",
-        title: "工事・メンテ用<br>統合チェック表",
-        desc: "「給湯機器工事」「キッチン設備」「シンプロメンテ」の3種類の現場に対応した統合型チェックリスト。進捗バー進行・A4のPDF印刷に最適化済み。",
+        title: "工事・メンテ統合チェック表",
+        desc: "給湯機器工事・キッチン・メンテナンス向けチェックリスト（PDF印刷対応）",
+        category: "site-mgmt",
+        tags: ["チェックリスト", "現場管理"],
         url: "Field_Checklists/index.html",
-        icon: "check-square",
-        tags: ["チェックリスト", "統合版", "現場管理"]
+        icon: "check-square"
     },
     {
         id: "photos",
-        title: "工事写真報告書<br>作成ツール",
-        desc: "IndexedDB採用で大量の写真に対応。専用ページでのドラッグ&ドロップ並べ替えや高品質なPDF出力機能を搭載。EXIF撮影日自動取得対応。",
+        title: "工事写真報告書作成ツール",
+        desc: "工事写真のドラッグ&ドロップ並べ替えと高品質PDF出力",
+        category: "site-mgmt",
+        tags: ["写真管理", "PDF出力"],
         url: "Construction photos/index.html",
-        icon: "image",
-        tags: ["写真管理", "PDF出力", "IndexedDB"]
+        icon: "image"
     },
     {
-        id: "hot_water",
-        title: "給湯能力計算<br>（大規模・単体）",
-        desc: "パーパス最新設計基準（v5.3）に準拠。マルチ方式・貯湯タンク方式・膨張タンク選定に対応。算定書PDF出力・同時使用率自動計算。",
-        url: "Hot water capacity calculation/index.html",
-        icon: "flame",
-        tags: ["給湯算定", "必要号数", "出湯量"]
+        id: "hot_water_v3",
+        title: "給湯能力計算書 v3",
+        desc: "パーパス基準v5.3対応。パラメータ変更の自動検出・記録、Rev管理、変更履歴の詳細自動記述対応",
+        category: "calculation",
+        tags: ["給湯計算", "計算書", "変更履歴管理"],
+        url: "Hot water calc/index.html",
+        icon: "flame"
     },
     {
         id: "fax",
-        title: "FAX送信票・<br>送付状作成",
-        desc: "FAX送信票や書類送付状を簡単に作成・印刷。最新の事業所データをオンラインで自動取得。",
+        title: "FAX送信票・送付状作成",
+        desc: "事業所最新データ自動取得で即座に作成・印刷可能",
+        category: "maintenance",
+        tags: ["送付状", "FAX"],
         url: "Fax Cover Sheet/index.html",
-        icon: "printer",
-        tags: ["送付状", "FAX", "最新データ取得"]
+        icon: "printer"
     },
     {
         id: "manual",
-        title: "簡易診断・<br>アラーム一覧生成",
-        desc: "宛先会社名を自由に入力して、パーパス製給湯器の「簡易診断マニュアル」や「アラーム一覧」を即座に生成・PDF化。",
+        title: "簡易診断・アラーム一覧生成",
+        desc: "パーパス給湯器のマニュアル・アラーム一覧を即座にPDF化",
+        category: "maintenance",
+        tags: ["マニュアル作成", "メンテ"],
         url: "manual/index.html",
-        icon: "alert-triangle",
-        tags: ["マニュアル作成", "メンテナンス", "PDF出力"]
+        icon: "alert-triangle"
     },
     {
         id: "e888",
-        title: "あんしん点検・<br>888表示について",
-        desc: "パーパス製給湯器の法定点検「あんしん点検」の料金・時間や、リモコンの「888」表示の一時解除方法をまとめた案内。",
+        title: "あんしん点検・888表示について",
+        desc: "法定点検「あんしん点検」と「888」表示解除方法の案内",
+        category: "maintenance",
+        tags: ["点検", "メンテ"],
         url: "E888/index.html",
-        icon: "shield-check",
-        tags: ["あんしん点検", "888表示", "メンテナンス"]
+        icon: "shield-check"
+    },
+    {
+        id: "maintenance_modes",
+        title: "メーカー別メンテナンス情報表示方法",
+        desc: "パーパス・ノーリツ・リンナイ・パロマのメンテナンスモード操作・表示内容を比較表示",
+        category: "maintenance",
+        tags: ["メンテナンス", "メーカー別"],
+        url: "maintenance-modes/index.html",
+        icon: "settings"
     },
     {
         id: "qvc",
-        title: "Showa Excel<br>レンジフード現地調査シート",
-        desc: "Excelデータを読み込み、エリア絞込（地方・県・エリア）を経て、A4印刷用の現地調査シートを即座に一括生成。自動列探索による柔軟なデータ抽出機能付き。",
+        title: "Showa Excelレンジフード現地調査シート",
+        desc: "Excel・地域絞込み対応の現地調査シート一括生成",
+        category: "calculation",
+        tags: ["Excel連携", "調査"],
         url: "Showa Excel/index.html",
-        icon: "clipboard-list",
-        tags: ["Excel連携", "調査シート", "レンジフード"]
+        icon: "clipboard-list"
     },
     {
         id: "running_cost",
-        title: "機器取替<br>シミュレーション",
-        desc: "ガス給湯器・ハイブリッドなどのランニングコストを比較。現在機種の自動ロックや先頭固定表示で比較がより分かりやすく。年間削減額グラフ表示対応。",
+        title: "機器取替シミュレーション",
+        desc: "ガス給湯器等のランニングコスト比較・年間削減額の可視化",
+        category: "calculation",
+        tags: ["コスト計算", "シミュレーション"],
         url: "Equipment Replacement Simulation/index.html",
-        icon: "trending-down",
-        tags: ["コスト計算", "比較シミュレーション", "エコジョーズ"]
+        icon: "trending-down"
     },
     {
         id: "freeze_prevention",
-        title: "凍結予防方法の<br>まとめ資料",
-        desc: "給湯器・風呂釜の凍結を防ぐ方法を4つのカテゴリ（単能機・ふろ給湯・暖房・風呂釜）ごとに解説。編ごとのA4印刷に対応。",
+        title: "凍結予防方法のまとめ資料",
+        desc: "普段・寒冷時・不在時別の凍結対策を網羅した完全版資料",
+        category: "maintenance",
+        tags: ["凍結予防", "メンテ"],
         url: "Freeze Prevention/index.html",
-        icon: "snowflake",
-        tags: ["凍結予防", "メンテナンス", "A4印刷"]
+        icon: "snowflake"
     },
     {
         id: "btob_price",
-        title: "BtoB価格表<br>作成ツール",
-        desc: "取引先・販売店の親子関係を管理し、製品・工事ごとの卸価格表を作成。行ごとに掛け率(%)または金額表示を切り替え可能。有効期限管理・バージョン管理対応。",
+        title: "BtoB価格表作成ツール",
+        desc: "取引先別卸価格表の作成・管理（フォルダ自動同期）",
+        category: "biz-tool",
+        tags: ["価格表", "BtoB"],
         url: "BtoB Price data base/index.html",
-        icon: "file-spreadsheet",
-        tags: ["価格表", "BtoB", "卸価格", "顧客管理"]
+        icon: "file-spreadsheet"
+    },
+    {
+        id: "ecotech_pmse",
+        title: "Ecotech アフターサービスシステム",
+        desc: "依頼受付・顧客管理・担当者割当・請求明細・レポート出力を統合管理。利用前に「ecotech-pmse-main」フォルダで npm run dev を起動してください（localhost:3000）",
+        category: "biz-tool",
+        tags: ["アフターサービス", "依頼管理", "請求"],
+        url: "http://localhost:3000",
+        icon: "layout-dashboard"
+    },
+    {
+        id: "service_book",
+        title: "サービス報告書・点検履歴台帳",
+        desc: "顧客・機器ごとに点検/修理履歴を蓄積。フォルダ同期、横断あいまい検索、依頼票・サービス報告書のA4発行",
+        category: "maintenance",
+        tags: ["点検履歴", "サービス報告書", "台帳"],
+        url: "Service Book/index.html",
+        icon: "clipboard-list"
     }
 ];

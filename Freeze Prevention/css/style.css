@@ -1,17 +1,27 @@
 /* ===== Variable Definitions ===== */
 :root {
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --secondary-color: #64748b;
-    --accent-color: #0ea5e9;
-    --danger-color: #ef4444;
-    --warning-color: #f59e0b;
-    --bg-color: #f8fafc;
+    --primary-color: #1d1d1f;
+    --primary-hover: #3a3a3c;
+    --secondary-color: #6e6e73;
+    --accent-color: #1d1d1f;
+    --danger-color: #ff3b30;
+    --warning-color: #ff9500;
+    --bg-color: #f5f5f7;
     --card-bg: #ffffff;
-    --text-main: #1e293b;
-    --text-muted: #64748b;
-    --border-color: #e2e8f0;
-    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --text-main: #1d1d1f;
+    --text-muted: #6e6e73;
+    --border-color: #d2d2d7;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+    /* Apple design tokens (mirrored for compatibility) */
+    --bg: #f5f5f7;
+    --white: #ffffff;
+    --border: #d2d2d7;
+    --border-dark: #b8b8be;
+    --text: #1d1d1f;
+    --text2: #6e6e73;
+    --text3: #86868b;
+    --accent: #1d1d1f;
+    --surface2: #f0f0f5;
 }
 
 /* ===== General Styles ===== */
@@ -22,7 +32,7 @@
 }
 
 body {
-    font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif;
     background-color: var(--bg-color);
     color: var(--text-main);
     line-height: 1.6;
@@ -110,7 +120,7 @@ body {
     .btn-primary:hover {
         background-color: var(--primary-hover);
         transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        box-shadow: 0 4px 12px rgba(29, 29, 31, 0.2);
     }
 
     .btn-secondary {
@@ -120,8 +130,8 @@ body {
     }
 
     .btn-secondary:hover {
-        background-color: #f1f5f9;
-        border-color: #cbd5e1;
+        background-color: var(--bg-color);
+        border-color: var(--border-dark);
     }
 
     main {
@@ -154,24 +164,87 @@ body {
 
     .btn-outline {
         background-color: transparent;
-        color: var(--primary-color);
-        border: 1px solid var(--primary-color);
+        color: var(--text-main);
+        border: 1px solid var(--border-color);
     }
 
     .btn-outline:hover {
-        background-color: #eff6ff;
+        background-color: var(--bg-color);
+        border-color: var(--primary-color);
     }
 
     .btn-sm {
         padding: 0.4rem 0.75rem;
         font-size: 0.8rem;
     }
+
+    /* ===== ページ内ナビゲーションバー ===== */
+    .page-nav {
+        position: sticky;
+        top: 80px; /* ヘッダー高さ分下げる */
+        z-index: 900;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .page-nav-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 1rem;
+        display: flex;
+        gap: 0;
+    }
+
+    .page-nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.6rem 1.1rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-decoration: none;
+        border-bottom: 3px solid transparent;
+        transition: color 0.18s, border-color 0.18s, background 0.18s;
+        white-space: nowrap;
+    }
+
+    .page-nav-link i {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+    }
+
+    .page-nav-link:hover {
+        color: var(--text-main);
+        background: var(--bg-color);
+        border-bottom-color: var(--text-main);
+    }
+
+    .page-nav-link.active {
+        color: var(--text-main);
+        border-bottom-color: var(--text-main);
+    }
+
+    /* ナビ分だけmainのpadding-topを追加 */
+    body {
+        padding-top: 80px; /* Header space */
+        scroll-behavior: smooth;
+    }
+
+    /* スクロール時アンカー位置のオフセット（ヘッダー+ナビ分） */
+    .page {
+        scroll-margin-top: 128px; /* 80px header + 48px nav */
+    }
 }
 
 /* ===== 🖨️ PRINT (印刷表示用) ===== */
 @page {
     size: A4 portrait;
-    margin: 10mm;
+    /* ブラウザフッターを考慮し小さめに設定 */
+    margin: 8mm 10mm 12mm 10mm;
 }
 
 @media print {
@@ -195,18 +268,23 @@ body {
         max-width: none !important;
     }
 
+    /* =====
+       印刷時のページ全体枠組み
+       190mm × 272mm（@pageマージンを引いた有効領域）に固定。
+       コンテンツが溢れたら overflow: hidden で強制カット。
+    ===== */
     .page {
         width: 190mm !important;
         height: 272mm !important;
         margin: 0 auto !important;
-        padding: 15mm !important;
+        padding: 6mm 8mm 6mm 8mm !important; /* 内側余白を最小限に */
         border: none !important;
         box-shadow: none !important;
         overflow: hidden !important;
         position: relative;
         display: flex;
         flex-direction: column;
-        break-after: page; /* Important: One section per page */
+        break-after: page;
         background: white !important;
         color: black !important;
     }
@@ -215,12 +293,226 @@ body {
         break-after: auto;
     }
 
+    /* 印刷時：ページヘッダーの圧縮 */
+    .page-header {
+        margin-bottom: 4px !important;
+        padding-bottom: 4px !important;
+        border-bottom-width: 2px !important;
+    }
+
+    .page-title {
+        font-size: 16pt !important;
+    }
+
+    .page-title i {
+        width: 20px !important;
+        height: 20px !important;
+    }
+
+    .page-subtitle {
+        font-size: 8pt !important;
+        margin-top: 2px !important;
+    }
+
+    .brand-banner {
+        font-size: 7pt !important;
+        margin-bottom: 2px !important;
+        padding-bottom: 2px !important;
+        color: #888 !important;
+        border-bottom-color: #eee !important;
+    }
+
+    /* 印刷時：ページボディ（カテゴリの列）*/
+    .page-body {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    /* 印刷時：カテゴリブロック */
+    .category-block {
+        border: 1px solid #ccc !important;
+        margin-bottom: 0 !important;
+        border-radius: 4px !important;
+        overflow: hidden !important;
+        break-inside: avoid;
+        flex-shrink: 1; /* コンテンツに応じて縮小を許可 */
+    }
+
+    .category-header {
+        padding: 3px 8px !important;
+        font-size: 8pt !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .cat-icon {
+        width: 11px !important;
+        height: 11px !important;
+    }
+
+    .cat-label {
+        font-size: 8pt !important;
+    }
+
+    .cat-subtitle {
+        font-size: 7pt !important;
+    }
+
+    .category-body {
+        padding: 4px 8px 2px !important;
+    }
+
+    /* 印刷時：各セクション */
+    .section {
+        margin-bottom: 4px !important;
+    }
+
+    .section-heading {
+        font-size: 8pt !important;
+        font-weight: 700 !important;
+        margin-bottom: 2px !important;
+    }
+
+    .section-content {
+        font-size: 7.5pt !important;
+        margin-bottom: 2px !important;
+        line-height: 1.4 !important;
+    }
+
+    /* 印刷時：箇条書きリスト */
+    .list-items {
+        margin-left: 0 !important;
+    }
+
+    .list-items li {
+        font-size: 7.5pt !important;
+        padding-left: 1rem !important;
+        margin-bottom: 1px !important;
+        line-height: 1.4 !important;
+    }
+
+    /* 印刷時：ステップボックス */
+    .step-box {
+        background: #f5f5f5 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        padding: 4px 8px !important;
+        margin: 2px 0 !important;
+        border-radius: 4px !important;
+    }
+
+    .step-item {
+        gap: 6px !important;
+        margin-bottom: 2px !important;
+    }
+
+    .step-number {
+        width: 15px !important;
+        height: 15px !important;
+        font-size: 6pt !important;
+        flex-shrink: 0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .step-text {
+        font-size: 7.5pt !important;
+        line-height: 1.4 !important;
+    }
+
+    /* 印刷時：アラート */
+    .alert {
+        padding: 3px 8px !important;
+        margin-top: 2px !important;
+        font-size: 7pt !important;
+        border-radius: 3px !important;
+        gap: 4px !important;
+        line-height: 1.4 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .alert-warning {
+        background: #fffbeb !important;
+        border-color: #fde68a !important;
+        color: #92400e !important;
+    }
+
+    .alert-important {
+        background: #fdf2f2 !important;
+        border-color: #fecaca !important;
+        color: #991b1b !important;
+    }
+
+    .alert-icon {
+        width: 12px !important;
+        height: 12px !important;
+        flex-shrink: 0 !important;
+    }
+
+    /* 印刷時：ワンポイントアドバイス */
+    .tip-box {
+        margin-top: 3px !important;
+        padding: 4px 8px !important;
+        border-radius: 4px !important;
+        background: #f0fff4 !important;
+        border-left: 3px solid #22c55e !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .tip-header {
+        margin-bottom: 1px !important;
+    }
+
+    .tip-icon {
+        width: 11px !important;
+        height: 11px !important;
+    }
+
+    .tip-label {
+        font-size: 7pt !important;
+        color: #15803d !important;
+    }
+
+    .tip-content {
+        font-size: 7pt !important;
+        color: #166534 !important;
+        line-height: 1.4 !important;
+    }
+
+    /* 印刷時：カテゴリヘッダー色 */
+    .cat-normal .category-header {
+        background: #1d1d1f !important;
+        color: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .cat-cold .category-header {
+        background: #3a3a3c !important;
+        color: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .cat-absent .category-header {
+        background: #86868b !important;
+        color: #ffffff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
     /* Print color overrides */
     :root {
-        --primary-color: #000;
+        --primary-color: #1d1d1f;
         --border-color: #ccc;
     }
 }
+
 
 /* ===== Brand Banner ===== */
 .brand-banner {
@@ -245,7 +537,7 @@ body {
 .page-header {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 3px solid var(--primary-color);
+    border-bottom: 2px solid var(--border-color);
 }
 
 .title-area {
@@ -257,7 +549,7 @@ body {
 .page-title {
     font-size: 2rem;
     font-weight: 800;
-    color: var(--primary-color);
+    color: var(--text-main);
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -275,8 +567,8 @@ body {
 }
 
 .category-tag {
-    background: #eef2ff;
-    color: #4338ca;
+    background: #e8e8ed;
+    color: var(--text-main);
     padding: 0.25rem 0.75rem;
     border-radius: 2rem;
     font-size: 0.875rem;
@@ -287,14 +579,15 @@ body {
     margin-bottom: 1.5rem;
 }
 
+/* h3 に変更したため少し小さく調整 */
 .section-heading {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 700;
     margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: #0f172a;
+    color: var(--text-main);
 }
 
 .section-content {
@@ -317,12 +610,12 @@ body {
     content: "・";
     position: absolute;
     left: 0;
-    color: var(--primary-color);
+    color: var(--text-muted);
     font-weight: bold;
 }
 
 .step-box {
-    background: #f1f5f9;
+    background: var(--bg-color);
     padding: 1.25rem;
     border-radius: 0.75rem;
     margin: 1rem 0;
@@ -335,7 +628,7 @@ body {
 }
 
 .step-number {
-    background: var(--primary-color);
+    background: var(--text-main);
     color: white;
     width: 24px;
     height: 24px;
@@ -386,6 +679,115 @@ body {
 
 @media print {
     .print-footer {
-        display: flex;
+        display: flex !important;
+        font-size: 7pt !important;
+        padding-top: 3px !important;
+        margin-top: auto;
     }
 }
+
+/* ===== ワンポイントアドバイス ===== */
+.tip-box {
+    margin-top: 1.5rem;
+    padding: 1.1rem 1.25rem;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-left: 4px solid #22c55e;
+    border-radius: 0.75rem;
+}
+
+.tip-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.tip-icon {
+    width: 18px;
+    height: 18px;
+    color: #16a34a;
+    flex-shrink: 0;
+}
+
+.tip-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #15803d;
+    letter-spacing: 0.03em;
+}
+
+.tip-content {
+    font-size: 0.9rem;
+    color: #166534;
+    line-height: 1.7;
+    margin: 0;
+}
+
+
+
+/* ===== カテゴリブロック（普段・寒い日・不在時）===== */
+.category-block {
+    border-radius: 0.75rem;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1.25rem;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.cat-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.cat-label {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.cat-subtitle {
+    font-size: 0.8rem;
+    font-weight: 500;
+    opacity: 0.8;
+    margin-left: 0.25rem;
+}
+
+.category-body {
+    padding: 1rem 1.25rem 0.25rem;
+    background: #ffffff;
+}
+
+/* 普段の凍結予防 — ダーク */
+.cat-normal .category-header {
+    background: var(--text-main);
+    color: #ffffff;
+    border-bottom: none;
+}
+.cat-normal .cat-icon { color: #ffffff; }
+
+/* 特に寒い日の凍結予防 — ミッドグレー */
+.cat-cold .category-header {
+    background: #3a3a3c;
+    color: #ffffff;
+    border-bottom: none;
+}
+.cat-cold .cat-icon { color: #ffffff; }
+
+/* 不在時の凍結予防 — ライトグレー */
+.cat-absent .category-header {
+    background: #86868b;
+    color: #ffffff;
+    border-bottom: none;
+}
+.cat-absent .cat-icon { color: #ffffff; }
+
+

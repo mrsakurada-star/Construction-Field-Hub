@@ -1,0 +1,22 @@
+{
+  "customers": [
+    {
+      "type": "client",
+      "name": "株式会社テスト瓦斯",
+      "kana": "",
+      "contact": "テスト",
+      "memo": "",
+      "parentId": null,
+      "id": 1
+    },
+    {
+      "type": "dealer",
+      "name": "テストテック",
+      "kana": "",
+      "contact": "テスト山テトト",
+      "memo": "",
+      "parentId": 1,
+      "id": 2
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 /* BtoB価格表作成ツール - IndexedDB管理モジュール */
 
 const DB_NAME = 'BtoBPriceListDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let _db = null;
 
@@ -74,11 +74,11 @@ async function dbAdd(storeName, data) {
     });
 }
 
-async function dbPut(storeName, data) {
+async function dbPut(storeName, data, key = undefined) {
     const db = await openDB();
     return new Promise((resolve, reject) => {
         const tx = db.transaction(storeName, 'readwrite');
-        const req = tx.objectStore(storeName).put(data);
+        const req = key !== undefined ? tx.objectStore(storeName).put(data, key) : tx.objectStore(storeName).put(data);
         req.onsuccess = () => resolve(req.result);
         req.onerror = () => reject(req.error);
     });
@@ -147,8 +147,25 @@ async function dbExport() {
  * データベース全体をインポート
  */
 async function dbImport(data) {
+    return dbImportPartial(data, ['customers', 'products', 'constructions', 'priceLists', 'priceListItems']);
+}
+
+/**
+ * 特定のストアのみエクスポート
+ */
+async function dbExportPartial(stores) {
+    const data = {};
+    for (const s of stores) {
+        data[s] = await dbGetAll(s);
+    }
+    return data;
+}
+
+/**
+ * 特定のストアのみインポート
+ */
+async function dbImportPartial(data, stores) {
     const db = await openDB();
-    const stores = ['customers', 'products', 'constructions', 'priceLists', 'priceListItems'];
     
     // トランザクション開始
     const tx = db.transaction(stores, 'readwrite');

@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: ecotech-pmse
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npx prisma db push --accept-data-loss && npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: AUTH_SECRET
+        sync: false
+      - key: AUTH_GOOGLE_ID
+        sync: false
+      - key: AUTH_GOOGLE_SECRET
+        sync: false
+      - key: AUTH_URL
+        sync: false

@@ -1,0 +1,245 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新築見積ツール</title>
+    <link rel="stylesheet" href="css/estimate.css">
+</head>
+<body>
+    <!-- Screen A: 基本情報入力 -->
+    <div id="screen-info" class="screen active">
+        <div class="app-header">
+            <h1>新築見積書作成ツール</h1>
+            <a href="admin/index.html" class="admin-link">⚙️ 管理画面</a>
+        </div>
+
+        <div class="info-card">
+            <h2>見積書を作成</h2>
+            <div class="form-grid">
+                <label>顧客名</label>
+                <input type="text" id="clientName" placeholder="顧客名を入力">
+                <label>物件名</label>
+                <input type="text" id="projectName" placeholder="物件名を入力">
+                <label>所在地</label>
+                <input type="text" id="location" placeholder="所在地を入力">
+                <label>見積日</label>
+                <input type="date" id="estimateDate">
+                <label>有効期限</label>
+                <select id="validPeriod">
+                    <option value="1">1ヶ月</option>
+                    <option value="2">2ヶ月</option>
+                    <option value="3">3ヶ月</option>
+                </select>
+            </div>
+
+            <div class="template-section">
+                <button class="btn btn-secondary" onclick="openTemplateModal()">📋 テンプレートから読み込む</button>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn btn-primary" onclick="proceedToEditor()">見積作成を開始 →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Screen B: 見積エディタ -->
+    <div id="screen-editor" class="screen hidden">
+        <div class="editor-topbar">
+            <button class="btn btn-secondary" onclick="backToInfo()">← 戻る</button>
+            <span id="editorProjectTitle" class="editor-title"></span>
+            <div class="topbar-actions">
+                <button class="btn btn-primary" onclick="printEstimate()">📄 印刷</button>
+                <button class="btn btn-success" onclick="saveCurrentEstimate()">💾 保存</button>
+            </div>
+        </div>
+
+        <div class="editor-container">
+            <!-- カテゴリセクション -->
+            <div class="category-section">
+                <div class="category-header">
+                    <h3>機器</h3>
+                    <span class="subtotal" id="subtotal-equipment">小計: ¥0</span>
+                </div>
+                <table class="line-items-table">
+                    <thead>
+                        <tr>
+                            <th>品番</th>
+                            <th>品名</th>
+                            <th>数量</th>
+                            <th>単価</th>
+                            <th>金額</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-equipment"></tbody>
+                </table>
+                <button class="add-item-btn" onclick="openPickerModal('equipment')">+ アイテム追加</button>
+            </div>
+
+            <div class="category-section">
+                <div class="category-header">
+                    <h3>関連部材</h3>
+                    <span class="subtotal" id="subtotal-relatedParts">小計: ¥0</span>
+                </div>
+                <table class="line-items-table">
+                    <thead>
+                        <tr>
+                            <th>品番</th>
+                            <th>品名</th>
+                            <th>数量</th>
+                            <th>単価</th>
+                            <th>金額</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-relatedParts"></tbody>
+                </table>
+                <button class="add-item-btn" onclick="openPickerModal('relatedParts')">+ アイテム追加</button>
+            </div>
+
+            <div class="category-section">
+                <div class="category-header">
+                    <h3>工事部材</h3>
+                    <span class="subtotal" id="subtotal-workMaterials">小計: ¥0</span>
+                </div>
+                <table class="line-items-table">
+                    <thead>
+                        <tr>
+                            <th>品番</th>
+                            <th>品名</th>
+                            <th>数量</th>
+                            <th>単価</th>
+                            <th>金額</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-workMaterials"></tbody>
+                </table>
+                <button class="add-item-btn" onclick="openPickerModal('workMaterials')">+ アイテム追加</button>
+            </div>
+
+            <div class="category-section">
+                <div class="category-header">
+                    <h3>工事費</h3>
+                    <span class="subtotal" id="subtotal-works">小計: ¥0</span>
+                </div>
+                <table class="line-items-table">
+                    <thead>
+                        <tr>
+                            <th>品番</th>
+                            <th>品名</th>
+                            <th>数量</th>
+                            <th>単価</th>
+                            <th>金額</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="items-works"></tbody>
+                </table>
+                <button class="add-item-btn" onclick="openPickerModal('works')">+ アイテム追加</button>
+            </div>
+        </div>
+
+        <!-- 合計パネル -->
+        <div class="totals-panel" id="totalsPanel">
+            <div class="totals-row">
+                <span>小計合計</span>
+                <span id="total-subtotal" class="amount">¥0</span>
+            </div>
+            <div class="totals-row discount-row">
+                <span>値引き</span>
+                <div class="discount-input-group">
+                    <input type="number" id="discountInput" value="0" min="0" onchange="onDiscountChange()">
+                    <span id="total-discount" class="amount">-¥0</span>
+                </div>
+            </div>
+            <div class="totals-row">
+                <span>消費税 (10%)</span>
+                <span id="total-tax" class="amount">¥0</span>
+            </div>
+            <div class="totals-row grand-total">
+                <span>合計</span>
+                <span id="total-grand" class="amount">¥0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- アイテム追加モーダル -->
+    <div id="modal-picker" class="modal hidden">
+        <div class="modal-overlay" onclick="closePickerModal()"></div>
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h3 id="picker-title">アイテム追加</h3>
+                <button class="modal-close" onclick="closePickerModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="search" id="picker-search" placeholder="品名・品番で検索" onkeyup="onPickerSearch()">
+
+                <div class="picker-tabs">
+                    <button class="tab-btn active" data-tab="master" onclick="pickerTab('master')">マスターから選択</button>
+                    <button class="tab-btn" data-tab="custom" onclick="pickerTab('custom')">カスタム入力</button>
+                </div>
+
+                <!-- Master tab -->
+                <div id="picker-master" class="tab-content active">
+                    <table class="picker-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 32px;"></th>
+                                <th>品番</th>
+                                <th>品名</th>
+                                <th>単価</th>
+                                <th style="width: 70px;">数量</th>
+                            </tr>
+                        </thead>
+                        <tbody id="picker-rows"></tbody>
+                    </table>
+                </div>
+
+                <!-- Custom tab -->
+                <div id="picker-custom" class="tab-content hidden">
+                    <div class="form-grid">
+                        <label>品番</label>
+                        <input type="text" id="custom-code">
+                        <label>品名*</label>
+                        <input type="text" id="custom-name" required>
+                        <label>単価*</label>
+                        <input type="number" id="custom-price" min="0">
+                        <label>数量</label>
+                        <input type="number" id="custom-qty" value="1" min="1">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePickerModal()">キャンセル</button>
+                <button class="btn btn-primary" onclick="confirmPickerSelection()">追加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- テンプレート選択モーダル -->
+    <div id="modal-template" class="modal hidden">
+        <div class="modal-overlay" onclick="closeTemplateModal()"></div>
+        <div class="modal-panel">
+            <div class="modal-header">
+                <h3>テンプレートから読み込む</h3>
+                <button class="modal-close" onclick="closeTemplateModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="template-list-body"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeTemplateModal()">キャンセル</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 印刷用エリア（画面に表示されず、印刷時のみ表示） -->
+    <div id="print-area" class="print-only"></div>
+
+    <script src="js/database.js"></script>
+    <script src="js/estimate.js"></script>
+</body>
+</html>

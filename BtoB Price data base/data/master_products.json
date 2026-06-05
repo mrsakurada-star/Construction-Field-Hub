@@ -1,0 +1,15 @@
+{
+  "products": [
+    {
+      "code": "000823339",
+      "name": "GH-H2400ZW",
+      "category": "給湯器",
+      "price": 580000,
+      "costPrice": 108000,
+      "supplier": "パーパス",
+      "description": "エコ給湯暖房熱源機",
+      "remarks": "",
+      "id": 1
+    }
+  ]
+}

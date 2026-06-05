@@ -6,9 +6,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BtoB価格表作成ツール</title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;700&display=swap"
-        rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="css/style.css">
     <style>
@@ -96,6 +93,19 @@
 
         <!-- メインコンテンツ -->
         <main class="main-content">
+
+            <!-- グローバル同期警告 -->
+            <div id="global-sync-alert" class="alert alert-warning screen-only"
+                style="display:none; margin-bottom: 20px; align-items: center; justify-content: space-between;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                    <i data-lucide="alert-triangle" style="width:16px;height:16px"></i>
+                    <span><strong>データフォルダへの再接続が必要です</strong>：ブラウザのセキュリティ設定により、アクセス権限の再取得が必要です。</span>
+                </div>
+                <button class="btn btn-primary btn-sm" type="button" onclick="reconnectAllFiles()"
+                    style="flex-shrink:0;">
+                    <i data-lucide="refresh-cw" style="width:14px;height:14px"></i> 再接続
+                </button>
+            </div>
 
             <!-- ========================
              ダッシュボード
@@ -420,72 +430,100 @@
                     </div>
                 </div>
 
-                <div class="alert alert-info" style="margin-bottom:24px">
-                    <i data-lucide="info" style="width:16px;height:16px"></i>
-                    データベースはプロジェクト内の <strong>/data/btob_database.json</strong> に保存・同期することを推奨します。
-                </div>
+                <div style="max-width:720px;display:flex;flex-direction:column;gap:16px">
 
-                <div style="max-width:800px">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <i data-lucide="file-json-2" style="width:16px;height:16px"></i>
-                                プロジェクトファイル同期
+                    <!-- ── 未接続バナー ── -->
+                    <div id="folder-disconnected-banner" class="card" style="border:2px dashed var(--border); background:var(--surface2);">
+                        <div style="padding:28px 24px; text-align:center;">
+                            <i data-lucide="folder-open" style="width:40px;height:40px;color:var(--accent);margin-bottom:12px;display:block;margin-left:auto;margin-right:auto"></i>
+                            <div style="font-size:15px;font-weight:700;margin-bottom:6px">dataフォルダが未接続です</div>
+                            <div style="font-size:13px;color:var(--text3);margin-bottom:20px">
+                                プロジェクト内の <code style="background:rgba(0,0,0,0.06);padding:2px 6px;border-radius:4px">BtoB Price data base / data</code> フォルダを選択してください。<br>
+                                以降は自動でデータが読み込まれ、変更時にも自動保存されます。
                             </div>
+                            <button class="btn btn-primary" type="button" onclick="connectDataFolder()" style="font-size:14px;padding:10px 28px">
+                                <i data-lucide="folder-open" style="width:15px;height:15px"></i>
+                                dataフォルダを選択して接続
+                            </button>
                         </div>
-                        <div style="padding:20px">
-                            <div style="display:grid;grid-template-columns:1fr 1.5fr;gap:32px">
+                    </div>
+
+                    <!-- ── 接続済みバナー ── -->
+                    <div id="folder-connected-banner" class="card" style="display:none; border:2px solid var(--success);">
+                        <div style="padding:16px 20px; display:flex; align-items:center; justify-content:space-between; gap:16px;">
+                            <div style="display:flex;align-items:center;gap:12px">
+                                <div style="width:12px;height:12px;border-radius:50%;background:var(--success);flex-shrink:0"></div>
                                 <div>
-                                    <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">
-                                        プロジェクトフォルダ内の <code>data</code> フォルダに保存先を限定することで、データの散逸を防ぎ、起動時の自動読み込みを確実にします。
-                                    </p>
-                                    <div style="display:flex;flex-direction:column;gap:10px">
-                                        <button class="btn btn-primary" type="button" onclick="connectLocalFile('create')">
-                                            <i data-lucide="file-plus" style="width:14px;height:14px"></i> 新規同期ファイルを作成
-                                        </button>
-                                        <button class="btn btn-secondary" type="button" onclick="connectLocalFile('open')">
-                                            <i data-lucide="folder-open" style="width:14px;height:14px"></i> 既存のファイルを選択
-                                        </button>
+                                    <div style="font-weight:700;font-size:14px">dataフォルダ接続中</div>
+                                    <div style="font-size:12px;color:var(--text3);margin-top:2px">
+                                        フォルダ名：<code id="folder-connected-name" style="background:rgba(0,0,0,0.06);padding:1px 5px;border-radius:3px">—</code>
                                     </div>
                                 </div>
-                                
-                                <div id="sync-status-box" style="padding:20px;background:var(--bg);border-radius:8px;border:1px solid var(--border);display:flex;flex-direction:column;justify-content:center">
-                                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-                                        <div id="sync-status-dot" style="width:12px;height:12px;border-radius:50%;background:#ccc"></div>
-                                        <span id="sync-status-text" style="font-size:14px;font-weight:700;color:var(--text3)">未接続</span>
-                                    </div>
-                                    <div style="font-size:12px;color:var(--text3);margin-bottom:16px">
-                                        同期先: <code id="sync-filename" style="background:rgba(0,0,0,0.05);padding:2px 4px;border-radius:3px">—</code>
-                                    </div>
-                                    <button class="btn btn-danger btn-sm" type="button" id="btn-disconnect-sync" onclick="disconnectLocalFile()" style="display:none;align-self:flex-start">
-                                        同期を解除
-                                    </button>
-                                </div>
+                            </div>
+                            <button class="btn btn-danger btn-sm" type="button" onclick="disconnectDataFolder()">
+                                <i data-lucide="unplug" style="width:13px;height:13px"></i> 同期解除
+                            </button>
+                        </div>
+                        <!-- ファイル別接続状況 -->
+                        <div style="border-top:1px solid var(--border);padding:12px 20px;display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+                            <div style="display:flex;align-items:center;gap:8px;font-size:13px">
+                                <div id="sync-dot-products" style="width:8px;height:8px;border-radius:50%;background:#ccc;flex-shrink:0"></div>
+                                <i data-lucide="package" style="width:13px;height:13px;color:var(--text3)"></i>
+                                <span style="color:var(--text3)">製品マスタDB</span>
+                                <span id="sync-label-products" style="margin-left:auto;font-size:11px;font-weight:600;color:var(--text3)">—</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;font-size:13px">
+                                <div id="sync-dot-constructions" style="width:8px;height:8px;border-radius:50%;background:#ccc;flex-shrink:0"></div>
+                                <i data-lucide="hammer" style="width:13px;height:13px;color:var(--text3)"></i>
+                                <span style="color:var(--text3)">工事マスタDB</span>
+                                <span id="sync-label-constructions" style="margin-left:auto;font-size:11px;font-weight:600;color:var(--text3)">—</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;font-size:13px">
+                                <div id="sync-dot-customers" style="width:8px;height:8px;border-radius:50%;background:#ccc;flex-shrink:0"></div>
+                                <i data-lucide="building-2" style="width:13px;height:13px;color:var(--text3)"></i>
+                                <span style="color:var(--text3)">取引先・販売店DB</span>
+                                <span id="sync-label-customers" style="margin-left:auto;font-size:11px;font-weight:600;color:var(--text3)">—</span>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;font-size:13px">
+                                <div id="sync-dot-quotes" style="width:8px;height:8px;border-radius:50%;background:#ccc;flex-shrink:0"></div>
+                                <i data-lucide="file-text" style="width:13px;height:13px;color:var(--text3)"></i>
+                                <span style="color:var(--text3)">見積DB</span>
+                                <span id="sync-label-quotes" style="margin-left:auto;font-size:11px;font-weight:600;color:var(--text3)">—</span>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card" style="margin-top:20px">
+                    <!-- ── 手動操作 ── -->
+                    <div class="card">
                         <div class="card-header" style="padding:10px 16px">
                             <div class="card-title" style="font-size:13px;opacity:0.8">
                                 <i data-lucide="settings-2" style="width:14px;height:14px"></i>
                                 詳細・メンテナンス
                             </div>
                         </div>
-                        <div style="padding:16px;display:flex;gap:20px;align-items:center;justify-content:space-between">
-                            <div style="display:flex;gap:10px">
-                                <label class="btn btn-xs btn-secondary" style="cursor:pointer;display:inline-flex;align-items:center">
-                                    <i data-lucide="upload" style="width:12px;height:12px;margin-right:6px"></i> バックアップを復元
-                                    <input type="file" id="import-file" style="display:none" onchange="importDataManual(this)">
+                        <div style="padding:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between">
+                            <div style="display:flex;gap:10px;flex-wrap:wrap">
+                                <label class="btn btn-xs btn-secondary"
+                                    style="cursor:pointer;display:inline-flex;align-items:center">
+                                    <i data-lucide="upload" style="width:12px;height:12px;margin-right:6px"></i>
+                                    バックアップを復元
+                                    <input type="file" id="import-file" style="display:none"
+                                        onchange="importDataManual(this)">
                                 </label>
                                 <button class="btn btn-xs btn-secondary" type="button" onclick="exportDataManual()">
                                     <i data-lucide="download" style="width:12px;height:12px;margin-right:6px"></i> 手動DL (JSON)
                                 </button>
                             </div>
-                            <button class="btn btn-xs btn-danger" style="opacity:0.7" type="button" onclick="resetDatabase()">
+                            <button class="btn btn-xs btn-danger" style="opacity:0.7" type="button"
+                                onclick="resetDatabase()">
                                 内部データ初期化
                             </button>
                         </div>
+                    </div>
+
+                    <div class="alert alert-info" style="font-size:12px">
+                        <i data-lucide="info" style="width:14px;height:14px"></i>
+                        <span>データの変更（追加・編集・削除）はすべて自動でファイルに書き込まれます。バックアップが必要な場合は「手動DL」でJSONとして保存してください。</span>
                     </div>
                 </div>
             </div>

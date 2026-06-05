@@ -1,0 +1,239 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>給湯器現地調査シート</title>
+  <script src="js/survey.js"></script>
+  <script>
+    SURVEY_DATA.refs = SURVEY_DATA.refs || [];
+    let CHECKLIST_DATA = SURVEY_DATA;
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif; color: #1d1d1f; background: #f5f5f7; line-height: 1.6; }
+
+    @media screen {
+      body { font-size: 12px; padding-bottom: 80px; }
+      .page-wrap { padding: 10px 5px 80px; margin: 0; }
+      .page { background: white; border-radius: 0; padding: 30px; display: block; width: 732px; height: 1050px; margin: 0 auto; box-sizing: border-box; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; }
+      #page-content-wrapper { display: flex; flex-direction: column; height: 100%; }
+
+      .doc-header { border-bottom: 1px solid #1d1d1f; padding: 6px 0 4px; margin: 0 0 4px 0; flex-shrink: 0; }
+      .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+      .doc-logo { font-size: 12px; font-weight: bold; color: #1d1d1f; border: 1px solid #1d1d1f; padding: 3px 8px; border-radius: 2px; }
+      .doc-version { font-size: 10px; color: #777; }
+
+      .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin-bottom: 4px; }
+      .info-row { display: flex; align-items: center; border-right: 1px solid #d0d0d0; border-bottom: 1px solid #d0d0d0; padding: 2px 0; min-height: 10px; }
+      .info-row:nth-child(2n) { border-right: none; }
+      .info-row:nth-child(n+5) { border-bottom: none; }
+      .info-label { font-weight: bold; font-size: 9px; color: #333; width: 55px; flex-shrink: 0; padding: 0 3px; border-right: 1px solid #d0d0d0; }
+      .info-input { border: none; outline: none; font-size: 9px; background: transparent; font-family: inherit; flex: 1; padding: 1px 3px; }
+
+      #sections { display: flex; flex-direction: column; gap: 3px; flex: 1; overflow-y: auto; margin-bottom: 2px; align-items: stretch; }
+      .section-card { margin-bottom: 0px; border: 1px solid #c0c0c0; border-radius: 0; background: #fff; overflow: hidden; box-shadow: none; width: 100%; display: block; }
+      .section-header { padding: 3px 4px; font-size: 10px; font-weight: bold; color: white; display: flex; align-items: center; gap: 2px; }
+      .section-header.blue { background: #1d1d1f; }
+      .section-header.green { background: #505050; }
+      .section-header.orange { background: #808080; }
+      .section-count { margin-left: auto; font-size: 8px; font-weight: normal; background: rgba(255,255,255,0.3); padding: 1px 2px; border-radius: 2px; }
+
+      .check-row { display: flex; border-top: 1px solid #e0e0e0; padding: 0; min-height: 10px; }
+      .check-row:nth-child(even) { background: #fafafa; }
+      .td-num { width: 20px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 9px; color: #555; background: #f9f9f9; border-right: 1px solid #e0e0e0; flex-shrink: 0; }
+      .td-content { flex: 1; padding: 1px 3px; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; justify-content: center; gap: 0px; }
+      .td-checks { width: 100px; padding: 1px 2px; display: flex; flex-direction: column; justify-content: center; gap: 1px; flex-shrink: 0; }
+      .td-done { width: 20px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; color: #1d1d1f; border-left: 1px solid #e0e0e0; background: #f9f9f9; }
+
+      .item-title-text { font-weight: bold; font-size: 9px; color: #111; line-height: 1.1; }
+      .item-desc-text { font-size: 8px; color: #666; line-height: 1; }
+      .item-alert { display: inline-block; padding: 1px 3px; border-radius: 1px; font-size: 8px; font-weight: bold; }
+      .item-alert.warning { background: #fffacd; border-left: 2px solid #ffc107; color: #d84315; }
+      .item-alert.danger { background: #ffe0e0; border-left: 2px solid #e53935; color: #c62828; }
+
+      .check-group { display: flex; flex-direction: column; gap: 0px; }
+      .check-box { display: flex; align-items: center; gap: 2px; font-size: 8px; color: #222; cursor: pointer; }
+      .check-box input { width: 11px; height: 11px; cursor: pointer; flex-shrink: 0; }
+      .check-box span { line-height: 1; }
+
+      .doc-footer { padding: 6px 0; border-top: 1px solid #d0d0d0; font-size: 9px; color: #888; display: flex; justify-content: space-between; flex-shrink: 0; }
+
+      .fixed-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #1d1d1f; padding: 10px 20px; display: block; text-align: center; z-index: 1000; color: white; }
+      .fixed-bar span { font-size: 12px; font-weight: bold; margin-right: 15px; }
+      .btn { padding: 6px 16px; border-radius: 3px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; }
+      .btn-reset { background: #fff; color: #1d1d1f; }
+      .btn-reset:hover { background: #f0f0f0; }
+      .btn-print { background: #ff9800; color: #fff; margin-left: 15px; }
+      .btn-print:hover { background: #f57c00; }
+      .progress-bar-wrap { margin-top: 5px; display: block; font-size: 11px; font-weight: bold; color: #444; }
+      .progress-bar-track { display: inline-block; width: 150px; height: 8px; background: #e0e6ed; border-radius: 4px; overflow: hidden; margin: 0 8px; }
+      .progress-bar-fill { height: 100%; background: #3a3a3c; width: 0%; }
+      .memo-section { margin-top: 10px; padding: 8px 10px; border: 1px solid #c5cfe0; border-radius: 4px; background: #fff; }
+      .memo-label { font-size: 11px; font-weight: bold; color: #1565c0; margin-bottom: 5px; }
+      .memo-content { width: 100%; min-height: 40px; padding: 6px; border: 1px solid #e0e6ed; border-radius: 3px; box-sizing: border-box; font-size: 11px; font-family: inherit; resize: vertical; }
+    }
+
+    @page { size: A4 portrait; margin: 10mm 8mm; }
+    @media print {
+      * { margin: 0; padding: 0; }
+      body { font-size: 10px; background: white; }
+      .no-print { display: none !important; }
+      .page-wrap { padding: 0; margin: 0; }
+      .page { width: 100%; padding: 12px; display: flex; flex-direction: column; margin: 0; box-shadow: none; border-radius: 0; box-sizing: border-box; height: 277mm; position: relative; }
+      #page-content-wrapper { display: flex; flex-direction: column; height: 100%; }
+      .doc-header { border-bottom: 1px solid #1d1d1f; padding: 2px 0 1px; margin: 0 0 2px 0; flex-shrink: 0; }
+      .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1px; }
+      .doc-logo { font-size: 12px; font-weight: bold; color: #1d1d1f; border: 1px solid #1d1d1f; padding: 3px 8px; border-radius: 2px; }
+      .doc-version { font-size: 10px; color: #777; }
+      .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-bottom: 2px; }
+      .info-row { display: flex; align-items: center; border-right: 1px solid #d0d0d0; border-bottom: 1px solid #d0d0d0; padding: 1px 0; min-height: 9px; }
+      .info-row:nth-child(3n) { border-right: none; }
+      .info-row:nth-child(n+4) { border-bottom: none; }
+      .info-label { font-weight: bold; font-size: 8px; color: #333; width: 45px; flex-shrink: 0; padding: 0 2px; border-right: 1px solid #d0d0d0; }
+      .info-input { border: none; outline: none; font-size: 8px; background: transparent; font-family: inherit; flex: 1; padding: 0px 2px; }
+      #sections { display: flex; flex-direction: column; gap: 3px; flex: 1; overflow: hidden; }
+      .section-card { margin-bottom: 0px; border: 1px solid #c0c0c0; border-radius: 0; background: #fff; overflow: hidden; box-shadow: none; width: 100%; display: block; page-break-inside: avoid; }
+      .section-header { padding: 2px 3px; font-size: 8px; font-weight: bold; color: white; display: flex; align-items: center; gap: 1px; }
+      .section-header.blue { background: #1d1d1f; }
+      .section-header.green { background: #505050; }
+      .section-header.orange { background: #808080; }
+      .section-count { margin-left: auto; font-size: 7px; font-weight: normal; background: rgba(255,255,255,0.3); padding: 0px 2px; border-radius: 1px; }
+      .check-row { display: flex; border-top: 1px solid #e0e0e0; padding: 0; min-height: 10px; page-break-inside: avoid; }
+      .check-row:nth-child(even) { background: #fafafa; }
+      .td-num { width: 14px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 6px; color: #555; background: #f9f9f9; border-right: 1px solid #e0e0e0; flex-shrink: 0; }
+      .td-content { flex: 1; padding: 2px 3px; border-right: 1px solid #e0e0e0; display: flex; flex-direction: column; justify-content: center; gap: 0.5px; }
+      .td-checks { width: 80px; padding: 2px 3px; display: flex; flex-direction: column; justify-content: center; gap: 1px; flex-shrink: 0; }
+      .td-done { width: 14px; display: flex; align-items: center; justify-content: center; font-size: 6px; font-weight: bold; color: #1d1d1f; border-left: 1px solid #e0e0e0; background: #f9f9f9; }
+      .item-title-text { font-weight: bold; font-size: 8.5px; color: #111; line-height: 1.25; }
+      .item-desc-text { font-size: 7.5px; color: #666; line-height: 1.2; }
+      .item-alert { display: inline-block; padding: 1px 3px; border-radius: 1px; font-size: 7.5px; font-weight: bold; margin-top: 0.5px; }
+      .item-alert.warning { background: #fffacd; border-left: 1px solid #ffc107; color: #d84315; }
+      .item-alert.danger { background: #ffe0e0; border-left: 1px solid #e53935; color: #c62828; }
+      .check-group { display: flex; flex-direction: column; gap: 1px; }
+      .check-box { display: flex; align-items: center; gap: 2px; font-size: 7.5px; color: #222; }
+      .check-box input { width: 9px; height: 9px; flex-shrink: 0; }
+      .check-box span { line-height: 1.2; }
+      .memo-section { margin-top: 3px; padding: 0; border: 1px solid #c0c0c0; background: #fff; }
+      .memo-label { padding: 1px 3px; font-size: 8px; font-weight: bold; color: white; background: #1d1d1f; }
+      .memo-content { width: 100%; min-height: 20px; padding: 2px; border: none; box-sizing: border-box; font-size: 7px; font-family: inherit; resize: none; }
+      .doc-footer { padding: 1px 0; border-top: 1px solid #d0d0d0; font-size: 7px; color: #888; display: flex; justify-content: space-between; flex-shrink: 0; margin-top: auto; }
+      .fixed-bar { display: none !important; }
+      .progress-bar-wrap { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+    <div class="page">
+      <div id="page-content-wrapper"></div>
+    </div>
+  </div>
+
+  <div class="fixed-bar no-print">
+    <button class="btn btn-reset" onclick="resetAll()">クリア</button>
+    <span id="bar-progress">0/0</span>
+    <button class="btn btn-print" onclick="handlePrint()">印刷する</button>
+  </div>
+
+  <script>
+    function renderChecklist() {
+      const data = CHECKLIST_DATA;
+      const html = `
+        <div class="doc-header">
+          <div class="header-top">
+            <div class="doc-logo">✔ ${data.docTitle}</div>
+            <div class="doc-version">${data.version}</div>
+          </div>
+          <div class="info-grid">
+            ${data.infoFields.map(f => `
+              <div class="info-row"><span class="info-label">${f.label}</span><input class="info-input" type="text" placeholder="${f.placeholder || ''}"></div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div id="sections">
+          ${data.sections.map((sec, si) => `
+            <div class="section-card section-${si}">
+              <div class="section-header ${sec.color}"><span>${sec.icon}</span>${sec.title}<span class="section-count">${sec.items.length} 項目</span></div>
+              <div class="check-table">
+                ${sec.items.map((item, ii) => `
+                  <div class="check-row">
+                    <div class="td-num">${ii + 1}</div>
+                    <div class="td-content">
+                      <div class="item-title-text">${item.title}</div>
+                      ${item.desc ? `<div class="item-desc-text">▶ ${item.desc}</div>` : ''}
+                      ${item.alert ? `<div class="item-alert ${item.alert.type}">${item.alert.text}</div>` : ''}
+                    </div>
+                    <div class="td-checks">
+                      <div class="check-group">
+                        ${item.checks.map((c, ci) => `
+                          <label class="check-box"><input type="checkbox" class="cb" data-key="${si}-${ii}-${ci}" data-si="${si}" data-ii="${ii}" onchange="onCheck()"><span>${c}</span></label>
+                        `).join('')}
+                      </div>
+                    </div>
+                    <div class="td-done" id="done-${si}-${ii}"></div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="memo-section" style="position:static;">
+          <div class="memo-label">現場メモ</div>
+          <textarea class="memo-content" placeholder="特記事項、注意点などを記入"></textarea>
+        </div>
+
+        <div class="progress-bar-wrap no-print">
+          <span>進捗</span>
+          <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-fill"></div></div>
+          <span id="progress-label">0%</span>
+        </div>
+
+        <div class="doc-footer">
+          <div>※ ${data.footerNote}</div>
+          <div>${data.docTitle} ${data.version}</div>
+        </div>
+      `;
+      document.getElementById('page-content-wrapper').innerHTML = html;
+    }
+
+    function onCheck() {
+      const all = document.querySelectorAll('.cb');
+      const checked = document.querySelectorAll('.cb:checked').length;
+      if (all.length === 0) return;
+      const pct = Math.round(checked / all.length * 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+      document.getElementById('progress-label').textContent = pct + '%';
+      document.getElementById('bar-progress').textContent = `${checked}/${all.length}`;
+
+      CHECKLIST_DATA.sections.forEach((sec, si) => {
+        sec.items.forEach((item, ii) => {
+          const cbs = document.querySelectorAll(`.cb[data-si="${si}"][data-ii="${ii}"]`);
+          const done = document.getElementById(`done-${si}-${ii}`);
+          if (cbs.length > 0) {
+             const allDone = [...cbs].every(c => c.checked);
+             done.textContent = allDone ? '✔' : '';
+          }
+        });
+      });
+    }
+
+    function resetAll() {
+      if (confirm('リセットしますか？')) {
+        document.querySelectorAll('.cb').forEach(c => c.checked = false);
+        document.querySelectorAll('.info-input').forEach(i => i.value = '');
+        onCheck();
+      }
+    }
+
+    function handlePrint() { window.print(); }
+
+    window.onload = () => {
+      renderChecklist();
+      onCheck();
+    };
+  </script>
+</body>
+</html>

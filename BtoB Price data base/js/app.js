@@ -241,7 +241,7 @@ async function saveCustomer() {
     else { await dbAdd('customers', data); }
 
     closeModal('customer-modal');
-    await onDataChanged();
+    await onCustomerChanged();
     showToast('顧客情報を保存しました');
     loadCustomers();
 }
@@ -249,7 +249,7 @@ async function saveCustomer() {
 async function deleteCustomer(id) {
     if (!confirmDialog('この顧客を削除しますか？（関連する販売店の親紐付けも解除されます）')) return;
     await dbDelete('customers', id);
-    await onDataChanged();
+    await onCustomerChanged();
     showToast('削除しました', 'danger');
     loadCustomers();
 }
@@ -311,7 +311,7 @@ async function saveProduct() {
     if (id) { data.id = parseInt(id); await dbPut('products', data); }
     else { await dbAdd('products', data); }
     closeModal('product-modal');
-    await onDataChanged();
+    await onProductChanged();
     showToast('製品情報を保存しました');
     loadProducts();
 }
@@ -319,7 +319,7 @@ async function saveProduct() {
 async function deleteProduct(id) {
     if (!confirmDialog('この製品を削除しますか？')) return;
     await dbDelete('products', id);
-    await onDataChanged();
+    await onProductChanged();
     showToast('削除しました', 'danger');
     loadProducts();
 }
@@ -377,7 +377,7 @@ async function saveConstruction() {
     if (id) { data.id = parseInt(id); await dbPut('constructions', data); }
     else { await dbAdd('constructions', data); }
     closeModal('construction-modal');
-    await onDataChanged();
+    await onConstructionChanged();
     showToast('工事情報を保存しました');
     loadConstructions();
 }
@@ -385,7 +385,7 @@ async function saveConstruction() {
 async function deleteConstruction(id) {
     if (!confirmDialog('この工事を削除しますか？')) return;
     await dbDelete('constructions', id);
-    await onDataChanged();
+    await onConstructionChanged();
     showToast('削除しました', 'danger');
     loadConstructions();
 }
@@ -524,7 +524,7 @@ async function savePriceListHeader() {
         existing.updatedAt = today();
         await dbPut('priceLists', existing);
         closeModal('pl-header-modal');
-        await onDataChanged();
+        await onQuoteChanged();
         showToast('価格表情報を更新しました');
         loadPriceLists();
     } else {
@@ -540,7 +540,7 @@ async function savePriceListHeader() {
         };
         const newId = await dbAdd('priceLists', newPl);
         closeModal('pl-header-modal');
-        await onDataChanged();
+        await onQuoteChanged();
         showToast('価格表を作成しました');
         openPriceListEdit(newId);
     }
@@ -570,7 +570,7 @@ async function duplicatePriceList(id) {
             await dbAdd('priceListItems', newItem);
         }
 
-        await onDataChanged();
+        await onQuoteChanged();
         showToast('新しいバージョンを作成しました');
         loadPriceLists();
     } catch (err) {
@@ -583,7 +583,7 @@ async function deletePriceList(id) {
     if (!confirmDialog('この価格表を削除しますか？明細も削除されます。')) return;
     await dbDelete('priceLists', id);
     await dbDeleteByIndex('priceListItems', 'priceListId', id);
-    await onDataChanged();
+    await onQuoteChanged();
     showToast('削除しました', 'danger');
     loadPriceLists();
 }
@@ -826,7 +826,7 @@ async function savePriceListItems() {
         }
 
         closeModal('pl-edit-modal');
-        await onDataChanged();
+        await onQuoteChanged();
         showToast('価格表の明細を保存しました');
         loadPriceLists();
         loadDashboard();
@@ -921,6 +921,9 @@ function buildPrintRow(item, master, isProduct) {
     const name = master ? escHtml(master.name) : '—';
     const code = master ? escHtml(master.code || '') : '';
     const rateStr = item.rate ? `${parseFloat(item.rate).toFixed(1)}%` : '—';
+    
+    const desc = master && master.description ? `<div style="font-size:10px;color:var(--text3);margin-top:2px;">${escHtml(master.description)}</div>` : '';
+    const rem = master && master.remarks ? `<div style="font-size:10px;color:var(--text3);margin-top:2px;">【備考】${escHtml(master.remarks)}</div>` : '';
 
     // 表示モードに応じた「表示」列の値
     // %表示: 製品→掛け率%, 工事→参考率%
@@ -950,11 +953,15 @@ function buildPrintRow(item, master, isProduct) {
     }
 
     return `<tr>
-        <td style="font-size:10px;color:var(--text3);white-space:nowrap">${code}</td>
-        <td>${name}</td>
-        ${listPriceCol}
-        <td class="text-right">${displayHtml}</td>
-        <td class="text-center">${displayCol}</td>
+        <td style="font-size:10px;color:var(--text3);white-space:nowrap;vertical-align:top;padding-top:10px;">${code}</td>
+        <td style="vertical-align:top;padding-top:8px;padding-bottom:8px;">
+            <div style="font-weight:600;">${name}</div>
+            ${desc}
+            ${rem}
+        </td>
+        ${listPriceCol.replace('<td ', '<td style="vertical-align:top;padding-top:10px;" ')}
+        <td class="text-right" style="vertical-align:top;padding-top:10px;">${displayHtml}</td>
+        <td class="text-center" style="vertical-align:top;padding-top:10px;">${displayCol}</td>
     </tr>`;
 }
 
@@ -1017,159 +1024,247 @@ function escHtml(str) {
 }
 
 // =====================
-// データ管理・外部ファイル連携
+// データ管理・外部ファイル連携 (フォルダ一括接続方式)
 // =====================
-let _syncFileHandle = null;
+
+const SYNC_CONFIG = {
+    products:      { filename: 'master_products.json',      stores: ['products'] },
+    constructions: { filename: 'master_constructions.json', stores: ['constructions'] },
+    customers:     { filename: 'master_customers.json',     stores: ['customers'] },
+    quotes:        { filename: 'quotes.json',               stores: ['priceLists', 'priceListItems'] }
+};
+
+// ファイルハンドルキャッシュ
+let _syncHandles = { products: null, constructions: null, customers: null, quotes: null };
+
+// フォルダハンドル（showDirectoryPicker の結果）
+let _dirHandle = null;
 
 /**
- * データが変更された際に呼ばれるフック
- * 同期設定が有効な場合、自動的にファイルへ保存する
+ * データ変更時の自動保存トリガー
  */
+async function onProductChanged()      { await saveToLocalFile('products'); }
+async function onConstructionChanged() { await saveToLocalFile('constructions'); }
+async function onCustomerChanged()     { await saveToLocalFile('customers'); }
+async function onQuoteChanged()        { await saveToLocalFile('quotes'); }
 async function onDataChanged() {
-    if (_syncFileHandle) {
-        await saveToLocalFile();
-    }
+    for (const k of Object.keys(SYNC_CONFIG)) await saveToLocalFile(k);
 }
 
-/** 
- * ローカルファイルとの接続（同期開始）
+// =====================
+// フォルダ選択・一括接続
+// =====================
+
+/**
+ * dataフォルダを1回選択し、4ファイルを自動接続する
  */
-async function connectLocalFile(mode = 'open') {
-    if (!('showOpenFilePicker' in window)) {
-        alert('お使いのブラウザはFile System Access APIをサポートしていません。最新のChromeまたはEdgeを使用してください。');
+async function connectDataFolder() {
+    if (!('showDirectoryPicker' in window)) {
+        alert('お使いのブラウザはDirectory Access APIをサポートしていません。\n最新のChrome / Edgeをご使用ください。');
         return;
     }
-
     try {
-        let handle;
-        if (mode === 'create') {
-            handle = await window.showSaveFilePicker({
-                suggestedName: 'btob_database.json',
-                types: [{ description: 'JSONファイル', accept: { 'application/json': ['.json'] } }]
-            });
-        } else {
-            const [h] = await window.showOpenFilePicker({
-                types: [{ description: 'JSONファイル', accept: { 'application/json': ['.json'] } }],
-                multiple: false
-            });
-            handle = h;
-        }
-        
-        _syncFileHandle = handle;
-        
-        // 最初の読み込み・書き込み確認
-        if (mode === 'create') {
-            // 新規作成時は現在のデータを書き込む
-            await saveToLocalFile();
-            showToast('新規同期ファイルを作成しました');
-        } else {
-            // 既存ファイル時は読み込むか確認
-            if (confirm('ファイルからデータを読み込みますか？（ブラウザ内の現在のデータは上書きされます）\n「キャンセル」を押すと現在のブラウザデータをファイルへ書き込みます。')) {
-                await loadFromLocalFile();
-                showToast('ファイルからデータを読み込みました');
-            } else {
-                await saveToLocalFile();
-                showToast('現在のデータをファイルへ保存しました');
-            }
-        }
-
-        // ハンドルをIndexedDBに保存（次回起動用）
-        await dbPut('appSettings', _syncFileHandle, 'syncFileHandle');
-        updateSyncStatus();
-        
+        const dir = await window.showDirectoryPicker({ mode: 'readwrite' });
+        await _initDirHandle(dir, true);
     } catch (err) {
         if (err.name !== 'AbortError') {
             console.error(err);
-            alert('接続に失敗しました: ' + err.message);
+            alert('フォルダの接続に失敗しました: ' + err.message);
         }
     }
 }
 
-/** 
- * 同期解除
+/**
+ * フォルダハンドルからファイルハンドルを取得・接続する共通処理
+ * @param {FileSystemDirectoryHandle} dir
+ * @param {boolean} interactive - trueならユーザーに読込/書込を確認する
  */
-async function disconnectLocalFile() {
-    if (!confirm('同期を解除しますか？（ファイル自体は削除されません）')) return;
-    _syncFileHandle = null;
-    await dbDelete('appSettings', 'syncFileHandle');
+async function _initDirHandle(dir, interactive) {
+    _dirHandle = dir;
+
+    // ディレクトリハンドルをIndexedDBに永続化
+    await dbPut('appSettings', dir, 'sync_dir');
+
+    let loadCount = 0;
+    const missing = [];
+
+    for (const [dbKey, cfg] of Object.entries(SYNC_CONFIG)) {
+        try {
+            // ファイルが存在するか試みる
+            const fh = await dir.getFileHandle(cfg.filename, { create: false });
+            _syncHandles[dbKey] = fh;
+            loadCount++;
+        } catch (_) {
+            // ファイルが存在しない場合は新規作成
+            try {
+                const fh = await dir.getFileHandle(cfg.filename, { create: true });
+                _syncHandles[dbKey] = fh;
+                missing.push(dbKey);
+            } catch (e2) {
+                console.warn(`Cannot access ${cfg.filename}:`, e2);
+            }
+        }
+    }
+
+    if (interactive) {
+        if (missing.length === Object.keys(SYNC_CONFIG).length) {
+            // 全て新規 → 現在のIndexedDBをファイルに書き出し
+            for (const k of Object.keys(SYNC_CONFIG)) await saveToLocalFile(k);
+            showToast('新しいデータファイルを作成しました');
+        } else if (missing.length > 0) {
+            // 一部新規
+            for (const k of missing) await saveToLocalFile(k);
+            const choice = confirm(
+                `既存ファイルが見つかりました。\n` +
+                `【OK】ファイルのデータをブラウザに読み込む\n` +
+                `【キャンセル】現在のブラウザデータをファイルへ書き込む`
+            );
+            const existingKeys = Object.keys(SYNC_CONFIG).filter(k => !missing.includes(k));
+            for (const k of existingKeys) {
+                if (choice) await loadFromLocalFile(k);
+                else await saveToLocalFile(k);
+            }
+            showToast(choice ? 'ファイルからデータを読み込みました' : 'データをファイルへ保存しました');
+        } else {
+            // 全て既存
+            const choice = confirm(
+                `dataフォルダ内の全ファイルを検出しました。\n\n` +
+                `【OK】ファイルのデータをブラウザに読み込む\n` +
+                `【キャンセル】現在のブラウザデータをファイルへ書き込む`
+            );
+            for (const k of Object.keys(SYNC_CONFIG)) {
+                if (choice) await loadFromLocalFile(k);
+                else await saveToLocalFile(k);
+            }
+            showToast(choice ? 'ファイルからデータを読み込みました' : 'データをファイルへ保存しました');
+        }
+    } else {
+        // 非対話（起動時自動接続）: ファイルが存在するものだけ読み込む
+        const existingKeys = Object.keys(SYNC_CONFIG).filter(k => !missing.includes(k));
+        for (const k of existingKeys) await loadFromLocalFile(k);
+        if (missing.length > 0) {
+            for (const k of missing) await saveToLocalFile(k);
+        }
+    }
+
     updateSyncStatus();
+    updateFolderStatus();
+}
+
+/**
+ * フォルダ同期を解除する
+ */
+async function disconnectDataFolder() {
+    if (!confirm('フォルダとの同期を解除しますか？\n（ファイル自体は削除されません）')) return;
+    _dirHandle = null;
+    for (const k of Object.keys(SYNC_CONFIG)) _syncHandles[k] = null;
+    await dbDelete('appSettings', 'sync_dir');
+    updateSyncStatus();
+    updateFolderStatus();
     showToast('同期を解除しました');
 }
 
-/** 
- * ファイルへ書き出し
+// =====================
+// ファイル読み書き
+// =====================
+
+/**
+ * 指定キーのデータをファイルへ書き出す
  */
-async function saveToLocalFile() {
-    if (!_syncFileHandle) return;
+async function saveToLocalFile(dbKey) {
+    const handle = _syncHandles[dbKey];
+    if (!handle) return;
     try {
-        const data = await dbExport();
-        const writable = await _syncFileHandle.createWritable();
+        const data = await dbExportPartial(SYNC_CONFIG[dbKey].stores);
+        const writable = await handle.createWritable();
         await writable.write(JSON.stringify(data, null, 2));
         await writable.close();
-        console.log('File synced:', _syncFileHandle.name);
+        console.log(`[sync] saved: ${SYNC_CONFIG[dbKey].filename}`);
     } catch (err) {
-        console.error('Save to file failed:', err);
-        // パーミッションエラーなどの場合は再接続を促す
+        console.error(`[sync] save failed [${dbKey}]:`, err);
         if (err.name === 'NotAllowedError') {
-            _syncFileHandle = null;
+            showToast('ファイルへの書き込み権限がありません。フォルダを再接続してください。', 'danger');
+            _dirHandle = null;
+            for (const k of Object.keys(SYNC_CONFIG)) _syncHandles[k] = null;
             updateSyncStatus();
+            updateFolderStatus();
         }
     }
 }
 
-/** 
- * ファイルから読み込み
+/**
+ * 指定キーのファイルからデータを読み込む
  */
-async function loadFromLocalFile() {
-    if (!_syncFileHandle) return;
+async function loadFromLocalFile(dbKey) {
+    const handle = _syncHandles[dbKey];
+    if (!handle) return;
     try {
-        const file = await _syncFileHandle.getFile();
+        const file = await handle.getFile();
         const text = await file.text();
-        if (text.trim()) {
-            const data = JSON.parse(text);
-            await dbImport(data);
-            // 画面更新
-            if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
-            if (document.getElementById('page-customers').classList.contains('active')) loadCustomers();
-            if (document.getElementById('page-products').classList.contains('active')) loadProducts();
-            if (document.getElementById('page-constructions').classList.contains('active')) loadConstructions();
-            if (document.getElementById('page-pricelists').classList.contains('active')) loadPriceLists();
-        }
+        if (!text.trim()) return;
+        const data = JSON.parse(text);
+        await dbImportPartial(data, SYNC_CONFIG[dbKey].stores);
+        // 表示中のページを更新
+        if (document.getElementById('page-dashboard').classList.contains('active')) loadDashboard();
+        if (dbKey === 'customers'     && document.getElementById('page-customers').classList.contains('active'))     loadCustomers();
+        if (dbKey === 'products'      && document.getElementById('page-products').classList.contains('active'))      loadProducts();
+        if (dbKey === 'constructions' && document.getElementById('page-constructions').classList.contains('active')) loadConstructions();
+        if (dbKey === 'quotes'        && document.getElementById('page-pricelists').classList.contains('active'))    loadPriceLists();
     } catch (err) {
-        console.error('Load from file failed:', err);
-        alert('読み込みに失敗しました: ' + err.message);
+        console.error(`[sync] load failed [${dbKey}]:`, err);
     }
 }
 
-/** 
- * UI上の同期ステータス更新
+// =====================
+// UI ステータス更新
+// =====================
+
+/**
+ * フォルダ接続状態バナーを更新する
+ */
+function updateFolderStatus() {
+    const connected = !!_dirHandle;
+
+    // 接続済みバナー
+    const banner = document.getElementById('folder-connected-banner');
+    if (banner) banner.style.display = connected ? 'flex' : 'none';
+
+    // 未接続バナー
+    const noBanner = document.getElementById('folder-disconnected-banner');
+    if (noBanner) noBanner.style.display = connected ? 'none' : 'flex';
+
+    // フォルダ名表示
+    const nameEl = document.getElementById('folder-connected-name');
+    if (nameEl) nameEl.textContent = connected ? _dirHandle.name : '—';
+
+    // ファイル一覧の接続状況
+    Object.keys(SYNC_CONFIG).forEach(dbKey => {
+        const dot   = document.getElementById(`sync-dot-${dbKey}`);
+        const label = document.getElementById(`sync-label-${dbKey}`);
+        if (!dot || !label) return;
+        const ok = !!_syncHandles[dbKey];
+        dot.style.background   = ok ? 'var(--success)' : '#ccc';
+        label.textContent      = ok ? '接続済' : '—';
+        label.style.color      = ok ? 'var(--success)' : 'var(--text3)';
+    });
+}
+
+/**
+ * 旧来の updateSyncStatus（旧UIとの互換のため残す）
  */
 function updateSyncStatus() {
-    const dot = document.getElementById('sync-status-dot');
-    const text = document.getElementById('sync-status-text');
-    const fname = document.getElementById('sync-filename');
-    const btnDisc = document.getElementById('btn-disconnect-sync');
-
-    if (_syncFileHandle) {
-        dot.style.background = 'var(--success)';
-        text.textContent = '同期中（自動保存有効）';
-        text.style.color = 'var(--success)';
-        fname.textContent = _syncFileHandle.name;
-        btnDisc.style.display = '';
-    } else {
-        dot.style.background = '#ccc';
-        text.textContent = '未接続';
-        text.style.color = 'var(--text3)';
-        fname.textContent = '—';
-        btnDisc.style.display = 'none';
-    }
+    updateFolderStatus();
 }
 
+// =====================
+// 手動エクスポート / インポート
+// =====================
+
 /** 
- * 手動エクスポート（ダウンロード）
+ * 手動エクスポート（データベース全体の一括ダウンロード）
  */
 async function exportDataManual() {
-    const data = await dbExport();
+    const data = await dbExportPartial(['customers', 'products', 'constructions', 'priceLists', 'priceListItems']);
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -1181,19 +1276,19 @@ async function exportDataManual() {
 }
 
 /** 
- * 手動インポート（アップロード）
+ * 手動インポート（データベース全体の一括アップロード）
  */
 async function importDataManual(input) {
     const file = input.files[0];
     if (!file) return;
-    if (!confirm('データを復元しますか？現在のデータはすべて上書きされます。')) return;
+    if (!confirm('データを復元しますか？現在の全データが上書きされます。')) return;
 
     const reader = new FileReader();
     reader.onload = async (e) => {
         try {
             const data = JSON.parse(e.target.result);
-            await dbImport(data);
-            showToast('データを復元しました');
+            await dbImportPartial(data, ['customers', 'products', 'constructions', 'priceLists', 'priceListItems']);
+            showToast('全データを復元しました');
             loadDashboard();
             input.value = ''; // Reset
         } catch (err) {
@@ -1210,35 +1305,82 @@ async function resetDatabase() {
     if (!confirm('【警告】すべてのデータを初期化しますか？この操作は取り消せません。')) return;
     if (!confirm('本当によろしいですか？バックアップがない場合、データは永久に失われます。')) return;
 
-    _syncFileHandle = null;
-    await dbDelete('appSettings', 'syncFileHandle');
+    // ハンドル情報をリセット
+    for (const dbKey of Object.keys(SYNC_CONFIG)) {
+        _syncHandles[dbKey] = null;
+        await dbDelete('appSettings', `sync_${dbKey}`);
+    }
     
-    await dbImport({}); // 空データで上書き
+    // 全ストアを空データで上書き
+    await dbImportPartial({}, ['customers', 'products', 'constructions', 'priceLists', 'priceListItems']);
     showToast('データベースを初期化しました', 'danger');
     location.reload();
 }
 
-/** 
- * 起動時の同期チェック
+/**
+ * 起動時の自動同期チェック（フォルダハンドル方式）
  */
 async function checkAutoSync() {
     try {
-        const handle = await dbGet('appSettings', 'syncFileHandle');
-        if (handle) {
-            // パーミッション確認
-            if (await handle.queryPermission({ mode: 'readwrite' }) === 'granted') {
-                _syncFileHandle = handle;
-                await loadFromLocalFile();
-                console.log('Auto-sync connected:', handle.name);
-            } else {
-                console.log('Sync file found but permission required');
-                // ユーザーアクションが必要なため、ここでは何もしない（UIで「再接続」を促すなど）
+        const dir = await dbGet('appSettings', 'sync_dir');
+        if (!dir) {
+            // 旧方式のハンドル（個別ファイル）を移行チェック
+            let foundOld = false;
+            for (const dbKey of Object.keys(SYNC_CONFIG)) {
+                const oldHandle = await dbGet('appSettings', `sync_${dbKey}`);
+                if (oldHandle) { foundOld = true; break; }
             }
+            const alertEl = document.getElementById('global-sync-alert');
+            if (alertEl) alertEl.style.display = foundOld ? 'flex' : 'none';
+            updateFolderStatus();
+            return;
+        }
+
+        // パーミッションが自動で取れるか確認
+        const perm = await dir.queryPermission({ mode: 'readwrite' });
+        if (perm === 'granted') {
+            await _initDirHandle(dir, false);
+            console.log('[sync] Auto-connected:', dir.name);
+            const alertEl = document.getElementById('global-sync-alert');
+            if (alertEl) alertEl.style.display = 'none';
+        } else {
+            // パーミッションが必要 → 再接続ボタンを表示
+            _dirHandle = dir; // ハンドル自体は保持しておく
+            const alertEl = document.getElementById('global-sync-alert');
+            if (alertEl) alertEl.style.display = 'flex';
+            console.log('[sync] Permission required for folder:', dir.name);
         }
     } catch (err) {
-        console.warn('Auto-sync check failed:', err);
+        console.warn('[sync] Auto-sync check failed:', err);
     }
-    updateSyncStatus();
+    updateFolderStatus();
+}
+
+/**
+ * 再接続ボタン押下（ユーザー操作によりパーミッションを要求）
+ */
+async function reconnectAllFiles() {
+    try {
+        const dir = _dirHandle || await dbGet('appSettings', 'sync_dir');
+        if (!dir) {
+            await connectDataFolder();
+            return;
+        }
+        const perm = await dir.requestPermission({ mode: 'readwrite' });
+        if (perm === 'granted') {
+            await _initDirHandle(dir, false);
+            showToast('データフォルダへの接続が完了しました');
+            const alertEl = document.getElementById('global-sync-alert');
+            if (alertEl) alertEl.style.display = 'none';
+        } else {
+            showToast('アクセスが拒否されました', 'danger');
+        }
+    } catch (err) {
+        if (err.name !== 'AbortError') {
+            console.error('[sync] Reconnect failed:', err);
+            showToast('再接続に失敗しました: ' + err.message, 'danger');
+        }
+    }
 }
 
 // =====================
@@ -1247,6 +1389,7 @@ async function checkAutoSync() {
 window.addEventListener('DOMContentLoaded', async () => {
     await openDB();
     await checkAutoSync();
+    updateFolderStatus();
     navigateTo('dashboard');
 
     // ナビゲーション

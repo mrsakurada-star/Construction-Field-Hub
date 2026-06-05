@@ -1,25 +1,25 @@
 /* © 2026 Nozomi Sakurada. All rights reserved. */
 :root {
-    --bg: #f8f8f6;
+    --bg: #f5f5f7;
     --white: #ffffff;
-    --border: #e2e2dc;
-    --border-dark: #c8c8c0;
-    --text: #1a1a18;
-    --text2: #6b6b60;
-    --text3: #9e9e94;
-    --accent: #2a2a24;
-    --accent-line: #3d3d35;
-    --primary: #2a2a24;
-    --secondary: #6b6b60;
-    --success: #4a6741;
-    --chart-1: #2a2a24;
-    --chart-2: #6b6b60;
-    --chart-3: #9e9e94;
-    --chart-4: #c8c8c0;
+    --border: #d2d2d7;
+    --border-dark: #b8b8be;
+    --text: #1d1d1f;
+    --text2: #6e6e73;
+    --text3: #86868b;
+    --accent: #1d1d1f;
+    --accent-line: #3a3a3c;
+    --primary: #1d1d1f;
+    --secondary: #6e6e73;
+    --success: #34c759;
+    --chart-1: #1d1d1f;
+    --chart-2: #6e6e73;
+    --chart-3: #86868b;
+    --chart-4: #b8b8be;
 }
 
 body {
-    font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif;
     background: var(--bg);
     color: var(--text);
     margin: 0;
@@ -516,7 +516,7 @@ tr:hover .formula-toggle-icon {
         background: white !important;
         print-color-adjust: exact;
         -webkit-print-color-adjust: exact;
-        font-family: 'Noto Sans JP', sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif;
         font-size: 9px;
         color: #1a1a18;
     }

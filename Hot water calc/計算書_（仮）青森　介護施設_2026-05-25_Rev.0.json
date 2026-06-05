@@ -1,0 +1,135 @@
+{
+  "version": "3.0",
+  "savedAt": "2026-05-25T00:40:27.612Z",
+  "common": {
+    "name": "（仮）青森　介護施設",
+    "pref": "青森県",
+    "tc": "4",
+    "k": "1.1",
+    "facility": "nursing",
+    "author": "櫻田　希望",
+    "date": "2026年05月25日",
+    "rev": "Rev.0",
+    "memo": "浴槽容量は概算です。深浴槽3400ℓ＋浅浴槽1280ℓ＝4680ℓ",
+    "gasType": "13A"
+  },
+  "revHistory": [
+    {
+      "rev": "Rev.0",
+      "date": "2026年05月25日",
+      "note": "概算での能力計算"
+    }
+  ],
+  "systems": [
+    {
+      "id": 1,
+      "name": "大浴槽",
+      "pat": "pat1",
+      "fixtures": [
+        {
+          "id": 1,
+          "zone": "room",
+          "name": "洗面台（客室）",
+          "hq": 7.6,
+          "hqTank": 30,
+          "qty": 1
+        },
+        {
+          "id": 2,
+          "zone": "room",
+          "name": "シャワー（客室）",
+          "hq": 114,
+          "hqTank": 120,
+          "qty": 0
+        }
+      ],
+      "p4params": {
+        "vol": 10,
+        "qty": 1,
+        "nfilter": 6,
+        "dt2": 5,
+        "dt1": 10,
+        "tset": 42,
+        "tfill": 4,
+        "useQfill": false
+      },
+      "p23params": {
+        "pipelen": 0,
+        "losscoef": 10,
+        "tankvol": 1000
+      },
+      "expansionParams": {
+        "enable": false,
+        "vsysPipe": 0,
+        "unitModel": "GS-S3200GW"
+      },
+      "multiParams": {
+        "facilityType": "nursing",
+        "shower": {
+          "qty": 10,
+          "enabled": false
+        },
+        "wash": {
+          "qty": 10,
+          "enabled": false
+        },
+        "kitchen": {
+          "qty": 0,
+          "enabled": false
+        },
+        "bath": {
+          "vol": 4680,
+          "fillMin": 60,
+          "outdoor": false,
+          "enabled": true
+        }
+      },
+      "sliders": {},
+      "th": 45,
+      "unitcap": 50,
+      "result": {
+        "isMulti": true,
+        "pat": "multi",
+        "lineName": "大浴槽",
+        "groups": [],
+        "sumGosuA": 0,
+        "gosuA": 0,
+        "unitsA": 0,
+        "bathResult": {
+          "vol": 4680,
+          "fillMin": 60,
+          "outdoor": false,
+          "bathTemp": 44,
+          "flowBath": 78,
+          "gosuBath": 124.8,
+          "gosuB": 137.28,
+          "unitsB": 3
+        },
+        "unitsB": 3,
+        "gosuB": 137.28,
+        "finalUnits": 3,
+        "unitcap": 50,
+        "pipeInfo": {
+          "maxUnits": 3,
+          "kyusuiA": "32A",
+          "kyutoA": "32A",
+          "maxFlowTotal": 53
+        },
+        "ftype": "nursing",
+        "facilityLabel": "介護・老健施設",
+        "src": "設計資料073-8 P.8",
+        "tc": 4,
+        "K": 1.1,
+        "waterDirect": {
+          "status": "ng",
+          "label": "原則不可",
+          "message": "複数台マルチは原則不可。PU-6等ポンプユニットの使用を検討してください。"
+        },
+        "gasKw70Alert": true,
+        "QcircKw": 0,
+        "QcircGosu": 0,
+        "expansionTank": null
+      }
+    }
+  ]
+}

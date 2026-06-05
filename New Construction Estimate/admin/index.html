@@ -1,0 +1,267 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>見積ツール - 管理画面</title>
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+    <div class="admin-container">
+        <header class="admin-header">
+            <h1>見積ツール - 管理画面</h1>
+            <a href="../index.html" class="back-link">← 見積作成に戻る</a>
+        </header>
+
+        <div class="tabs-container">
+            <div class="tabs-nav">
+                <button class="tab-btn active" onclick="switchTab('equipment')">機器管理</button>
+                <button class="tab-btn" onclick="switchTab('materials')">部材管理</button>
+                <button class="tab-btn" onclick="switchTab('works')">工事管理</button>
+                <button class="tab-btn" onclick="switchTab('relatedparts')">関連部材紐づけ</button>
+                <button class="tab-btn" onclick="switchTab('templates')">テンプレート管理</button>
+            </div>
+
+            <!-- 機器管理タブ -->
+            <div id="equipment" class="tab-content active">
+                <div class="tab-header">
+                    <h2>機器管理</h2>
+                    <button class="btn btn-primary" onclick="openEquipmentForm()">+ 新規追加</button>
+                </div>
+                <table class="data-table" id="equipmentTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>機器名</th>
+                            <th>カテゴリ</th>
+                            <th>定価</th>
+                            <th>販売価格</th>
+                            <th>数量</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="equipmentList"></tbody>
+                </table>
+            </div>
+
+            <!-- 部材管理タブ -->
+            <div id="materials" class="tab-content">
+                <div class="tab-header">
+                    <h2>部材管理</h2>
+                    <button class="btn btn-primary" onclick="openMaterialForm()">+ 新規追加</button>
+                </div>
+                <table class="data-table" id="materialsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>部材名</th>
+                            <th>カテゴリ</th>
+                            <th>タイプ</th>
+                            <th>定価</th>
+                            <th>販売価格</th>
+                            <th>数量</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="materialsList"></tbody>
+                </table>
+            </div>
+
+            <!-- 工事管理タブ -->
+            <div id="works" class="tab-content">
+                <div class="tab-header">
+                    <h2>工事管理</h2>
+                    <button class="btn btn-primary" onclick="openWorkForm()">+ 新規追加</button>
+                </div>
+                <table class="data-table" id="worksTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>工事名</th>
+                            <th>カテゴリ</th>
+                            <th>定価</th>
+                            <th>販売価格</th>
+                            <th>数量</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="worksList"></tbody>
+                </table>
+            </div>
+
+            <!-- 関連部材紐づけ管理タブ -->
+            <div id="relatedparts" class="tab-content">
+                <div class="tab-header">
+                    <h2>関連部材紐づけ管理</h2>
+                </div>
+
+                <div class="related-parts-container">
+                    <div class="related-parts-selector">
+                        <label for="mainProductSelect">主製品を選択:</label>
+                        <select id="mainProductSelect" onchange="onMainProductSelect()">
+                            <option value="">選択してください</option>
+                        </select>
+                    </div>
+
+                    <div id="relatedPartsSection" style="display: none; margin-top: 30px;">
+                        <h3>紐づけられた関連部材</h3>
+                        <table class="data-table" id="relatedPartsTable">
+                            <thead>
+                                <tr>
+                                    <th>部材名</th>
+                                    <th>カテゴリ</th>
+                                    <th>数量</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="relatedPartsList"></tbody>
+                        </table>
+
+                        <div style="margin-top: 20px; display: flex; gap: 12px;">
+                            <button class="btn btn-primary" onclick="openAddRelatedPartModal()">+ 関連部材を追加</button>
+                            <button class="btn btn-success" onclick="saveRelatedParts()">保存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- テンプレート管理タブ -->
+            <div id="templates" class="tab-content">
+                <div class="tab-header">
+                    <h2>見積テンプレート</h2>
+                    <button class="btn btn-primary" onclick="openTemplateForm()">+ 新規テンプレート作成</button>
+                </div>
+                <div id="templatesList" class="templates-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- フォームモーダル -->
+    <div id="formModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="formTitle">新規追加</h3>
+                <button class="modal-close" onclick="closeForm()">×</button>
+            </div>
+            <form id="dataForm" onsubmit="handleFormSubmit(event)">
+                <div class="form-body">
+                    <input type="hidden" id="formId">
+                    <input type="hidden" id="formType">
+
+                    <!-- 機器/部材/工事共通 -->
+                    <div class="form-group">
+                        <label for="itemId">ID（自動採番の場合は空欄）</label>
+                        <input type="text" id="itemId" placeholder="GH-H2400ZW">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemName">名称*</label>
+                        <input type="text" id="itemName" required placeholder="機器名を入力">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemCategory">カテゴリ*</label>
+                        <select id="itemCategory" required>
+                            <option value="">選択してください</option>
+                            <option value="給湯器">給湯器</option>
+                            <option value="ルームヒーター">ルームヒーター</option>
+                            <option value="複合システム">複合システム</option>
+                            <option value="その他">その他</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="typeGroup" style="display:none;">
+                        <label for="itemType">タイプ</label>
+                        <input type="text" id="itemType" placeholder="QFジョイント等">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemListPrice">定価</label>
+                        <input type="number" id="itemListPrice" placeholder="150000" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemPrice">単価（販売価格）*</label>
+                        <input type="number" id="itemPrice" required placeholder="139000" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="itemQty">数量</label>
+                        <input type="number" id="itemQty" placeholder="1" value="1" min="1">
+                    </div>
+                    <div class="form-group" id="isMainUnitGroup" style="display:none;">
+                        <label for="isMainUnit">主要機械</label>
+                        <input type="checkbox" id="isMainUnit">
+                    </div>
+                    <div class="form-group" id="optionTemplateGroup" style="display:none;">
+                        <label>オプションテンプレート</label>
+                        <div id="optionTemplateEditor" style="margin-top: 8px;"></div>
+                        <button type="button" class="btn btn-secondary" onclick="addTemplateOption()" style="margin-top: 8px;">+ オプション追加</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeForm()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- テンプレートフォームモーダル -->
+    <div id="templateModal" class="modal hidden">
+        <div class="modal-content wide">
+            <div class="modal-header">
+                <h3>テンプレート作成</h3>
+                <button class="modal-close" onclick="closeTemplateForm()">×</button>
+            </div>
+            <form id="templateForm" onsubmit="handleTemplateSubmit(event)">
+                <div class="form-body">
+                    <input type="hidden" id="templateId">
+                    <div class="form-group">
+                        <label for="templateName">テンプレート名*</label>
+                        <input type="text" id="templateName" required placeholder="例：標準パッケージA">
+                    </div>
+                    <div class="form-group">
+                        <label for="templateDesc">説明</label>
+                        <textarea id="templateDesc" placeholder="このテンプレートの説明"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>含まれる項目</label>
+                        <div id="templateItems" class="template-items"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeTemplateForm()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 関連部材追加モーダル -->
+    <div id="addRelatedPartModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>関連部材を追加</h3>
+                <button class="modal-close" onclick="closeAddRelatedPartModal()">×</button>
+            </div>
+            <form id="addRelatedPartForm" onsubmit="handleAddRelatedPart(event)">
+                <div class="form-body">
+                    <div class="form-group">
+                        <label for="partSelect">部材を選択*</label>
+                        <select id="partSelect" required>
+                            <option value="">選択してください</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="partQty">数量*</label>
+                        <input type="number" id="partQty" required min="1" value="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddRelatedPartModal()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">追加</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../js/database.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

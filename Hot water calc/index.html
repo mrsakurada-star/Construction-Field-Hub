@@ -1,0 +1,683 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>給湯能力計算書 v3</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'primary': '#1d1d1f',
+            'surface': '#f5f5f7',
+            'border-c': '#d2d2d7'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body>
+
+<!-- ===== サイドナビ ===== -->
+<div id="side-nav" class="hidden side-nav">
+  <div class="nav-logo">給湯計算書 <span class="nav-ver">v3</span></div>
+  <nav class="nav-links">
+    <button class="nav-item" data-page="common" onclick="showPage('common')">
+      <span class="material-symbols-outlined">tune</span> 基本条件
+    </button>
+    <button class="nav-item" data-page="systems" onclick="showPage('systems')">
+      <span class="material-symbols-outlined">water_heater</span> 系統設計
+    </button>
+    <button class="nav-item" data-page="report" onclick="showPage('report')">
+      <span class="material-symbols-outlined">description</span> 計算書出力
+    </button>
+  </nav>
+  <div class="nav-footer">
+    <button onclick="saveProject()" class="nav-action-btn">
+      <span class="material-symbols-outlined">save</span> 保存
+    </button>
+    <label class="nav-action-btn" style="cursor:pointer">
+      <span class="material-symbols-outlined">folder_open</span> 読込
+      <input type="file" accept=".json" onchange="loadProject(event)" style="display:none">
+    </label>
+    <button onclick="openCompanySettings()" class="nav-action-btn">
+      <span class="material-symbols-outlined">business</span> 会社設定
+    </button>
+  </div>
+</div>
+
+<!-- ===== メインコンテンツ ===== -->
+<div id="main-content">
+
+<!-- ===== TOP ページ ===== -->
+<div id="page-top" class="page active">
+  <div class="top-hero">
+    <div class="top-float-stage" id="floatStage" aria-hidden="true"></div>
+    <div class="top-hero-inner">
+      <div class="top-label-en">Hot water calc</div>
+      <h1 class="top-title">給湯能力計算書</h1>
+      <p class="top-sub">客先提出用計算書の作成・管理システム</p>
+      <button onclick="startNewProject()" class="top-cta">新規プロジェクトを開始</button>
+      <label class="top-load-btn">
+        <input type="file" id="projectFileInput" accept=".json" onchange="loadProject(event)" style="display:none">
+        保存済みプロジェクトを読み込む
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 基本条件 ページ ===== -->
+<div id="page-common" class="page">
+  <div class="page-header">
+    <h2 class="page-title">基本条件・プロジェクト情報</h2>
+  </div>
+  <div class="form-layout">
+
+    <!-- 施設情報 -->
+    <section class="form-section">
+      <h3 class="section-heading">施設情報</h3>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="form-label">施設名称</label>
+          <input type="text" id="common-name" class="form-input" placeholder="例：○○ビル 給湯設備">
+        </div>
+        <div class="form-group">
+          <label class="form-label">所在地（都道府県）</label>
+          <select id="common-pref" class="form-select" onchange="onPrefChange()"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">給水温度 tc（冬期最低）</label>
+          <div class="input-unit-wrap">
+            <input type="number" id="common-tc" class="form-input" value="8" step="1">
+            <span class="input-unit">℃</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">施設種別</label>
+          <select id="common-facility" class="form-select">
+            <option value="bizhotel">ビジネスホテル</option>
+            <option value="leisurehotel">レジャーホテル</option>
+            <option value="hotel">ホテル・旅館</option>
+            <option value="hospital">病院・医療施設</option>
+            <option value="nursing">介護・老健施設</option>
+            <option value="sports">スポーツ施設</option>
+            <option value="school">学校・教育施設</option>
+            <option value="factory">工場・作業場</option>
+            <option value="apartment">集合住宅</option>
+            <option value="office">オフィス</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">余裕係数 K</label>
+          <input type="number" id="common-k" class="form-input" value="1.1" step="0.05" min="1.0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">ガス種別</label>
+          <div class="radio-group">
+            <label class="radio-label"><input type="radio" name="gas-type" value="13A" checked> 13A</label>
+            <label class="radio-label"><input type="radio" name="gas-type" value="LPG"> LPG</label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- プロジェクト管理 -->
+    <section class="form-section">
+      <h3 class="section-heading">プロジェクト管理</h3>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">作成者</label>
+          <input type="text" id="common-author" class="form-input" placeholder="担当者名">
+        </div>
+        <div class="form-group">
+          <label class="form-label">作成日</label>
+          <input type="text" id="proj-date" class="form-input" placeholder="例：2026年05月11日">
+        </div>
+        <div class="form-group">
+          <label class="form-label">改訂番号</label>
+          <input type="text" id="proj-rev" class="form-input" value="Rev.0" placeholder="Rev.0">
+        </div>
+      </div>
+
+      <!-- 変更履歴テーブル -->
+      <div class="rev-history-wrap">
+        <div class="rev-history-header">
+          <span class="form-label">変更履歴</span>
+          <button onclick="addRevRow()" class="btn-secondary-sm">＋ 行を追加</button>
+        </div>
+        <table class="rev-table">
+          <thead>
+            <tr><th>Rev.</th><th>年月日</th><th>変更内容</th><th></th></tr>
+          </thead>
+          <tbody id="rev-history-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 計算条件メモ -->
+    <section class="form-section">
+      <h3 class="section-heading">計算条件メモ（特記事項）</h3>
+      <textarea id="common-memo" class="form-textarea" rows="4" placeholder="前提条件・特記事項など（計算書の末尾に「特記事項」として出力されます）"></textarea>
+    </section>
+
+    <div class="form-actions">
+      <button onclick="showPage('systems')" class="btn-primary">系統設計へ →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 系統一覧 ページ ===== -->
+<div id="page-systems" class="page">
+  <div class="page-header">
+    <h2 class="page-title">系統設計</h2>
+    <div id="systems-summary" class="hidden sys-summary">
+      合計熱源能力: <strong id="total-kw">―</strong>
+    </div>
+  </div>
+  <div id="systems-grid" class="systems-grid"></div>
+</div>
+
+<!-- ===== 系統詳細 ページ ===== -->
+<div id="page-detail" class="page">
+  <div class="detail-layout">
+
+    <!-- 左パネル：入力 -->
+    <div class="detail-left">
+      <div class="page-header">
+        <button onclick="saveSystemAndBack()" class="btn-back">← 一覧へ</button>
+        <h2 class="page-title">系統詳細</h2>
+      </div>
+
+      <!-- 基本設定 -->
+      <section class="form-section">
+        <div class="form-grid">
+          <div class="form-group full">
+            <label class="form-label">系統名</label>
+            <input type="text" id="detail-name" class="form-input" oninput="calcAndUpdate()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">給湯温度 th</label>
+            <div class="input-unit-wrap">
+              <input type="number" id="detail-th" class="form-input" value="60" step="1" onchange="calcAndUpdate()">
+              <span class="input-unit">℃</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">機器単機能力</label>
+            <select id="detail-unitcap" class="form-select" onchange="calcAndUpdate()">
+              <option value="16">16号</option>
+              <option value="20">20号</option>
+              <option value="24">24号</option>
+              <option value="32" selected>32号</option>
+              <option value="50">50号</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- パターン選択 -->
+      <section class="form-section">
+        <h3 class="section-heading">計算パターン</h3>
+        <div class="pat-grid">
+          <button class="pat-btn pat-active" data-pat="pat1" onclick="selectPat(this,'pat1')">
+            <span class="pat-label">Pat 1</span><span class="pat-desc">直圧給湯</span>
+          </button>
+          <button class="pat-btn" data-pat="pat2" onclick="selectPat(this,'pat2')">
+            <span class="pat-label">Pat 2</span><span class="pat-desc">給湯循環</span>
+          </button>
+          <button class="pat-btn" data-pat="pat3" onclick="selectPat(this,'pat3')">
+            <span class="pat-label">Pat 3</span><span class="pat-desc">貯湯タンク</span>
+          </button>
+          <button class="pat-btn" data-pat="pat4" onclick="selectPat(this,'pat4')">
+            <span class="pat-label">Pat 4</span><span class="pat-desc">ろ過昇温</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Pat1/2: 業務用マルチ入力 -->
+      <div id="multi-area">
+        <section class="form-section">
+          <h3 class="section-heading">器具グループ設定</h3>
+
+          <!-- シャワー -->
+          <div class="fixture-group">
+            <div class="fixture-group-header">
+              <label class="form-label">シャワー・浴室カラン（基準15号/台）</label>
+              <label class="toggle-label"><input type="checkbox" id="multi-shower-en" checked onchange="calcAndUpdate()"> 有効</label>
+            </div>
+            <div class="fixture-group-body">
+              <div class="form-group">
+                <label class="form-label-sm">台数</label>
+                <div class="input-unit-wrap">
+                  <input type="number" id="multi-shower-qty" class="form-input-sm" value="10" min="0" onchange="calcAndUpdate()">
+                  <span class="input-unit">台</span>
+                </div>
+              </div>
+              <div id="slider-row-shower" class="slider-row">
+                <label class="form-label-sm">同時使用率</label>
+                <div class="slider-wrap">
+                  <span id="slider-val-shower" class="slider-val">―%</span>
+                  <span id="slider-badge-shower" class="manual-badge hidden">手動</span>
+                  <input type="range" id="slider-shower" class="slider" min="10" max="100" step="1" value="50">
+                  <button id="slider-reset-shower" class="slider-reset hidden">自動に戻す</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 洗面 -->
+          <div class="fixture-group">
+            <div class="fixture-group-header">
+              <label class="form-label">手洗い・洗面カラン（基準9号/台）</label>
+              <label class="toggle-label"><input type="checkbox" id="multi-wash-en" checked onchange="calcAndUpdate()"> 有効</label>
+            </div>
+            <div class="fixture-group-body">
+              <div class="form-group">
+                <label class="form-label-sm">台数</label>
+                <div class="input-unit-wrap">
+                  <input type="number" id="multi-wash-qty" class="form-input-sm" value="10" min="0" onchange="calcAndUpdate()">
+                  <span class="input-unit">台</span>
+                </div>
+              </div>
+              <div id="slider-row-wash" class="slider-row">
+                <label class="form-label-sm">同時使用率</label>
+                <div class="slider-wrap">
+                  <span id="slider-val-wash" class="slider-val">―%</span>
+                  <span id="slider-badge-wash" class="manual-badge hidden">手動</span>
+                  <input type="range" id="slider-wash" class="slider" min="10" max="100" step="1" value="50">
+                  <button id="slider-reset-wash" class="slider-reset hidden">自動に戻す</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 厨房 -->
+          <div class="fixture-group">
+            <div class="fixture-group-header">
+              <label class="form-label">厨房カラン（基準25号/台）</label>
+              <label class="toggle-label"><input type="checkbox" id="multi-kitchen-en" onchange="calcAndUpdate()"> 有効</label>
+            </div>
+            <div class="fixture-group-body">
+              <div class="form-group">
+                <label class="form-label-sm">台数</label>
+                <div class="input-unit-wrap">
+                  <input type="number" id="multi-kitchen-qty" class="form-input-sm" value="0" min="0" onchange="calcAndUpdate()">
+                  <span class="input-unit">台</span>
+                </div>
+              </div>
+              <div id="slider-row-kitchen" class="slider-row hidden">
+                <label class="form-label-sm">同時使用率</label>
+                <div class="slider-wrap">
+                  <span id="slider-val-kitchen" class="slider-val">―%</span>
+                  <span id="slider-badge-kitchen" class="manual-badge hidden">手動</span>
+                  <input type="range" id="slider-kitchen" class="slider" min="10" max="100" step="1" value="50">
+                  <button id="slider-reset-kitchen" class="slider-reset hidden">自動に戻す</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 大浴場 -->
+          <div class="fixture-group">
+            <div class="fixture-group-header">
+              <label class="form-label">ふろ給湯（大浴場）</label>
+              <label class="toggle-label"><input type="checkbox" id="multi-bath-en" onchange="calcAndUpdate()"> 有効</label>
+            </div>
+            <div class="fixture-group-body form-grid">
+              <div class="form-group">
+                <label class="form-label-sm">浴槽容量</label>
+                <div class="input-unit-wrap">
+                  <input type="number" id="multi-bath-vol" class="form-input-sm" value="3000" onchange="calcAndUpdate()">
+                  <span class="input-unit">L</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label-sm">湯はり時間</label>
+                <div class="input-unit-wrap">
+                  <input type="number" id="multi-bath-fmin" class="form-input-sm" value="60" onchange="calcAndUpdate()">
+                  <span class="input-unit">分</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label-sm">設置</label>
+                <label class="toggle-label"><input type="checkbox" id="multi-bath-outdoor" onchange="calcAndUpdate()"> 屋外（48℃）</label>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Pat2/3: 循環配管 -->
+      <div id="pat23-section" class="hidden">
+        <section class="form-section">
+          <h3 class="section-heading">循環配管設定</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">配管全長</label>
+              <div class="input-unit-wrap">
+                <input type="number" id="p23-pipelen" class="form-input" value="0" min="0" onchange="calcAndUpdate()">
+                <span class="input-unit">m</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">単位損失</label>
+              <div class="input-unit-wrap">
+                <input type="number" id="p23-losscoef" class="form-input" value="10" min="1" onchange="calcAndUpdate()">
+                <span class="input-unit">W/m</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Pat3: 貯湯タンク＋器具テーブル -->
+      <div id="fixtures-area" class="hidden">
+        <section class="form-section">
+          <h3 class="section-heading">器具一覧</h3>
+          <table class="fixture-table">
+            <thead>
+              <tr><th>器具名</th><th>ゾーン</th><th>Hq [L/h]</th><th>数量</th><th></th></tr>
+            </thead>
+            <tbody id="fixture-tbody"></tbody>
+          </table>
+          <div class="fixture-add-row">
+            <button onclick="addFixtureRow('room')" class="btn-secondary-sm">＋ 客室</button>
+            <button onclick="addFixtureRow('bath')" class="btn-secondary-sm">＋ 大浴場</button>
+            <button onclick="addFixtureRow('kitchen')" class="btn-secondary-sm">＋ 厨房</button>
+          </div>
+
+          <!-- Pat3 同時使用率スライダー -->
+          <div id="slider-row-pat3" class="slider-row hidden" style="margin-top:16px">
+            <label class="form-label">同時使用率（器具合計台数から自動算出）</label>
+            <div class="slider-wrap">
+              <span id="slider-val-pat3" class="slider-val">―%</span>
+              <span id="slider-badge-pat3" class="manual-badge hidden">手動</span>
+              <input type="range" id="slider-pat3" class="slider" min="10" max="100" step="1" value="50">
+              <button id="slider-reset-pat3" class="slider-reset hidden">自動に戻す</button>
+            </div>
+          </div>
+        </section>
+
+        <div id="p3-tank-area" class="hidden">
+          <section class="form-section">
+            <h3 class="section-heading">貯湯タンク容量</h3>
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">貯湯タンク容量（参考）</label>
+                <div class="input-unit-wrap">
+                  <input type="number" id="p23-tankvol" class="form-input" value="1000" onchange="calcAndUpdate()">
+                  <span class="input-unit">L</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- Pat4: ろ過昇温 -->
+      <div id="pat4-section" class="hidden">
+        <section class="form-section">
+          <h3 class="section-heading">ろ過昇温パラメータ</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">浴槽容量</label>
+              <div class="input-unit-wrap">
+                <input type="number" id="p4-vol" class="form-input" value="10" step="0.1" onchange="calcAndUpdate()">
+                <span class="input-unit">m³</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">浴槽数</label>
+              <div class="input-unit-wrap">
+                <input type="number" id="p4-qty" class="form-input" value="1" min="1" onchange="calcAndUpdate()">
+                <span class="input-unit">槽</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">ろ過循環回数</label>
+              <div class="input-unit-wrap">
+                <input type="number" id="p4-nfilter" class="form-input" value="6" step="0.5" onchange="calcAndUpdate()">
+                <span class="input-unit">回/h</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">二次側温度差 ΔT₂</label>
+              <div class="input-unit-wrap">
+                <input type="number" id="p4-dt2" class="form-input" value="5" step="0.5" onchange="calcAndUpdate()">
+                <span class="input-unit">℃</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">一次側温度差 ΔT₁</label>
+              <div class="input-unit-wrap">
+                <input type="number" id="p4-dt1" class="form-input" value="10" step="0.5" onchange="calcAndUpdate()">
+                <span class="input-unit">℃</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">設定温度 T_set</label>
+              <div class="input-unit-wrap">
+                <input type="number" id="p4-tset" class="form-input" value="42" onchange="calcAndUpdate()">
+                <span class="input-unit">℃</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">湯はり時間</label>
+              <div class="input-unit-wrap">
+                <input type="number" id="p4-tfill" class="form-input" value="4" step="0.5" onchange="calcAndUpdate()">
+                <span class="input-unit">h</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">初期湯はりを考慮</label>
+              <label class="toggle-label"><input type="checkbox" id="p4-useqfill" onchange="calcAndUpdate()"> 有効</label>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- 膨張タンク（任意） -->
+      <section class="form-section">
+        <div class="collapsible-header" onclick="toggleExpansion()">
+          <h3 class="section-heading" style="margin:0">膨張タンク選定（任意）</h3>
+          <span id="expansion-toggle-icon">＋</span>
+        </div>
+        <div id="expansion-body" class="hidden" style="margin-top:12px">
+          <label class="toggle-label" style="margin-bottom:12px">
+            <input type="checkbox" id="exp-enable" onchange="calcAndUpdate()"> 計算する
+          </label>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">配管内水量</label>
+              <div class="input-unit-wrap">
+                <input type="number" id="exp-vsys-pipe" class="form-input" value="0" onchange="calcAndUpdate()">
+                <span class="input-unit">L</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">機器型式</label>
+              <select id="exp-unit-model" class="form-select" onchange="calcAndUpdate()">
+                <option value="GS-S3200GW">GS-S3200GW（3.5L）</option>
+                <option value="PG-H500W">PG-H500W（5.0L）</option>
+                <option value="default">その他（4.0L）</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 右パネル：結果 -->
+    <div class="detail-right">
+      <div id="detail-result" class="hidden result-panel">
+        <div class="result-primary">
+          <div class="result-primary-label" id="res-primary-label">必要合計号数</div>
+          <div class="result-primary-val" id="res-primary">―</div>
+          <div class="result-sub" id="res-sub"></div>
+        </div>
+        <div class="result-rows">
+          <div class="result-row-item">
+            <span class="result-item-label">機器選定</span>
+            <span class="result-item-val" id="res-selection">―</span>
+          </div>
+          <div id="res-pipe-row">
+            <div class="result-row-item">
+              <span class="result-item-label">推奨配管口径</span>
+              <span class="result-item-val" id="res-pipe">―</span>
+            </div>
+          </div>
+          <div id="res-tank-area" class="hidden">
+            <div class="result-row-item">
+              <span class="result-item-label">推奨貯湯タンク容量</span>
+              <span class="result-item-val"><span id="res-tank">―</span> L 以上</span>
+            </div>
+          </div>
+        </div>
+        <div id="res-aux" class="res-aux-block"></div>
+        <button onclick="saveSystemAndBack()" class="btn-primary" style="width:100%;margin-top:16px">確定して一覧へ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 計算書 ページ ===== -->
+<div id="page-report" class="page">
+  <div class="report-toolbar no-print">
+    <button onclick="downloadReportPDF()" class="btn-print">
+      <span class="material-symbols-outlined">print</span> 印刷 / PDF保存
+    </button>
+  </div>
+  <div id="report-content"></div>
+</div>
+
+</div><!-- end #main-content -->
+
+<!-- ===== 会社情報モーダル ===== -->
+<div id="modal-company" class="hidden modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title">会社情報設定</h3>
+      <button onclick="document.getElementById('modal-company').classList.add('hidden')" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">会社ロゴ</label>
+        <label class="logo-upload-area">
+          <span>クリックしてロゴ画像を選択</span>
+          <input type="file" accept="image/*" onchange="onLogoUpload(this)" style="display:none">
+        </label>
+        <img id="co-logo-preview" class="hidden" style="max-height:60px;margin-top:8px">
+      </div>
+      <div class="form-grid">
+        <div class="form-group full">
+          <label class="form-label">会社名</label>
+          <input type="text" id="co-name" class="form-input">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">部署名</label>
+          <input type="text" id="co-dept" class="form-input">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">住所</label>
+          <input type="text" id="co-address" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">TEL</label>
+          <input type="text" id="co-tel" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">FAX</label>
+          <input type="text" id="co-fax" class="form-input">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="saveCompanySettings()" class="btn-primary">保存</button>
+      <button onclick="document.getElementById('modal-company').classList.add('hidden')" class="btn-secondary">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<div class="no-print copyright">© 2026 Nozomi Sakurada. All rights reserved.</div>
+
+<script src="js/data.js"></script>
+<script src="js/calc.js"></script>
+<script src="js/report.js"></script>
+<script src="js/main.js"></script>
+<script>
+function toggleExpansion() {
+  const body = document.getElementById('expansion-body');
+  const icon = document.getElementById('expansion-toggle-icon');
+  body.classList.toggle('hidden');
+  icon.textContent = body.classList.contains('hidden') ? '＋' : '−';
+}
+
+// ===== トップページ 浮遊イラスト =====
+(function initFloatStage() {
+  const IMAGES = [
+    './media/ホテル.png',
+    './media/病院.png',
+    './media/介護施設.png',
+    './media/スポーツ施設.png',
+    './media/学校.png',
+    './media/工場.png',
+  ];
+
+  // 各スロットの構成：画面を9ゾーンに分割しつつランダム性を持たせる
+  const SLOTS = [
+    { x: 5,  y: 4,  w: 18, rot: -8 },
+    { x: 72, y: 6,  w: 15, rot:  6 },
+    { x: 18, y: 60, w: 14, rot: -4 },
+    { x: 60, y: 55, w: 20, rot:  9 },
+    { x: 38, y: 10, w: 12, rot:  3 },
+    { x: 80, y: 35, w: 16, rot: -6 },
+    { x: 2,  y: 30, w: 13, rot:  5 },
+    { x: 45, y: 68, w: 11, rot: -3 },
+  ];
+
+  const stage = document.getElementById('floatStage');
+  if (!stage) return;
+
+  // シャッフルしてスロットに割り当て
+  const shuffledImgs = [...IMAGES].sort(() => Math.random() - 0.5);
+
+  SLOTS.forEach((slot, i) => {
+    const img = shuffledImgs[i % shuffledImgs.length];
+    const el = document.createElement('div');
+    el.className = 'float-img';
+
+    const drift = 4 + Math.random() * 6;   // 浮遊移動量(px相当)
+    const dur   = 14 + Math.random() * 10; // 1サイクルの秒数
+    const delay = -(Math.random() * dur);   // バラけさせるためマイナス開始
+
+    const tx0 = `${slot.x}vw`;
+    const ty0 = `${slot.y}vh`;
+    const tx1 = `${slot.x + (Math.random() - 0.5) * drift}vw`;
+    const ty1 = `${slot.y - drift * 0.8}vh`;
+    const rot0 = `${slot.rot}deg`;
+    const rot1 = `${slot.rot + (Math.random() - 0.5) * 6}deg`;
+
+    el.style.cssText = `
+      width: ${slot.w}vw;
+      aspect-ratio: 1;
+      background-image: url('${encodeURI(img)}');
+      --tx0: ${tx0}; --ty0: ${ty0};
+      --tx1: ${tx1}; --ty1: ${ty1};
+      --rot0: ${rot0}; --rot1: ${rot1};
+      --dur: ${dur.toFixed(1)}s;
+      --delay: ${delay.toFixed(1)}s;
+      --peak-op: ${(0.06 + Math.random() * 0.05).toFixed(3)};
+    `;
+
+    stage.appendChild(el);
+  });
+})();
+</script>
+</body>
+</html>

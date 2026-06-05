@@ -1,29 +1,27 @@
 /* © 2026 Nozomi Sakurada. All rights reserved. */
 /* BtoB価格表作成ツール - スタイルシート */
 
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;700&display=swap');
-
 :root {
-    --bg: #f8f8f6;
+    --bg: #f5f5f7;
     --white: #ffffff;
-    --border: #e2e2dc;
-    --border-dark: #c8c8c0;
-    --text: #1a1a18;
-    --text2: #6b6b60;
-    --text3: #9e9e94;
-    --accent: #2a2a24;
-    --primary: #2a2a24;
-    --success: #4a6741;
-    --danger: #b83232;
-    --warning: #a37c22;
-    --info: #2b5f75;
+    --border: #d2d2d7;
+    --border-dark: #b8b8be;
+    --text: #1d1d1f;
+    --text2: #6e6e73;
+    --text3: #86868b;
+    --accent: #1d1d1f;
+    --primary: #1d1d1f;
+    --success: #34c759;
+    --danger: #ff3b30;
+    --warning: #ff9500;
+    --info: #007aff;
     --sidebar-w: 220px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
-    font-family: 'Noto Sans JP', 'Inter', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif;
     background: var(--bg);
     color: var(--text);
     margin: 0;

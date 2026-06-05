@@ -16,8 +16,8 @@ function getCoverIllustration(facilityType) {
     sports: 'スポーツ施設',
     school: '学校',
     factory: '工場',
-    apartment: 'ホテル',
-    office: 'ホテル'
+    apartment: 'マンション',
+    office: 'オフィスビル'
   };
 
   const filename = fileMap[facilityType] || 'ホテル';
@@ -30,8 +30,18 @@ function generateReport() {
   const tc = parseFloat(document.getElementById('common-tc').value) || 8;
   const K = parseFloat(document.getElementById('common-k').value) || DEFAULT_K;
   const memo = document.getElementById('common-memo')?.value?.trim() || '';
-  const rev = document.getElementById('proj-rev')?.value?.trim() || 'Rev.0';
+  let rev = document.getElementById('proj-rev')?.value?.trim() || 'Rev.0';
   const revHistory = getRevHistory();
+
+  // 現在の変更内容を検出（計算書出力時）
+  const currentChanges = detectAllChanges();
+
+  // 未保存の変更がある場合、表紙のRevを次のバージョンに更新
+  if (currentChanges && (currentChanges.basic.length > 0 || currentChanges.systems.length > 0)) {
+    const match = rev.match(/\d+/);
+    const nextRevNum = match ? parseInt(match[0]) + 1 : 0;
+    rev = `Rev.${nextRevNum}`;
+  }
 
   state.systems.forEach(sys => {
     if (!sys.result) {
@@ -79,7 +89,6 @@ function generateReport() {
         <div class="cover-project-detail">
           <span>${proj.pref || '―'}</span>
           <span>${proj.date || '―'}</span>
-          <span>${proj.author || '―'}</span>
         </div>
       </div>
       <div class="cover-rev-display">${rev}</div>
@@ -93,23 +102,71 @@ function generateReport() {
       </div>
     </div>
 
-    ${revHistory.length > 0 ? `
-    <div class="cover-rev-table-wrap">
-      <table class="cover-rev-table">
-        <thead><tr><th>Rev.</th><th>年月日</th><th>変更内容</th></tr></thead>
-        <tbody>${revHistory.map(r => `<tr><td>${r.rev}</td><td>${r.date}</td><td>${r.note}</td></tr>`).join('')}</tbody>
+  </div>`;
+
+  // ===== 変更履歴ページ =====
+  // 未保存の変更を反映したバージョン履歴を生成
+  let revHistoryWithCurrent = [...revHistory];
+  if (currentChanges && (currentChanges.basic.length > 0 || currentChanges.systems.length > 0)) {
+    // 次のRev番号を計算
+    const match = rev.match(/\d+/);
+    const nextRevNum = match ? parseInt(match[0]) : 0;
+    const nextRev = `Rev.${nextRevNum}`;
+
+    // 現在の日付
+    const today = new Date();
+    const dateStr = `${today.getFullYear()}年${String(today.getMonth()+1).padStart(2,'0')}月${String(today.getDate()).padStart(2,'0')}日`;
+
+    // 変更内容を自動生成
+    const changeNotes = [];
+    currentChanges.basic.forEach(c => {
+      changeNotes.push(generateDetailedChangeText(c.id, c.oldVal, c.newVal, c.label));
+    });
+    currentChanges.systems.forEach(s => {
+      changeNotes.push(generateDetailedSystemChangeText(s));
+    });
+
+    revHistoryWithCurrent.push({
+      rev: nextRev,
+      date: dateStr,
+      note: changeNotes.join('\n')
+    });
+  }
+
+  html += `<div class="report-page page-break">
+    <h2 class="report-section-title">変更履歴</h2>
+
+    <div style="margin-bottom: 24px;">
+      <h3 class="report-sub-title">バージョン履歴</h3>
+      <table class="data-table">
+        <thead>
+          <tr style="background: #f5f5f5;">
+            <th style="width: 80px;">Rev.</th>
+            <th style="width: 120px;">年月日</th>
+            <th>変更内容</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${revHistoryWithCurrent.map((r, idx) => `
+          <tr>
+            <td style="text-align: center; font-weight: 600;">${r.rev}</td>
+            <td style="text-align: center;">${r.date}</td>
+            <td style="white-space: pre-wrap; word-wrap: break-word;">${r.note}</td>
+          </tr>`).join('')}
+        </tbody>
       </table>
-    </div>` : ''}
+    </div>
   </div>`;
 
   // ===== 目次 + 共通条件 =====
   html += `<div class="report-page page-break">
     <h2 class="report-section-title">目 次</h2>
     <ol class="toc-list">
-      <li>共通計算条件</li>
-      ${state.systems.map((sys, i) => `<li>系統別計算：${sys.name}　<span class="toc-pat">${PAT_LABELS[sys.pat] || sys.pat}</span></li>`).join('')}
-      <li>使用機器仕様一覧</li>
-      ${memo ? '<li>特記事項</li>' : ''}
+      <li>0. 変更履歴</li>
+      <li>1. 共通計算条件</li>
+      ${memo ? '<li>2. 特記事項・前提条件</li>' : ''}
+      ${state.systems.map((sys, i) => `<li>${memo ? i + 3 : i + 2}. 系統別計算：${sys.name}　<span class="toc-pat">${PAT_LABELS[sys.pat] || sys.pat}</span></li>`).join('')}
+      <li>${memo ? state.systems.length + 4 : state.systems.length + 3}. 使用機器仕様一覧</li>
     </ol>
 
     <div class="section-block" style="margin-top:24px">
@@ -124,11 +181,19 @@ function generateReport() {
     </div>
   </div>`;
 
+  // ===== 特記事項（共通条件の直後） =====
+  if (memo) {
+    html += `<div class="report-page page-break">
+      <h2 class="report-section-title">2. 特記事項・前提条件</h2>
+      <div class="memo-block">${memo.replace(/\n/g, '<br>')}</div>
+    </div>`;
+  }
+
   // ===== 系統別計算 =====
   state.systems.forEach((sys, i) => {
     const r = sys.result;
     if (!r) return;
-    const sysNo = i + 2;
+    const sysNo = (memo ? 3 : 2) + i;
 
     html += `<div class="report-page page-break">
       <h2 class="report-section-title">${sysNo}. 系統別計算：${sys.name}</h2>
@@ -161,22 +226,24 @@ function generateReport() {
   });
 
   // ===== 機器仕様表 =====
-  html += buildEquipmentTable(state.systems, totalKw, fmt);
-
-  // ===== 特記事項 =====
-  if (memo) {
-    html += `<div class="report-page page-break">
-      <h2 class="report-section-title">特記事項・前提条件</h2>
-      <div class="memo-block">${memo.replace(/\n/g, '<br>')}</div>
-    </div>`;
-  }
+  const equipmentSectionNo = state.systems.length + (memo ? 3 : 2);
+  html += buildEquipmentTable(state.systems, totalKw, fmt, equipmentSectionNo);
 
   // ===== 署名・捺印欄 =====
+  const companyInfoLines = [];
+  if (co.name) companyInfoLines.push(co.name);
+  if (co.dept) companyInfoLines.push(co.dept);
+  if (co.address) companyInfoLines.push(co.address);
+  if (co.tel) companyInfoLines.push(`TEL: ${co.tel}`);
+  if (co.fax) companyInfoLines.push(`FAX: ${co.fax}`);
+  if (proj.author) companyInfoLines.push(proj.author);
+  const companyInfoText = companyInfoLines.length > 0 ? companyInfoLines.join('<br>') : '―';
+
   html += `<div class="signature-block no-page-break">
     <div class="signature-grid">
       <div class="signature-cell">
         <div class="sig-label">作 成 者</div>
-        <div class="sig-space"></div>
+        <div class="sig-text">${companyInfoText}</div>
         <div class="sig-stamp">(印)</div>
       </div>
       <div class="signature-cell">
@@ -189,6 +256,28 @@ function generateReport() {
   </div>`;
 
   document.getElementById('report-content').innerHTML = html;
+}
+
+// ===== PDF ダウンロード =====
+function downloadReportPDF() {
+  const proj = getProjectInfo();
+  const rev = document.getElementById('proj-rev')?.value?.trim() || 'Rev.0';
+
+  const projectName = proj.name || '給湯計算書';
+  const dateStr = new Date().toISOString().split('T')[0];
+  const filename = `給湯計算書_${projectName}_${dateStr}_${rev}`.replace(/[\/\\?*:|"<>]/g, '_');
+
+  // ページタイトルを一時的に変更してブラウザの印刷ダイアログでいいファイル名を提案
+  const originalTitle = document.title;
+  document.title = filename;
+
+  // 印刷ダイアログを開く
+  window.print();
+
+  // 印刷ダイアログを閉じた後、タイトルを戻す
+  setTimeout(() => {
+    document.title = originalTitle;
+  }, 500);
 }
 
 // ----- 業務用マルチ レポート -----
@@ -330,7 +419,7 @@ function buildResultBox(items) {
 }
 
 // ----- 機器仕様表 -----
-function buildEquipmentTable(systems, totalKw, fmt) {
+function buildEquipmentTable(systems, totalKw, fmt, sectionNo) {
   const rows = systems.filter(s => s.result).map((sys, i) => {
     const r = sys.result;
     const spec = UNIT_SPEC[sys.unitcap] || {};
@@ -351,7 +440,7 @@ function buildEquipmentTable(systems, totalKw, fmt) {
   });
 
   return `<div class="report-page page-break">
-    <h2 class="report-section-title">使用機器仕様一覧</h2>
+    <h2 class="report-section-title">${sectionNo}. 使用機器仕様一覧</h2>
     <table class="data-table">
       <thead>
         <tr><th>No.</th><th>系統名</th><th>方式</th><th>号数</th><th>台数</th><th>接続管径</th><th>消費電力</th><th>熱源能力</th></tr>
@@ -382,11 +471,21 @@ function getCompanyInfo() {
 
 // ----- ヘルパー：プロジェクト情報取得 -----
 function getProjectInfo() {
+  let author = document.getElementById('common-author')?.value || '';
+
+  // 作成者欄が空の場合、会社情報から自動生成
+  if (!author.trim()) {
+    const co = getCompanyInfo();
+    if (co.name) {
+      author = co.dept ? `${co.name}　${co.dept}` : co.name;
+    }
+  }
+
   return {
     name:   document.getElementById('common-name')?.value || '',
     pref:   document.getElementById('common-pref')?.value || '',
     date:   document.getElementById('proj-date')?.value || '',
-    author: document.getElementById('common-author')?.value || ''
+    author: author
   };
 }
 
@@ -395,9 +494,10 @@ function getRevHistory() {
   const rows = document.querySelectorAll('#rev-history-tbody tr');
   const result = [];
   rows.forEach(row => {
-    const tds = row.querySelectorAll('td input, td textarea');
-    if (tds.length >= 3) {
-      result.push({rev:tds[0].value, date:tds[1].value, note:tds[2].value});
+    const inputs = row.querySelectorAll('td input');
+    const textarea = row.querySelector('td textarea');
+    if (inputs.length >= 2 && textarea) {
+      result.push({rev:inputs[0].value, date:inputs[1].value, note:textarea.value});
     }
   });
   return result;

@@ -7,7 +7,7 @@ function initPortal() {
     renderTools();
     renderUpdates();
     updateToolCount();
-    
+
     // Lucideアイコンの初期化（少し待機して要素のレンダリングを確実にする）
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
@@ -17,41 +17,85 @@ function initPortal() {
 }
 
 function renderTools() {
-    const grid = document.getElementById('toolsGrid');
-    if (!grid) return;
+    const sections = {
+        'site-mgmt': {
+            label: 'SITE MANAGEMENT',
+            gridId: 'toolsGrid-siteManagement'
+        },
+        'calculation': {
+            label: 'CALCULATION & SIMULATION',
+            gridId: 'toolsGrid-calculation'
+        },
+        'maintenance': {
+            label: 'MAINTENANCE & SALES',
+            gridId: 'toolsGrid-maintenance'
+        },
+        'biz-tool': {
+            label: 'BUSINESS TOOLS',
+            gridId: 'toolsGrid-bizTools'
+        }
+    };
 
-    let html = '';
-    PORTAL_TOOLS.forEach((tool, index) => {
-        const delay = 0.04 + (index * 0.04);
-        html += `
-            <a class="tool-card" href="${tool.url}" target="_blank" style="animation-delay: ${delay}s">
-                <div class="card-icon-wrap"><i data-lucide="${tool.icon}"></i></div>
-                <div class="card-title">${tool.title}</div>
-                <div class="card-desc">${tool.desc}</div>
-                <div class="card-tags">
-                    ${tool.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('')}
-                </div>
-                <div class="card-footer">
-                    <span class="card-open-btn">開く</span>
-                    <span class="card-arrow">›</span>
-                </div>
-            </a>
-        `;
-    });
+    // 各セクション別にレンダリング
+    let globalIndex = 0;
+    for (const [categoryId, section] of Object.entries(sections)) {
+        const tools = PORTAL_TOOLS.filter(t => t.category === categoryId);
+        const grid = document.getElementById(section.gridId);
 
-    // Add Placeholder
-    const addDelay = 0.04 + (PORTAL_TOOLS.length * 0.04);
-    html += `
-        <div class="tool-card-add" style="animation-delay: ${addDelay}s">
+        if (grid) {
+            grid.innerHTML = '';
+            tools.forEach((tool, index) => {
+                const card = createToolCard(tool, globalIndex);
+                grid.appendChild(card);
+                globalIndex++;
+            });
+        }
+    }
+
+    // Add Placeholder（最後のセクション後に追加）
+    const lastGrid = document.getElementById('toolsGrid-bizTools');
+    if (lastGrid) {
+        const addDelay = 0.04 + (globalIndex * 0.04);
+        const addCard = document.createElement('div');
+        addCard.className = 'tool-card-add';
+        addCard.style.animationDelay = `${addDelay}s`;
+        addCard.innerHTML = `
             <div class="tool-card-add-icon"><i data-lucide="plus"></i></div>
             <div class="tool-card-add-text">
                 ツールを追加できます<br>
                 <span style="font-size:11px;">js/tools.js に新しいツール情報を<br>追加するだけで自動生成されます</span>
             </div>
+        `;
+        lastGrid.appendChild(addCard);
+    }
+}
+
+// 既存の createToolCard 関数
+function createToolCard(tool, index) {
+    const a = document.createElement('a');
+    a.className = 'tool-card';
+    a.href = tool.url;
+    a.target = '_blank';
+    a.style.animationDelay = `${0.04 + (index * 0.04)}s`;
+
+    const tagHTML = tool.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('');
+
+    a.innerHTML = `
+        <div class="card-header">
+            <div class="card-icon-wrap">
+                <i data-lucide="${tool.icon}"></i>
+            </div>
+            <div class="card-title">${tool.title}</div>
+        </div>
+        <div class="card-desc">${tool.desc}</div>
+        <div class="card-tags">${tagHTML}</div>
+        <div class="card-footer">
+            <span class="card-open-btn">開く</span>
+            <span class="card-arrow">→</span>
         </div>
     `;
 
-    grid.innerHTML = html;
+    return a;
 }
 
 function renderUpdates() {

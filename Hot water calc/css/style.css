@@ -101,8 +101,40 @@ body {
   min-height: 100vh;
   display: flex; align-items: center; justify-content: center;
   background: var(--white);
+  position: relative; overflow: hidden;
 }
-.top-hero-inner { text-align: center; max-width: 520px; padding: 40px 24px; }
+
+/* 浮遊ステージ */
+.top-float-stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.float-img {
+  position: absolute;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: floatDrift var(--dur, 18s) ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes floatDrift {
+  0%   { opacity: 0;    transform: translate(var(--tx0), var(--ty0)) rotate(var(--rot0)) scale(var(--sc, 1)); }
+  15%  { opacity: var(--peak-op, 0.09); }
+  50%  { opacity: var(--peak-op, 0.09); transform: translate(var(--tx1), var(--ty1)) rotate(var(--rot1)) scale(var(--sc, 1)); }
+  85%  { opacity: var(--peak-op, 0.09); }
+  100% { opacity: 0;    transform: translate(var(--tx0), var(--ty0)) rotate(var(--rot0)) scale(var(--sc, 1)); }
+}
+
+.top-hero-inner {
+  position: relative;
+  z-index: 1;
+  text-align: center; max-width: 520px; padding: 40px 24px;
+}
 .top-label-en {
   font-size: 11px; letter-spacing: 0.15em;
   color: var(--text3); margin-bottom: 20px;
@@ -114,6 +146,27 @@ body {
 }
 .top-sub {
   font-size: 15px; color: var(--text2); margin-bottom: 40px;
+}
+.top-cta {
+  background: var(--text); color: var(--white);
+  border: none; padding: 12px 32px; border-radius: 4px;
+  font-size: 14px; font-weight: 600; cursor: pointer;
+  transition: all 0.2s ease; letter-spacing: 0.3px;
+  margin-bottom: 16px; display: block; margin-left: auto; margin-right: auto;
+}
+.top-cta:hover {
+  transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+}
+.top-load-btn {
+  display: inline-block;
+  padding: 10px 24px; border: 1px solid var(--border);
+  border-radius: 4px; font-size: 13px; color: var(--text2);
+  cursor: pointer; transition: all 0.2s ease; letter-spacing: 0.3px;
+  background: var(--white); font-weight: 500;
+}
+.top-load-btn:hover {
+  border-color: var(--text); color: var(--text); background: var(--bg);
+  transform: translateY(-1px);
 }
 .top-cta {
   padding: 14px 40px; border-radius: 100px;
@@ -519,27 +572,32 @@ body {
 
 /* Report sections */
 .report-section-title {
-  font-size: 14pt; font-weight: 700;
-  border-bottom: 2px solid var(--text);
-  padding-bottom: 6px; margin-bottom: 16px;
+  font-size: 18pt; font-weight: 800; letter-spacing: -0.02em;
+  border-top: 2px solid var(--text);
+  border-bottom: none;
+  padding: 10px 0 2px; margin-bottom: 20px;
 }
 .report-sub-title {
-  font-size: 12pt; font-weight: 700;
-  border-left: 3px solid var(--text); padding-left: 8px;
-  margin-bottom: 12px;
+  font-size: 8.5pt; font-weight: 700; letter-spacing: 0.1em;
+  color: var(--text3);
+  border-left: none; border-bottom: 1px solid var(--border);
+  padding: 0 0 6px; margin-bottom: 12px;
 }
 .report-pat-badge {
-  font-size: 9pt; color: var(--text2);
-  background: var(--bg); padding: 4px 10px;
-  border-radius: 3px; margin-bottom: 14px;
-  display: inline-block;
+  font-size: 7.5pt; font-weight: 700; letter-spacing: 0.1em;
+  color: var(--text3);
+  background: none; border: none;
+  padding: 0; margin-bottom: 16px;
+  display: block;
 }
 .report-warning {
-  background: #fef2f2; border: 1px solid #fecaca; border-radius: 4px;
-  padding: 10px 12px; font-size: 9pt; color: #991b1b; margin-bottom: 12px;
+  background: none; border: none;
+  border-left: 2px solid var(--danger); border-radius: 0;
+  padding: 8px 10px; font-size: 8.5pt; color: var(--text2); margin-bottom: 12px;
 }
 .report-note {
-  background: var(--bg); border-left: 3px solid var(--border);
+  background: none; border: none;
+  border-left: 2px solid var(--border); border-radius: 0;
   padding: 6px 10px; font-size: 9pt; color: var(--text2); margin-bottom: 10px;
 }
 .report-info-row {
@@ -547,9 +605,9 @@ body {
   font-size: 9pt; margin-top: 10px;
 }
 .report-alert {
-  background: #fef2f2; border: 1px solid #fecaca;
-  padding: 6px 10px; font-size: 9pt; color: #991b1b;
-  margin-top: 8px;
+  background: none; border: none;
+  border-left: 2px solid var(--danger);
+  padding: 6px 10px; font-size: 9pt; color: var(--text2); margin-top: 8px;
 }
 .manual-note { border-left-color: var(--warning); background: #fffbeb; }
 .manual-badge {
@@ -559,11 +617,15 @@ body {
 }
 
 /* Tables */
-.data-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 12px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; margin-bottom: 16px; }
 .data-table th, .data-table td {
-  border: 1px solid var(--border); padding: 5px 8px;
+  border: none; border-bottom: 1px solid var(--border); padding: 7px 10px;
 }
-.data-table th { background: var(--bg); font-weight: 600; font-size: 8.5pt; color: var(--text2); }
+.data-table th {
+  background: none; font-weight: 700; font-size: 8pt;
+  color: var(--text3); letter-spacing: 0.05em;
+  border-bottom: 1.5px solid var(--text);
+}
 .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
 .data-table .bold { font-weight: 700; }
 .data-table .subtotal-row { background: var(--surface2); font-weight: 700; }
@@ -571,25 +633,24 @@ body {
 
 /* Calc box */
 .calc-box {
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: 4px; padding: 12px 14px;
-  font-size: 9pt; margin-bottom: 12px;
-  line-height: 1.7;
+  background: none; border: none;
+  border-left: 2px solid var(--border);
+  border-radius: 0; padding: 6px 14px;
+  font-size: 9pt; margin-bottom: 10px; line-height: 1.75;
 }
 .calc-title { font-weight: 700; font-size: 10pt; margin-bottom: 8px; }
 .calc-formula { color: var(--text3); font-style: italic; }
 .pl { padding-left: 16px; }
 .tank-note {
-  background: #fffbeb; border: 1px solid #fef3c7;
-  padding: 8px 10px; border-radius: 4px;
-  margin-top: 8px; font-size: 9pt;
+  background: none; border: none;
+  border-left: 2px solid var(--warning); border-radius: 0;
+  padding: 8px 10px; margin-top: 8px; font-size: 9pt; color: var(--text2);
 }
 
 /* Result box (report) */
 .result-box {
   background: var(--text); color: var(--white);
-  border-radius: 4px; padding: 14px 16px;
-  margin-bottom: 12px;
+  border-radius: 0; padding: 16px 20px; margin-bottom: 16px;
 }
 .result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; }
 .result-row + .result-row { border-top: 1px solid rgba(255,255,255,0.12); }
@@ -600,16 +661,18 @@ body {
 /* Equipment table */
 .total-box {
   display: flex; justify-content: space-between; align-items: baseline;
-  padding: 10px 14px; border: 2px solid var(--text);
-  border-radius: 4px; margin-top: 12px;
+  padding: 14px 0; border: none;
+  border-top: 2px solid var(--text); border-bottom: 1px solid var(--border);
+  border-radius: 0; margin-top: 16px;
 }
 .total-label { font-size: 10pt; font-weight: 600; }
 .total-value { font-size: 12pt; font-weight: 700; }
 
 /* Design notes */
 .design-notes {
-  border: 1px solid var(--border); border-radius: 4px;
-  padding: 12px 14px; margin-top: 16px; font-size: 8.5pt;
+  border: none; border-left: 2px solid var(--border);
+  border-radius: 0; padding: 10px 14px;
+  margin-top: 16px; font-size: 8.5pt; color: var(--text2);
 }
 .notes-title { font-weight: 700; margin-bottom: 8px; }
 .design-notes ul { padding-left: 16px; }
@@ -647,6 +710,7 @@ body {
   border: 1px solid var(--border); padding: 10px;
 }
 .sig-label { font-size: 10pt; font-weight: 700; text-align: center; margin-bottom: 8px; }
+.sig-text { font-size: 9pt; text-align: center; margin-bottom: 8px; }
 .sig-space { height: 52px; }
 .sig-stamp { font-size: 9pt; color: var(--text3); text-align: right; }
 .report-footer-note { font-size: 8pt; color: var(--text3); text-align: center; border-top: 1px solid var(--border); padding-top: 8px; }

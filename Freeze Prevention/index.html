@@ -1,18 +1,17 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>【凍結予防方法】まとめ資料 - Construction Field Hub</title>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
+
 <body>
     <header class="no-print">
         <div class="header-content">
@@ -32,6 +31,28 @@
         </div>
     </header>
 
+    <!-- ページ内ナビゲーション（印刷時非表示） -->
+    <nav id="page-nav" class="page-nav no-print" aria-label="ページ内リンク">
+        <div class="page-nav-inner">
+            <a href="#page-tankai" class="page-nav-link">
+                <i data-lucide="droplets"></i>
+                <span>給湯単能機</span>
+            </a>
+            <a href="#page-furo" class="page-nav-link">
+                <i data-lucide="bath"></i>
+                <span>ふろ給湯器</span>
+            </a>
+            <a href="#page-danbo" class="page-nav-link">
+                <i data-lucide="thermometer"></i>
+                <span>給湯暖房機</span>
+            </a>
+            <a href="#page-furogama" class="page-nav-link">
+                <i data-lucide="flame"></i>
+                <span>風呂釜</span>
+            </a>
+        </div>
+    </nav>
+
     <main id="content">
         <!-- JSで動的にレンダリングされます -->
         <div id="pages-container"></div>
@@ -45,4 +66,5 @@
     <script src="js/data.js"></script>
     <script src="js/app.js"></script>
 </body>
+
 </html>

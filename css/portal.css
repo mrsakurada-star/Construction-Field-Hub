@@ -9,20 +9,20 @@
         }
 
         :root {
-            --bg: #f8f8f6;
+            --bg: #f5f5f7;
             --white: #ffffff;
-            --border: #e2e2dc;
-            --border-dark: #c8c8c0;
-            --text: #1a1a18;
-            --text2: #6b6b60;
-            --text3: #9e9e94;
-            --accent: #2a2a24;
-            --accent-line: #3d3d35;
-            --tag-bg: #f0f0ec;
+            --border: #d2d2d7;
+            --border-dark: #b8b8be;
+            --text: #1d1d1f;
+            --text2: #6e6e73;
+            --text3: #86868b;
+            --accent: #1d1d1f;
+            --accent-line: #3a3a3c;
+            --tag-bg: #e8e8ed;
         }
 
         body {
-            font-family: 'Noto Sans JP', 'Inter', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -165,6 +165,15 @@
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 16px;
             margin-bottom: 64px; /* 余白追加 */
+        }
+
+        /* ===== TOOLS SECTION ===== */
+        .tools-section {
+            margin-bottom: 60px;
+        }
+
+        .tools-section:last-of-type {
+            margin-bottom: 48px;
         }
 
         /* ===== UPDATES SECTION ===== */
@@ -342,18 +351,32 @@
 
         /* カードアイコン */
         .card-icon-wrap {
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 18px;
-            margin-bottom: 20px;
             flex-shrink: 0;
             background: var(--bg);
             border: 1px solid var(--border);
             color: var(--text2);
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .tool-card:hover .card-icon-wrap {
+            background: var(--accent-line);
+            border-color: var(--accent-line);
+            color: var(--white);
+        }
+
+        /* カードヘッダー */
+        .card-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 16px;
         }
 
         /* カードコンテンツ */
@@ -361,7 +384,6 @@
             font-size: 15px;
             font-weight: 700;
             color: var(--text);
-            margin-bottom: 10px;
             line-height: 1.5;
             letter-spacing: 0.3px;
         }
@@ -373,6 +395,16 @@
             flex: 1;
             margin-bottom: 18px;
             font-weight: 300;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
+        }
+
+        .tool-card:hover .card-desc {
+            max-height: 120px;
+            opacity: 1;
+            margin-bottom: 18px;
         }
 
         .card-tags {

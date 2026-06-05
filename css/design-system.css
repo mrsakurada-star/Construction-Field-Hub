@@ -1,0 +1,45 @@
+/* ============================================================
+   Construction Field Hub — Unified Design System
+   Apple-inspired monochrome design tokens
+   ============================================================ */
+
+:root {
+  /* Background */
+  --bg:          #f5f5f7;
+  --white:       #ffffff;
+  --surface2:    #f0f0f5;
+
+  /* Border */
+  --border:      #d2d2d7;
+  --border-dark: #b8b8be;
+
+  /* Typography */
+  --text:        #1d1d1f;
+  --text2:       #6e6e73;
+  --text3:       #86868b;
+
+  /* Accent */
+  --accent:      #1d1d1f;
+  --accent-line: #3a3a3c;
+  --tag-bg:      #e8e8ed;
+
+  /* Status colors (Apple HIG palette) */
+  --success:     #34c759;
+  --danger:      #ff3b30;
+  --warning:     #ff9500;
+  --info:        #007aff;
+}
+
+/* System font stack — Apple-first */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+               "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+               Meiryo, "Noto Sans JP", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Box model reset */
+*, *::before, *::after { box-sizing: border-box; }
