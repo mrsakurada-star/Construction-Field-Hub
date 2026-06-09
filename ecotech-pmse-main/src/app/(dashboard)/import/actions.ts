@@ -108,9 +108,11 @@ export async function analyzeAndCreateRequest(formData: FormData) {
             receivedAt: data.receivedAt ? new Date(data.receivedAt) : new Date(),
             reqName: data.reqName || "",
             reqAddr: data.reqAddr || "",
+            reqAddr1: data.reqAddr || "",
             reqTel: data.reqTel || "",
             customerName: data.customerName || "不明",
             customerAddress: data.customerAddr || "",
+            customerAddress1: data.customerAddr || "",
             customerTel1: data.customerTel1 || "",
             deviceManufacturer: data.deviceManufacturer || "",
             deviceModel: data.deviceModel || "",
@@ -132,8 +134,18 @@ export async function analyzeAndCreateRequest(formData: FormData) {
     } catch (error) {
         console.error("AI Analysis Error:", error)
         if (error instanceof SyntaxError) {
-             throw new Error("AI解析結果のJSONパースに失敗しました。もう一度試してください。");
+            throw new Error("AI解析結果の読み取りに失敗しました。別の画像・PDFで再試行してください。")
         }
-        throw new Error("AI解析に失敗しました: " + (error instanceof Error ? error.message : "Details unknown"))
+        const msg = error instanceof Error ? error.message : ""
+        if (msg.includes("quota") || msg.includes("RESOURCE_EXHAUSTED")) {
+            throw new Error("AI APIの利用上限に達しました。しばらく待ってから再試行してください。")
+        }
+        if (msg.includes("INVALID_ARGUMENT") || msg.includes("unsupported")) {
+            throw new Error("このファイル形式はAI解析に対応していません。JPEG・PNG・PDFをお試しください。")
+        }
+        if (msg.includes("SAFETY") || msg.includes("blocked")) {
+            throw new Error("AIがコンテンツをブロックしました。別のファイルで再試行してください。")
+        }
+        throw new Error("AI解析に失敗しました。ネットワーク接続を確認し、再試行してください。")
     }
 }

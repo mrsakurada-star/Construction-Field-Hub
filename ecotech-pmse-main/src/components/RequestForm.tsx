@@ -99,7 +99,10 @@ export function RequestForm({ initialData, onSubmit, isEditing }: RequestFormPro
 
     const onInvalid = (errors: FieldErrors<RequestFormValues>) => {
         console.error("Validation Errors:", errors)
-        toast.error("入力内容に誤りがあります")
+        const messages = Object.values(errors)
+            .map((e) => (e as { message?: string })?.message)
+            .filter(Boolean)
+        toast.error(messages.length > 0 ? messages.join(" / ") : "入力内容に誤りがあります")
     }
 
     // AutoKana
