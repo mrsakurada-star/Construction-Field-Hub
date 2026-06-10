@@ -280,6 +280,21 @@ tr:last-child td { border-bottom: none; }
 }
 .note-box .accent { color: #c62828; font-weight: 700; }
 
+/* ===== アイコンサイズ ===== */
+.icon-lg { width: 28px; height: 28px; }
+.icon-sm { width: 15px; height: 15px; }
+
+/* ===== テーブル列幅 ===== */
+.w-7p  { width: 7%;  }
+.w-8p  { width: 8%;  }
+.w-12p { width: 12%; }
+.w-14p { width: 14%; }
+.w-16p { width: 16%; }
+.w-26p { width: 26%; }
+.w-28p { width: 28%; }
+.w-36p { width: 36%; }
+.w-38p { width: 38%; }
+
 /* ===== 印刷設定 ===== */
 @media print {
     @page { size: A4 portrait; margin: 0; }
