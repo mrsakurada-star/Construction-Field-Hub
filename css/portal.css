@@ -633,3 +633,6 @@
                 grid-template-columns: 1fr;
             }
         }
+/* ユーティリティ */
+.ml-auto { margin-left: auto; }
+.icon-sm { width: 16px; height: 16px; }

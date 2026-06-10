@@ -6,6 +6,17 @@ const PORTAL_UPDATES = [
     {
         toolId: "maintenance_modes",
         toolName: "メーカー別メンテナンス情報表示方法",
+        date: "2026-06-10",
+        version: "v1.1",
+        changes: [
+            "デザインをプロジェクト仕様に統一：Tailwind CDNを廃止し、外部CSSファイル（css/style.css）へ移行",
+            "ヘッダーにLucideアイコンを追加し、他ツールと同一の構成・スタイルに整合",
+            "インラインスタイルをすべてCSSクラスに置き換え、コード品質を向上"
+        ]
+    },
+    {
+        toolId: "maintenance_modes",
+        toolName: "メーカー別メンテナンス情報表示方法",
         date: "2026-05-21",
         version: "v1.0",
         changes: [

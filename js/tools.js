@@ -99,22 +99,4 @@ const PORTAL_TOOLS = [
         url: "BtoB Price data base/index.html",
         icon: "file-spreadsheet"
     },
-    {
-        id: "ecotech_pmse",
-        title: "Ecotech アフターサービスシステム",
-        desc: "依頼受付・顧客管理・担当者割当・請求明細・レポート出力を統合管理。利用前に「ecotech-pmse-main」フォルダで npm run dev を起動してください（localhost:3000）",
-        category: "biz-tool",
-        tags: ["アフターサービス", "依頼管理", "請求"],
-        url: "http://localhost:3000",
-        icon: "layout-dashboard"
-    },
-    {
-        id: "service_book",
-        title: "サービス報告書・点検履歴台帳",
-        desc: "顧客・機器ごとに点検/修理履歴を蓄積。フォルダ同期、横断あいまい検索、依頼票・サービス報告書のA4発行",
-        category: "maintenance",
-        tags: ["点検履歴", "サービス報告書", "台帳"],
-        url: "Service Book/index.html",
-        icon: "clipboard-list"
-    }
 ];
