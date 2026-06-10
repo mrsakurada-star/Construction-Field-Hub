@@ -4,407 +4,439 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>メーカー別メンテナンス情報表示方法</title>
+    <title>給湯器メーカー別 メンテナンス表示・コードリファレンス - Construction Field Hub</title>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link rel="stylesheet" href="../css/design-system.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Hiragino Sans", Meiryo, "Noto Sans JP", sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            padding: 1rem;
-        }
-
-        .app-header {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: 0.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .app-header h1 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .app-header p {
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .print-btn {
-            background: var(--info);
-            color: white;
-            border: none;
-            padding: 0.6rem 1rem;
-            border-radius: 0.375rem;
-            font-size: 0.95rem;
-            font-weight: 500;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            transition: background 0.2s ease;
-        }
-
-        .print-btn:hover {
-            background: #0060d0;
-            opacity: 0.9;
-        }
-
-        .print-btn:active {
-            transform: scale(0.98);
-        }
-
-        .container {
-            background: var(--white);
-            border-radius: 0.5rem;
-            padding: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 0.75rem;
-            text-align: left;
-        }
-
-        th {
-            background: #f5f5f5;
-            font-weight: 600;
-            color: var(--text);
-        }
-
-        .row-label {
-            background: #f9f9f9;
-            font-weight: 500;
-            min-width: 120px;
-            width: 20%;
-        }
-
-        td:first-child {
-            background: #f9f9f9;
-            font-weight: 500;
-        }
-
-        .manufacturer-name {
-            font-weight: 600;
-            font-size: 1rem;
-        }
-
-        .maintenance-item {
-            line-height: 1.6;
-            margin: 0.3rem 0;
-        }
-
-        .multiplier {
-            color: #007aff;
-            font-weight: 500;
-        }
-
-        .note {
-            font-size: 0.8rem;
-            color: #666;
-            line-height: 1.3;
-        }
-
-        .operation-step {
-            margin: 0.3rem 0;
-            padding-left: 1rem;
-        }
-
-        .operation-step::before {
-            content: "▸ ";
-            margin-left: -0.8rem;
-        }
-
-        /* A4 Print Optimization */
-        @media print {
-            body {
-                padding: 0.5rem;
-                background: white;
-            }
-
-            .print-btn {
-                display: none;
-            }
-
-            .app-header {
-                page-break-after: avoid;
-                margin-bottom: 1rem;
-                padding: 1rem;
-                box-shadow: none;
-                border: 1px solid #ddd;
-            }
-
-            .app-header h1 {
-                font-size: 1.5rem;
-                margin-bottom: 0.3rem;
-            }
-
-            .app-header p {
-                font-size: 0.8rem;
-            }
-
-            .container {
-                padding: 0;
-                box-shadow: none;
-                border: none;
-            }
-
-            table {
-                font-size: 0.75rem;
-                page-break-inside: avoid;
-            }
-
-            th, td {
-                padding: 0.5rem;
-                border-color: #999;
-            }
-
-            .row-label {
-                min-width: 100px;
-            }
-
-            .note {
-                font-size: 0.7rem;
-                line-height: 1.2;
-            }
-
-            .operation-step {
-                margin: 0.2rem 0;
-            }
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 0.75rem;
-            }
-
-            table {
-                font-size: 0.75rem;
-            }
-
-            th, td {
-                padding: 0.5rem;
-            }
-
-            .manufacturer-name {
-                font-size: 0.9rem;
-            }
-
-            .row-label {
-                min-width: 100px;
-            }
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="app-header">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-            <div>
-                <h1>メーカー別メンテナンス情報表示方法</h1>
-                <p>パーパス・ノーリツ・リンナイ・パロマの4メーカーのメンテナンスモード表示方法を比較表示します</p>
-            </div>
-            <button onclick="window.print()" class="print-btn">
-                <i data-lucide="printer" style="width: 18px; height: 18px; display: inline-block; margin-right: 0.5rem;"></i>
-                印刷
-            </button>
+
+<header>
+    <div class="header-left">
+        <i data-lucide="settings" class="header-icon icon-lg"></i>
+        <div>
+            <div class="header-title">給湯器メーカー別 メンテナンス表示・コードリファレンス</div>
+            <div class="header-sub">Manufacturer Maintenance Command Reference &nbsp;|&nbsp; A4印刷対応 2枚組</div>
         </div>
     </div>
+    <button type="button" class="btn-print" onclick="window.print()">
+        <i data-lucide="printer" style="width:15px;height:15px;"></i>
+        印刷 / PDF保存
+    </button>
+</header>
 
-    <div class="container">
-        <table>
-            <thead>
-                <tr>
-                    <th></th>
-                    <th style="text-align: center;">パーパス</th>
-                    <th style="text-align: center;">ノーリツ</th>
-                    <th style="text-align: center;">リンナイ</th>
-                    <th style="text-align: center;">パロマ</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- 運転スイッチ -->
-                <tr>
-                    <td class="row-label">運転スイッチ</td>
-                    <td style="text-align: center;">「入」「切」にかかわらず</td>
-                    <td style="text-align: center;">「入」「切」にかかわらず</td>
-                    <td style="text-align: center;">「入」「切」にかかわらず</td>
-                    <td style="text-align: center;">「切」</td>
-                </tr>
+<div class="pages-wrap">
 
-                <!-- 操作手順 -->
-                <tr>
-                    <td class="row-label">操作</td>
-                    <td>
-                        <div class="operation-step">給湯温度スイッチ「▲」「▼」を同時押し2秒以上</div>
-                    </td>
-                    <td>
-                        <div class="operation-step">給湯温度スイッチ「▲」「▼」を同時押し2秒以上</div>
-                    </td>
-                    <td>
-                        <div class="operation-step">給湯温度スイッチ「▼」押しながら運転スイッチ押し</div>
-                        <div class="operation-step">給湯温度スイッチ「▲」押しながら運転スイッチ長押し</div>
-                        <div class="operation-step">給湯温度スイッチ「▲」「▼」を同時押し2秒以上</div>
-                    </td>
-                    <td>
-                        <div class="operation-step">給湯温度スイッチ「▲」「▼」を同時押し2秒以上</div>
-                    </td>
-                </tr>
+    <!-- ==================== PAGE 1 ==================== -->
+    <article class="a4">
+        <div>
+            <div class="page-header">
+                <div>
+                    <div class="page-title">給湯器メーカー別 メンテナンス情報表示一覧</div>
+                    <div class="page-title-sub">Manufacturer Maintenance Command Reference</div>
+                </div>
+                <div>
+                    <div class="page-badge">PAGE 01</div>
+                    <div class="page-date">資料：2025.07.29時点版</div>
+                </div>
+            </div>
 
-                <!-- メンテナンス番号1 -->
-                <tr>
-                    <td class="row-label">メンテナンス番号</td>
-                    <td>
-                        <div class="maintenance-item">
-                            <strong>1</strong> <span class="note">給湯燃焼時間</span><br>
-                            <span class="multiplier">×100時間</span>
-                            <div style="font-size: 0.75rem; margin-top: 0.2rem;">(32号は×10時間)</div>
-                            <div style="font-size: 0.75rem;">(GS-S1600、2400GE-1Hは×10時間)</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="maintenance-item">
-                            <strong>4</strong> <span class="note">給湯燃焼時間</span><br>
-                            <span class="multiplier">×10時間</span>
-                            <div style="font-size: 0.75rem; margin-top: 0.2rem;">(業務用×100時間)</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="maintenance-item">
-                            <strong>1</strong> <span class="note">給湯燃焼時間</span><br>
-                            <span class="multiplier">×100時間</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="maintenance-item">
-                            <strong>0J</strong> (ゼロ・ジエイ)<br>
-                            <span class="multiplier">×10時間</span>
-                        </div>
-                    </td>
-                </tr>
+            <!-- SECTION 01: 4大メーカー比較 -->
+            <div class="section-label">SECTION 01 : 4大メーカー呼出操作比較</div>
+            <div class="tbl-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:14%;">メーカー</th>
+                            <th style="width:16%;">運転スイッチ</th>
+                            <th style="width:38%;">操作手順</th>
+                            <th>主要メント番号 (時間 / 回数)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="cell-num">パーパス</td>
+                            <td class="cell-muted">「入」か「切」か</td>
+                            <td class="cell-accent">給湯温度スイッチ「▲」と「▼」 同時押し 5秒以上</td>
+                            <td>1：給湯燃焼時間<br>2：給湯燃焼回数</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">ノーリツ</td>
+                            <td class="cell-muted">「入」か「切」か</td>
+                            <td class="cell-accent">給湯温度スイッチ「▲」と「▼」 同時押し 5秒以上</td>
+                            <td>04：給湯燃焼時間<br>07：給湯燃焼回数</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">リンナイ</td>
+                            <td class="cell-accent">「切」を推奨<br><span class="cell-muted">(入でも可)</span></td>
+                            <td class="cell-accent">「▼」を押しながら、運転スイッチを長押し(オン)</td>
+                            <td>01：給湯燃焼時間<br>02：給湯燃焼回数</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">パロマ</td>
+                            <td class="cell-accent">「切」(OFF)</td>
+                            <td class="cell-accent">温度調節ボタン「▲」と「▼」 同時押し 3秒以上</td>
+                            <td>0J + 0H：燃焼時間合算<br>0d + 0C：点火回数合算</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-                <!-- メンテナンス番号2 -->
-                <tr>
-                    <td class="row-label">メンテナンス番号</td>
-                    <td>
-                        <div class="maintenance-item">
-                            <strong>2</strong> <span class="note">給湯燃焼回数</span><br>
-                            <span class="multiplier">×1000回</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="maintenance-item">
-                            <strong>7</strong> <span class="note">給湯燃焼回数</span><br>
-                            <span class="multiplier">×100回</span>
-                            <div style="font-size: 0.75rem; margin-top: 0.2rem;">(業務用×1000回)</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="maintenance-item">
-                            <strong>2</strong> <span class="note">給湯燃焼回数</span><br>
-                            <span class="multiplier">×100回</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="maintenance-item">
-                            <strong>OH</strong> (ゼロ・エイチ)<br>
-                            <span class="multiplier">×1000時間</span>
-                        </div>
-                        <div class="maintenance-item" style="margin-top: 0.3rem;">
-                            <strong>0D</strong> (ゼロ・デー)<br>
-                            <span class="multiplier">×100回数</span>
-                        </div>
-                        <div class="maintenance-item" style="margin-top: 0.3rem;">
-                            <strong>0C</strong> (ゼロ・シー)<br>
-                            <span class="multiplier">×10000回数</span>
-                        </div>
-                    </td>
-                </tr>
+            <!-- SECTION 02: パーパス詳細 -->
+            <div class="section-sep"></div>
+            <div class="section-head">
+                <div class="section-title">
+                    <div class="section-title-bar"></div>
+                    PURPOSE : パーパス
+                </div>
+                <div class="section-model-tag">MC-100, MC-201, FC-100 等</div>
+            </div>
 
-                <!-- 耐久の目安 -->
-                <tr>
-                    <td class="row-label">耐久の目安</td>
-                    <td colspan="4" style="text-align: center; background: #f9f9f9;">
-                        <div style="font-weight: 500; margin-bottom: 0.3rem;">家庭用機</div>
-                        <div class="note" style="margin-bottom: 0.5rem;">
-                            燃焼時間：3,000H &nbsp; | &nbsp; 点火回数：30万回
+            <div class="grid-2">
+                <div class="info-box">
+                    <strong>① メンテナンス情報の表示手順</strong>
+                    <ol>
+                        <li>運転ON/OFF不問。「▲」と「▼」を同時に<strong>5秒以上</strong>長押しする。</li>
+                        <li>温度表示部に<strong>「--」</strong>表示。右側1桁にメント番号<strong>「1」が点滅</strong>。</li>
+                        <li>「▲」で番号増加、「▼」で番号減少。</li>
+                        <li>表示番号に合わせた下記スイッチで決定（常時点灯になりデータ表示）。<br>
+                            <span class="cell-accent">・MC-100/201</span>：「設定」 /
+                            <span class="cell-accent">・FC-100</span>：右側押線部<br>
+                            <span class="cell-accent">・FC-201</span>：「呼び出し」 /
+                            <span class="cell-accent">・2台連結時</span>：「ブザー解除」
+                        </li>
+                        <li>運転スイッチを押すことでメンテモードが終了。</li>
+                    </ol>
+                </div>
+                <div class="info-box">
+                    <strong>② 機器分類別 燃焼時間・回数の算出区分</strong>
+                    <div class="calc-grid">
+                        <div class="calc-item">
+                            <div class="ci-label">① 家庭用A</div>
+                            <div class="ci-model">GS-1000/1600/2000W等</div>
+                            <div class="ci-val">時間：表示値×1000h</div>
+                            <div class="ci-val">回数：表示値×10000回</div>
                         </div>
-                        <div style="font-weight: 500; margin-bottom: 0.3rem; margin-top: 0.3rem;">業務用機</div>
-                        <div class="note">
-                            燃焼時間：8,000H &nbsp; | &nbsp; 点火回数：50万回
+                        <div class="calc-item">
+                            <div class="ci-label">② 家庭用B</div>
+                            <div class="ci-model">GS-H1600/H2000W等</div>
+                            <div class="ci-val">時間：表示値×100h</div>
+                            <div class="ci-val">回数：表示値×1000回</div>
                         </div>
-                    </td>
-                </tr>
+                        <div class="calc-item calc-grid-bottom">
+                            <div class="ci-label">③ 業務用A</div>
+                            <div class="ci-model">PG-H2400E, PG-240W等</div>
+                            <div class="ci-val">時間：表示値×100h</div>
+                            <div class="ci-val">回数：表示値×1000回</div>
+                        </div>
+                        <div class="calc-item calc-grid-bottom">
+                            <div class="ci-label">④ 業務用B</div>
+                            <div class="ci-model">GS-3200GW, PG-H500W等</div>
+                            <div class="ci-val">時間：表示値×10h</div>
+                            <div class="ci-val">回数：表示値×100回</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-                <!-- 備考 -->
-                <tr>
-                    <td class="row-label">備考</td>
-                    <td>
-                        <div class="note">
-                            ※上記倍率は参考数値<br>
-                            年代、機種によって倍率が異なります<br>
-                            古い製品で表示できないものもあります。
-                        </div>
-                    </td>
-                    <td>
-                        <div class="note">
-                            ※上記倍率は参考数値<br>
-                            年代、機種によって倍率が異なります<br>
-                            古い製品で表示できないものもあります。
-                        </div>
-                    </td>
-                    <td>
-                        <div class="note">
-                            ※上記倍率は参考数値<br>
-                            年代、機種によって倍率が異なります<br>
-                            古い製品で表示できないものもあります。
-                        </div>
-                    </td>
-                    <td>
-                        <div class="note">
-                            ※上記倍率は参考数値<br>
-                            年代、機種によって倍率が異なります<br>
-                            古い製品で表示できないものもあります。
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+            <!-- パーパス メントコード表 -->
+            <div class="tbl-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:7%;text-align:center;">番号</th>
+                            <th style="width:28%;">メント情報の内容</th>
+                            <th>リモコン表示仕様・区分・備考</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="cell-num">1</td>
+                            <td><strong>燃焼時間</strong></td>
+                            <td>0〜999 [表示換算は上記機種別分類①〜④に準拠する]</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">2</td>
+                            <td><strong>燃焼回数</strong></td>
+                            <td>0〜999 [表示換算は上記機種別分類①〜④に準拠する]</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">3</td>
+                            <td>燃焼ファン回転数</td>
+                            <td>0〜999 [ ×10 rpm ]</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">4</td>
+                            <td>入水温サーミスタ検出温度</td>
+                            <td>0〜999 [ ×0.1 ℃ ]（実測値）</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">5 / 6</td>
+                            <td>出湯温 / 混合温サーミスタ温度</td>
+                            <td>0〜999 [ ×0.1 ℃ ]</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">7</td>
+                            <td>自己診断用フレームロッド電流</td>
+                            <td>0〜999 [ μA ]</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">8 / 9</td>
+                            <td>水量流量 / 中和剤使用度</td>
+                            <td>流量：×0.1 L/分 ／ 中和剤：0〜999 [ % ]</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num cell-accent">a</td>
+                            <td>積算通水時間</td>
+                            <td>0〜999 [ ×100 時間 ]</td>
+                        </tr>
+                        <tr class="row-accent">
+                            <td class="cell-num">b / C / d</td>
+                            <td>アラーム データ履歴</td>
+                            <td>b：最新アラーム ／ C：履歴2 ／ d：最古履歴3 (上位2桁表示)</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num cell-accent">E</td>
+                            <td>アラームデータ初期化</td>
+                            <td>表示後「ODE」で初期化完了。<br>
+                                <strong>MC-100</strong>：「お湯設定」＋「お知らせ」 ／
+                                <strong>MC-201</strong>：「設定」＋「お湯張り」 ／
+                                <strong>FC-100</strong>：右押線＋「呼出」
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Lucideアイコン初期化
-            if (typeof lucide !== 'undefined') {
-                lucide.createIcons();
-            }
-        });
+        <div class="page-footer">
+            <span>給湯器メンテナンス・表示仕様クイックガイド</span>
+            <span>PAGE 01</span>
+        </div>
+    </article>
 
-        // Print button functionality
-        document.addEventListener('keydown', (e) => {
-            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
-                e.preventDefault();
-                window.print();
-            }
-        });
-    </script>
+    <!-- ==================== PAGE 2 ==================== -->
+    <article class="a4">
+        <div>
+            <div class="page-header">
+                <div>
+                    <div class="page-title">給湯器メーカー別 メンテナンス情報表示一覧</div>
+                    <div class="page-title-sub">Manufacturer Maintenance Command Reference</div>
+                </div>
+                <div>
+                    <div class="page-badge">PAGE 02</div>
+                    <div class="page-date">資料：2025.07.29時点版</div>
+                </div>
+            </div>
+
+            <!-- SECTION 03: ノーリツ -->
+            <div class="section-head">
+                <div class="section-title">
+                    <div class="section-title-bar"></div>
+                    NORITZ : ノーリツ
+                </div>
+                <div class="section-model-tag">RC-7626M, RC-7606S, RC-7506M-1</div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-box">
+                    <strong>① 表示方法 (RC-7626M/7606S)</strong>
+                    <ol>
+                        <li>選択スイッチの<strong>「▲」「▼」を同時に5秒以上</strong>押す。</li>
+                        <li>2秒間「項目No」を表示後、「データ表示」に自動切替。</li>
+                        <li><strong>解除</strong>：「▲」「▼」を同時に2秒以上押し（または10分放置）。</li>
+                    </ol>
+                </div>
+                <div class="info-box">
+                    <strong class="cell-accent">⚠ 換算区分（家庭用と業務用の違いに注意）</strong>
+                    <div>
+                        <p>・家庭用：燃焼時間＝表示値×<span class="cell-accent">10h</span> ／ 燃焼回数＝表示値×<span class="cell-accent">100回</span></p>
+                        <p>・業務用：燃焼時間＝表示値×<span class="cell-accent">100h</span> ／ 燃焼回数＝表示値×<span class="cell-accent">1000回</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tbl-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:8%;text-align:center;">No.</th>
+                            <th style="width:26%;">表示項目名</th>
+                            <th style="width:38%;">データ単位・区分</th>
+                            <th>表示範囲・備考</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="cell-num"><strong>03</strong></td>
+                            <td><strong>通電時間</strong></td>
+                            <td>時間 × 100</td>
+                            <td>[000]〜[1999]（100h単位）</td>
+                        </tr>
+                        <tr class="row-accent">
+                            <td class="cell-num">04</td>
+                            <td>燃焼時間</td>
+                            <td>×10時間（家庭用） / ×100時間（業務用）</td>
+                            <td>[000]〜[1999]</td>
+                        </tr>
+                        <tr class="row-accent">
+                            <td class="cell-num">07</td>
+                            <td>燃焼回数</td>
+                            <td>×100回（家庭用） / ×1000回（業務用）</td>
+                            <td>[000]〜[1999]</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">10</td>
+                            <td>ファン回転数</td>
+                            <td>×10 rpm（最小表示：25 rpm）</td>
+                            <td>燃焼ファン回転速度</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">14 / 30</td>
+                            <td>総流量 / 入水サーミスタ</td>
+                            <td>流量：×0.1 L/分 ／ 温度：×0.1 ℃</td>
+                            <td>温度最小単位：0.5 ℃</td>
+                        </tr>
+                        <tr class="row-accent">
+                            <td class="cell-num">91</td>
+                            <td>異常表示履歴1（最新）</td>
+                            <td>前回異常表示コード（000は履歴無し）</td>
+                            <td>91〜98番で過去8回分記憶</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- SECTION 04: リンナイ -->
+            <div class="section-sep-thin"></div>
+            <div class="section-head">
+                <div class="section-title">
+                    <div class="section-title-bar"></div>
+                    RINNAI : リンナイ 「給ゆ」
+                </div>
+                <div class="section-model-tag">RUXC-A2400W, RUX-A2400W</div>
+            </div>
+
+            <div class="note-box">
+                <strong>① 呼出方法</strong>：運転スイッチを「切」を推奨。
+                給湯温度の<strong>「▼（マイナス）」を押しながら、運転スイッチを押す</strong>。
+                <span class="accent">※デジタルリモコン（MC-135/33等）は2桁の「Hz」下位2桁のみ簡易表示。</span>（例：339Hz→[33]）
+            </div>
+
+            <div class="tbl-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:8%;text-align:center;">No.</th>
+                            <th style="width:28%;">表示項目名</th>
+                            <th style="width:36%;">データ単位・区分</th>
+                            <th>データ範囲・例外明示</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="row-accent">
+                            <td class="cell-num">01</td>
+                            <td>給湯燃焼時間</td>
+                            <td>× 100時間</td>
+                            <td>9900〜9999hは「99」、1万h以上は「E3」。</td>
+                        </tr>
+                        <tr class="row-accent">
+                            <td class="cell-num">02</td>
+                            <td>給湯運転（点火）回数</td>
+                            <td>× 100回</td>
+                            <td>0〜999（最大 99,900回まで判定可能）</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">03</td>
+                            <td>燃焼ファン回転数</td>
+                            <td>Hz（パルス/秒）→rpm換算：rpm = Hz × 15</td>
+                            <td>0〜999</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num">04 / 07</td>
+                            <td>認識流量 / 出湯サーミスタ温度</td>
+                            <td>流量：0.1 L/分 または L/分 ／ 温度：℃</td>
+                            <td>流量例：30 → 3.0 L/分</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- SECTION 05: パロマ -->
+            <div class="section-sep-thin"></div>
+            <div class="section-head">
+                <div class="section-title">
+                    <div class="section-title-bar"></div>
+                    PALOMA : パロマ
+                </div>
+                <div class="section-model-tag">PH-1615AW ・家庭用</div>
+            </div>
+
+            <div class="grid-2">
+                <div class="info-box">
+                    <strong>① 呼出方法</strong>：運転スイッチを「OFF」で。
+                    温度調節<strong>「▲」「▼」を同時に3秒間長押し</strong>。
+                    お湯温調節ボタン等で項目選択。解除は運転ONにする。
+                </div>
+                <div class="info-box-dark">
+                    <strong class="accent">⚠ 重要：パロマ算出による実稼働算出基</strong>
+                    <div class="dark-vals">
+                        <p>・実燃焼時間 ： <span class="accent">0J × 10h</span> ＋ <span class="accent">0H × 1000h</span></p>
+                        <p>・実点火回数 ： <span class="accent">0d × 100回</span> ＋ <span class="accent">0C × 10000回</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tbl-wrap">
+                <table class="matrix-tbl">
+                    <thead>
+                        <tr>
+                            <th class="col-head" style="width:12%;text-align:center;">上位 ＼ 下位</th>
+                            <th class="col-dark" style="text-align:center;">0*（トータル稼動）</th>
+                            <th style="text-align:center;">1* 〜 8*（履歴データ）</th>
+                            <th class="col-dark" style="text-align:center;">9*（システム等）</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="cell-num cell-accent">*d（回数下位）</td>
+                            <td class="cell-red">点火回数下位：<span class="v">表示値 × 100回</span></td>
+                            <td>n回前エラー時 点火回数下位（×100回）</td>
+                            <td>水量センサー流量（L/min）</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num cell-accent">*C（回数上位）</td>
+                            <td class="cell-red">点火回数上位：<span class="v">表示値 × 10,000回</span></td>
+                            <td>n回前エラー時 点火回数上位（×10,000回）</td>
+                            <td>外気サーミスタ温度（℃）</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num num-blue">*J（時間下位）</td>
+                            <td class="cell-blue">燃焼時間下位：<span class="v">表示値 × 10時間</span></td>
+                            <td>n回前エラー時 燃焼時間下位（×10h）</td>
+                            <td>入水温度（℃）</td>
+                        </tr>
+                        <tr>
+                            <td class="cell-num num-blue">*H（時間上位）</td>
+                            <td class="cell-blue">燃焼時間上位：<span class="v">表示値 × 1,000時間</span></td>
+                            <td>n回前エラー時 燃焼時間上位（×1000h）</td>
+                            <td>熱交換器サーミスタ温度（℃）</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="page-footer">
+            <span>給湯器メンテナンス・表示仕様クイックガイド</span>
+            <span>PAGE 02</span>
+        </div>
+    </article>
+
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
 </body>
 </html>
