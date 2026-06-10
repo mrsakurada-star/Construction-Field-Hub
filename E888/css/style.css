@@ -259,7 +259,17 @@
         .note {
             font-size: 13px;
             color: #666;
+            margin-top: 10px;
         }
+
+        /* ユーティリティ */
+        .w-25 { width: 25%; }
+        .w-30 { width: 30%; }
+        .w-50 { width: 50%; }
+        .w-70 { width: 70%; }
+        .text-center { text-align: center; }
+        .contact-label { font-weight: 700; color: #444; }
+        .mt-0 { margin-top: 0; }
 
         /* 料金詳細図表スタイル */
         .price-formula {
