@@ -353,7 +353,7 @@
         .tool-card:nth-child(6) { animation-delay: 0.24s; }
         .tool-card:nth-child(7) { animation-delay: 0.28s; }
 
-        @keyframes fadeIn {
+        @keyframes cfh-fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to   { opacity: 1; transform: translateY(0); }
         }
