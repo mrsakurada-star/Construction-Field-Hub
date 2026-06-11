@@ -225,7 +225,7 @@
             border: 1px solid var(--border);
             border-radius: 6px;
             padding: 0; /* paddingを内部要素へ移動 */
-            animation: fadeIn 0.4s ease both;
+            animation: cfh-fadeIn 0.4s ease both;
             transition: transform 0.2s ease, border-color 0.2s ease;
             overflow: hidden;
         }
@@ -342,7 +342,7 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            animation: fadeIn 0.35s ease both;
+            animation: cfh-fadeIn 0.35s ease both;
         }
 
         .tool-card:nth-child(1) { animation-delay: 0.04s; }
@@ -506,7 +506,7 @@
             color: var(--text3);
             cursor: default;
             min-height: 180px;
-            animation: fadeIn 0.35s ease both;
+            animation: cfh-fadeIn 0.35s ease both;
             animation-delay: 0.24s;
         }
 
@@ -575,7 +575,7 @@
             font-size: 12px;
             color: var(--text2);
             line-height: 1.9;
-            animation: fadeIn 0.2s ease both;
+            animation: cfh-fadeIn 0.2s ease both;
         }
 
         .guide-panel.open {
