@@ -479,7 +479,7 @@
             color: var(--text2);
             letter-spacing: 0.3px;
             text-decoration: none;
-            transition: color 0.2s;
+            transition: color var(--dur-base) var(--ease-out);
         }
 
         .tool-card:hover .card-open-btn {
