@@ -226,7 +226,8 @@
             border-radius: 6px;
             padding: 0; /* paddingを内部要素へ移動 */
             animation: cfh-fadeIn 0.4s ease both;
-            transition: transform 0.2s ease, border-color 0.2s ease;
+            transition: transform var(--dur-base) var(--ease-out),
+                        border-color var(--dur-base) var(--ease-out);
             overflow: hidden;
         }
 
