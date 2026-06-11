@@ -554,7 +554,7 @@
             cursor: pointer;
             padding: 4px 0;
             font-family: 'Noto Sans JP', sans-serif;
-            transition: color 0.2s;
+            transition: color var(--dur-base) var(--ease-out);
             letter-spacing: 0.3px;
         }
 
