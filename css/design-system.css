@@ -1,45 +1,118 @@
+/* © 2026 Nozomi Sakurada. All rights reserved. */
 /* ============================================================
-   Construction Field Hub — Unified Design System
-   Apple-inspired monochrome design tokens
+   Construction Field Hub — Unified Design System v2
+   Apple-inspired monochrome + orange accent
    ============================================================ */
 
 :root {
-  /* Background */
-  --bg:          #f5f5f7;
-  --white:       #ffffff;
-  --surface2:    #f0f0f5;
+  /* ─── Base Surfaces ─── */
+  --bg:           #f5f5f7;
+  --white:        #ffffff;
+  --surface:      #ffffff;
+  --surface-2:    #f0f0f5;
+  --surface-3:    #e8e8ed;
 
-  /* Border */
-  --border:      #d2d2d7;
-  --border-dark: #b8b8be;
+  /* ─── Borders ─── */
+  --border:       #d2d2d7;
+  --border-dark:  #b8b8be;
+  --border-light: #e5e5ea;
 
-  /* Typography */
-  --text:        #1d1d1f;
-  --text2:       #6e6e73;
-  --text3:       #86868b;
+  /* ─── Typography ─── */
+  --text:         #1d1d1f;
+  --text-1:       #1d1d1f;
+  --text2:        #6e6e73;
+  --text-2:       #6e6e73;
+  --text3:        #86868b;
+  --text-3:       #86868b;
+  --text-4:       #aeaeb2;
 
-  /* Accent */
-  --accent:      #1d1d1f;
-  --accent-line: #3a3a3c;
-  --tag-bg:      #e8e8ed;
+  /* ─── Orange Accent Scale ─── */
+  --orange-50:    #fff7ed;
+  --orange-100:   #ffedd5;
+  --orange-200:   #fed7aa;
+  --orange-300:   #ffbe6e;
+  --orange-400:   #ff9f40;
+  --orange-500:   #ff9500;
+  --orange-600:   #e67e00;
+  --orange-700:   #c06800;
+  --orange-800:   #9a5000;
+  --orange-900:   #7c3d00;
 
-  /* Status colors (Apple HIG palette) */
-  --success:     #34c759;
-  --danger:      #ff3b30;
-  --warning:     #ff9500;
-  --info:        #007aff;
+  /* ─── Neutral Scale ─── */
+  --neutral-50:   #fafafa;
+  --neutral-100:  #f5f5f7;
+  --neutral-200:  #e8e8ed;
+  --neutral-300:  #d2d2d7;
+  --neutral-400:  #b8b8be;
+  --neutral-500:  #86868b;
+  --neutral-600:  #6e6e73;
+  --neutral-700:  #3a3a3c;
+  --neutral-800:  #2c2c2e;
+  --neutral-900:  #1d1d1f;
+
+  /* ─── Status Colors (Apple HIG) ─── */
+  --success:      #34c759;
+  --danger:       #ff3b30;
+  --warning:      #ff9500;
+  --info:         #007aff;
+
+  /* ─── Semantic Aliases ─── */
+  --accent:         #ff9500;
+  --accent-hover:   #e67e00;
+  --accent-pressed: #c06800;
+  --accent-subtle:  #fff7ed;
+  --accent-border:  #fed7aa;
+  --accent-line:    #ff9500;
+  --tag-bg:         #e8e8ed;
+
+  /* ─── Font Stacks ─── */
+  --font-ui:      -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                  "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+                  Meiryo, "Noto Sans JP", sans-serif;
+  --font-display: 'Inter', var(--font-ui);
+  --font-mono:    'Consolas', 'Courier New', monospace;
+
+  /* ─── Animation Durations ─── */
+  --dur-instant:  100ms;
+  --dur-fast:     150ms;
+  --dur-base:     200ms;
+  --dur-slow:     300ms;
+  --dur-slower:   400ms;
+
+  /* ─── Easing ─── */
+  --ease-out:     cubic-bezier(0, 0, 0.2, 1);
+  --ease-inout:   cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* System font stack — Apple-first */
+/* ─── Keyframes ─── */
+@keyframes cfh-fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes cfh-slideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes cfh-scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes cfh-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes cfh-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* ─── Base ─── */
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
-               "Hiragino Sans", "Hiragino Kaku Gothic ProN",
-               Meiryo, "Noto Sans JP", sans-serif;
+  font-family: var(--font-ui);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--bg);
   color: var(--text);
 }
 
-/* Box model reset */
 *, *::before, *::after { box-sizing: border-box; }
