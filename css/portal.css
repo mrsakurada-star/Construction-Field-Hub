@@ -9,16 +9,49 @@
         }
 
         :root {
-            --bg: #f5f5f7;
-            --white: #ffffff;
-            --border: #d2d2d7;
-            --border-dark: #b8b8be;
-            --text: #1d1d1f;
-            --text2: #6e6e73;
-            --text3: #86868b;
-            --accent: #1d1d1f;
-            --accent-line: #3a3a3c;
-            --tag-bg: #e8e8ed;
+            /* ─── Surfaces ─── */
+            --bg:           #f5f5f7;
+            --white:        #ffffff;
+            --surface-2:    #f0f0f5;
+            --surface-3:    #e8e8ed;
+
+            /* ─── Borders ─── */
+            --border:       #d2d2d7;
+            --border-dark:  #b8b8be;
+            --border-light: #e5e5ea;
+
+            /* ─── Typography ─── */
+            --text:         #1d1d1f;
+            --text2:        #6e6e73;
+            --text3:        #86868b;
+            --text4:        #aeaeb2;
+
+            /* ─── Orange Accent ─── */
+            --orange-50:    #fff7ed;
+            --orange-200:   #fed7aa;
+            --orange-500:   #ff9500;
+            --orange-600:   #e67e00;
+            --orange-700:   #c06800;
+            --neutral-700:  #3a3a3c;
+
+            /* ─── Semantic ─── */
+            --accent:       #ff9500;
+            --accent-hover: #e67e00;
+            --accent-line:  #ff9500;
+            --tag-bg:       #e8e8ed;
+
+            /* ─── Fonts ─── */
+            --font-ui:      -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                            "Hiragino Sans", "Hiragino Kaku Gothic ProN",
+                            Meiryo, "Noto Sans JP", sans-serif;
+            --font-display: 'Inter', var(--font-ui);
+            --font-mono:    'Consolas', 'Courier New', monospace;
+
+            /* ─── Animation ─── */
+            --dur-base:     200ms;
+            --dur-slow:     300ms;
+            --ease-out:     cubic-bezier(0, 0, 0.2, 1);
+            --ease-inout:   cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
