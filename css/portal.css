@@ -489,7 +489,8 @@
         .card-arrow {
             font-size: 16px;
             color: var(--text3);
-            transition: transform 0.2s ease;
+            transition: transform var(--dur-base) var(--ease-out),
+                        color var(--dur-base) var(--ease-out);
         }
 
         .tool-card:hover .card-arrow {
