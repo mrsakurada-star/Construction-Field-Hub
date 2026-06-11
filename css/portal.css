@@ -271,7 +271,7 @@
             padding: 0 24px 20px 24px;
             border-top: 1px solid var(--tag-bg);
             margin-top: -5px; /* summaryとの密着感を調整 */
-            animation: slideDown 0.3s ease;
+            animation: cfh-slideDown 0.3s ease;
         }
 
         @keyframes cfh-slideDown {
