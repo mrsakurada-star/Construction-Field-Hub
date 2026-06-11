@@ -155,7 +155,7 @@
             font-size: 13px;
             font-weight: 500;
             text-decoration: none;
-            transition: all 0.25s ease;
+            transition: all 0.25s var(--ease-out);
             letter-spacing: 0.3px;
         }
 
