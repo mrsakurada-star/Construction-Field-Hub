@@ -478,7 +478,7 @@
         }
 
         .tool-card:hover .card-open-btn {
-            color: var(--text);
+            color: var(--accent);
         }
 
         .card-arrow {
