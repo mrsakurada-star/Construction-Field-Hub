@@ -160,8 +160,8 @@
         }
 
         .manual-btn:hover {
-            background: rgba(42, 42, 36, 0.08);
-            color: var(--text);
+            background: rgba(255, 149, 0, 0.06);
+            color: var(--accent);
             transform: translateY(-1px);
         }
 
