@@ -291,10 +291,10 @@
             font-size: 11px;
             font-weight: 700;
             color: var(--accent);
-            background: var(--tag-bg);
+            background: var(--orange-50);
             padding: 2px 8px;
             border-radius: 2px;
-            border: 1px solid var(--border);
+            border: 1px solid var(--orange-200);
         }
 
         .update-version {
