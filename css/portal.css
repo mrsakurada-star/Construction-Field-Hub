@@ -261,7 +261,7 @@
             width: 18px;
             height: 18px;
             color: var(--text3);
-            transition: transform 0.3s ease;
+            transition: transform var(--dur-slow) var(--ease-inout);
         }
 
         .update-item[open] .update-chevron {
