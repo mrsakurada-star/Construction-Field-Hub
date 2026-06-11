@@ -489,7 +489,7 @@
 
         .tool-card:hover .card-arrow {
             transform: translateX(4px);
-            color: var(--text2);
+            color: var(--accent);
         }
 
         /* ===== ADD CARD (placeholder) ===== */
