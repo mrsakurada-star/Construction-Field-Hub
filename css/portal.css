@@ -564,7 +564,7 @@
 
         .guide-toggle .guide-caret {
             display: inline-block;
-            transition: transform 0.2s;
+            transition: transform var(--dur-base) var(--ease-out);
             font-style: normal;
         }
 
