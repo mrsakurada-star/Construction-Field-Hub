@@ -399,8 +399,8 @@
         }
 
         .tool-card:hover .card-icon-wrap {
-            background: var(--accent-line);
-            border-color: var(--accent-line);
+            background: var(--neutral-700);
+            border-color: var(--neutral-700);
             color: var(--white);
         }
 
