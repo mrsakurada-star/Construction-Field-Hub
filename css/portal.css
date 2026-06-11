@@ -434,7 +434,9 @@
             max-height: 0;
             overflow: hidden;
             opacity: 0;
-            transition: max-height 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
+            transition: max-height var(--dur-slow) var(--ease-out),
+                        opacity var(--dur-slow) var(--ease-out),
+                        margin-bottom var(--dur-slow) var(--ease-out);
         }
 
         .tool-card:hover .card-desc {
