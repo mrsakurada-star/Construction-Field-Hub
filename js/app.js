@@ -147,3 +147,16 @@ function toggleGuide() {
         panel.classList.toggle('open');
     }
 }
+
+function copyGuideCode(btn) {
+    const code = btn.closest('.guide-code-block').querySelector('code');
+    if (!code) return;
+    navigator.clipboard.writeText(code.textContent.trim()).then(() => {
+        btn.textContent = 'コピー済み';
+        btn.classList.add('copied');
+        setTimeout(() => {
+            btn.textContent = 'コピー';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+}

@@ -81,15 +81,65 @@
     <!-- カスタマイズガイド（折りたたみ） -->
     <div class="guide-wrap">
         <button class="guide-toggle" id="guideToggle" onclick="toggleGuide()">
-            <i class="guide-caret">›</i> 使い方・ツール追加方法
+            <i class="guide-caret">›</i> ツール追加・カスタマイズ方法
         </button>
         <div class="guide-panel" id="guidePanel">
-            <h3>カスタマイズガイド</h3>
-            <ul>
-                <li>ツールを追加・編集するには、<code>js/tools.js</code> の配列データを書き換えてください。</li>
-                <li>新しいHTMLファイルは関連するフォルダに置き、<code>tools.js</code> の <code>url</code> に相対パスで指定してください。</li>
-                <li>設定を保存してページをリロードすると、自動的にカードが生成・カウントされます。</li>
-            </ul>
+            <h3>ツールを追加する方法</h3>
+            <div class="guide-steps">
+                <div class="guide-step">
+                    <div class="guide-step-num">1</div>
+                    <div class="guide-step-body">
+                        <div class="guide-step-title">HTMLファイルを配置する</div>
+                        <p>新しいツールのHTMLファイルを、ルートフォルダ内の適切なサブフォルダに置きます。</p>
+                        <div class="guide-code-block">
+                            <div class="guide-code-label">例：フォルダ構成</div>
+                            <pre><code>Construction Field Hub/
+├── My New Tool/
+│   └── index.html   ← ここに置く
+└── js/tools.js</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="guide-step-num">2</div>
+                    <div class="guide-step-body">
+                        <div class="guide-step-title"><code>js/tools.js</code> にエントリを追加する</div>
+                        <p><code>PORTAL_TOOLS</code> 配列の末尾（最後の <code>},</code> の後）に以下をコピーして貼り付け、各値を書き換えます。</p>
+                        <div class="guide-code-block">
+                            <button type="button" class="guide-copy-btn" onclick="copyGuideCode(this)">コピー</button>
+                            <pre><code>{
+    id: "my_tool",
+    title: "ツール名",
+    desc: "ツールの説明（カードのホバー時に表示）",
+    category: "site-mgmt",
+    tags: ["タグ1", "タグ2"],
+    url: "My New Tool/index.html",
+    icon: "tool"
+},</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="guide-step">
+                    <div class="guide-step-num">3</div>
+                    <div class="guide-step-body">
+                        <div class="guide-step-title">ページをリロードする</div>
+                        <p>ファイルを保存後、ブラウザで <kbd>F5</kbd> を押すとカードが自動生成されます。</p>
+                    </div>
+                </div>
+            </div>
+            <div class="guide-ref">
+                <div class="guide-ref-title">カテゴリ一覧（<code>category</code> の値）</div>
+                <div class="guide-ref-grid">
+                    <div class="guide-ref-item"><code>site-mgmt</code><span>SITE MANAGEMENT</span></div>
+                    <div class="guide-ref-item"><code>calculation</code><span>CALCULATION & SIMULATION</span></div>
+                    <div class="guide-ref-item"><code>maintenance</code><span>MAINTENANCE & SALES</span></div>
+                    <div class="guide-ref-item"><code>biz-tool</code><span>BUSINESS TOOLS</span></div>
+                </div>
+                <div class="guide-ref-title guide-ref-title--spaced">アイコン名</div>
+                <p class="guide-ref-body">
+                    <a href="https://lucide.dev/icons/" target="_blank" rel="noopener" class="guide-link">Lucide Icons</a> のアイコン名をそのまま使用できます。例：<code>flame</code> / <code>settings</code> / <code>file-text</code> / <code>tool</code>
+                </p>
+            </div>
         </div>
     </div>
 
