@@ -277,6 +277,7 @@ function openSystemDetail(id) {
   }
 
   showPage('detail');
+  window.updateFixtureGroupDisplay?.();
   setTimeout(() => { calcAndUpdate(); }, 0);
 }
 
@@ -486,6 +487,7 @@ function calcAndUpdate() {
       bath:    {vol: parseFloat(document.getElementById('multi-bath-vol')?.value || 3000), fillMin: parseFloat(document.getElementById('multi-bath-fmin')?.value || 60), outdoor: document.getElementById('multi-bath-outdoor')?.checked || false, enabled: document.getElementById('multi-bath-en')?.checked || false}
     };
     sys.result = calcMulti(sys, tc, K);
+    updateFixtureGroupDisplay();
   } else if (sys.pat === 'pat3') {
     sys.result = calcPat3(sys, tc, K, facilityType);
   } else if (sys.pat === 'pat4') {
@@ -555,6 +557,17 @@ function showResult(r) {
     aux += `<div class="aux-row aux-neutral">膨張タンク: 計算値 ${et.vexp.toFixed(2)}L → 推奨 ${et.recommended}L 以上 （V_sys=${et.vsysTotal.toFixed(1)}L / S=${et.S.toFixed(4)}）</div>`;
   }
   document.getElementById('res-aux').innerHTML = aux;
+}
+
+function updateFixtureGroupDisplay() {
+  ['shower','wash','kitchen','bath'].forEach(key => {
+    const checkbox = document.getElementById(`multi-${key}-en`);
+    const group = checkbox?.closest('.fixture-group');
+    if (!group) return;
+    const enabled = checkbox?.checked === true;
+    group.classList.toggle('collapsed', !enabled);
+    group.classList.toggle('enabled', enabled);
+  });
 }
 
 function saveSystemAndBack() {
