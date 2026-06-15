@@ -388,6 +388,10 @@ body {
   background: rgba(142, 142, 147, 0.08);
 }
 .fixture-group-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 14px; background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
 .fixture-group-body { padding: 12px 14px; }
 
 /* ===== Slider ===== */
