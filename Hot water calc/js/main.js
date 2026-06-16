@@ -565,7 +565,8 @@ function updateFixtureGroupDisplay() {
     const group = checkbox?.closest('.fixture-group');
     if (!group) return;
     const enabled = checkbox?.checked === true;
-    group.classList.toggle('collapsed', !enabled);
+    const body = group.querySelector('.fixture-group-body');
+    if (body) body.classList.toggle('hidden', !enabled);
     group.classList.toggle('enabled', enabled);
   });
 }
