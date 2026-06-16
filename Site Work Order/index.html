@@ -1,0 +1,146 @@
+<!-- © 2026 Nozomi Sakurada. All rights reserved. -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>大規模現場工事指示書 作成ツール</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/db.js"></script>
+</head>
+<body>
+
+  <div class="toolbar" data-np="1">
+    <span class="toolbar-title">工事指示書</span>
+    <button type="button" class="btn-add" onclick="addContractor()">＋ 業者追加</button>
+    <button type="button" class="btn-print" onclick="window.print()">印刷 / PDF</button>
+    <button type="button" class="btn-reset" onclick="confirmClearAll()">リセット</button>
+  </div>
+
+  <div id="wrap">
+    <div id="doc">
+
+      <div class="doc-band">
+        <span class="doc-title">大規模現場工事指示書</span>
+        <span class="doc-label">管理 No.</span>
+        <input type="text" id="fDocNo" class="doc-input-docno" placeholder="001">
+        <span class="doc-label">発行日</span>
+        <input type="text" id="fIssueDate" class="doc-input-date" placeholder="2026-06-16">
+      </div>
+
+      <div class="doc-toprow">
+        <div class="doc-info">
+          <div class="doc-info-row">
+            <span class="doc-info-label">工事名</span>
+            <input type="text" id="fProjectName" class="field-projectname" placeholder="工事名を入力">
+          </div>
+          <div class="doc-info-row">
+            <span class="doc-info-label">現場住所</span>
+            <input type="text" id="fAddress" placeholder="住所を入力">
+          </div>
+
+          <div class="map-mini" data-np="1">
+            <div class="map-mini-row">
+              <div class="map-embed-wrap" id="mapEmbedWrap"></div>
+              <div class="map-upload-col">
+                <div id="mapImagePreview"></div>
+                <div class="map-upload-zone" id="mapUploadZone">印刷用 地図画像をアップロード（任意）</div>
+                <input type="file" id="mapImageInput" accept="image/*" title="地図画像をアップロード">
+              </div>
+            </div>
+          </div>
+          <div id="printMapBlock"></div>
+
+          <div class="doc-info-row">
+            <span class="doc-info-label">工事日程</span>
+            <input type="text" id="fDateFrom" placeholder="開始日">
+            <span class="tilde">〜</span>
+            <input type="text" id="fDateTo" placeholder="終了日">
+          </div>
+          <div class="doc-info-row">
+            <span class="doc-info-label">集合時間</span>
+            <input type="text" id="fGatherTime" placeholder="08:00 現場集合">
+          </div>
+        </div>
+
+        <div class="doc-sched">
+          <div class="doc-sched-label">工程表 — Schedule</div>
+          <div id="scheduleGrid"></div>
+        </div>
+      </div>
+
+      <div class="doc-main">
+        <div class="doc-left">
+          <div class="doc-left-section sz-2">
+            <div class="sec-label accent">現場概要</div>
+            <textarea id="fOverview" placeholder="現場の概要・条件&#10;建物種別・規模"></textarea>
+          </div>
+          <div class="doc-left-section sz-2">
+            <div class="sec-label">アイテムリスト</div>
+            <textarea id="fItems" placeholder="・機器名&#10;・材料&#10;・工具類"></textarea>
+          </div>
+          <div class="doc-left-section sz-3">
+            <div class="sec-label accent">共通指示事項</div>
+            <textarea id="fCommon" placeholder="全業者への共通指示&#10;・安全管理事項&#10;・廃材処理方法&#10;・鍵・入退場管理"></textarea>
+          </div>
+        </div>
+
+        <div class="doc-contractors" id="contractorList"></div>
+      </div>
+
+      <div class="doc-footer">
+        <span>© 2026 Construction Field Hub</span>
+        <span class="saved-indicator" data-np="1">● 自動保存済み</span>
+        <span>大規模現場工事指示書 v1.0</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/storage.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/contractors.js"></script>
+  <script>
+    const escapeHtml = s => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const escapeAttr = s => (s || '').replace(/"/g, '&quot;');
+
+    function bindField(elId, field) {
+      const el = document.getElementById(elId);
+      el.value = state[field] || '';
+      el.addEventListener('input', () => {
+        state[field] = el.value;
+        saveToStorage();
+        if (field === 'address') {
+          renderMapEmbed();
+          renderPrintMapBlock();
+        }
+      });
+    }
+
+    async function confirmClearAll() {
+      if (!confirm('内容をすべてリセットしますか？')) return;
+      await clearStorage();
+      location.reload();
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      await initDB();
+      await loadFromStorage();
+
+      ['fDocNo:docNo', 'fIssueDate:issueDate', 'fProjectName:projectName', 'fAddress:address',
+       'fDateFrom:dateFrom', 'fDateTo:dateTo', 'fGatherTime:gatherTime',
+       'fOverview:overview', 'fItems:itemsList', 'fCommon:commonInstructions'].forEach(pair => {
+        const [elId, field] = pair.split(':');
+        bindField(elId, field);
+      });
+
+      renderMapEmbed();
+      initMapUpload();
+      renderMapImagePreview();
+      renderPrintMapBlock();
+      renderContractorList();
+      renderScheduleGrid();
+    });
+  </script>
+</body>
+</html>

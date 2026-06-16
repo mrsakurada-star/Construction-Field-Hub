@@ -1,0 +1,562 @@
+/* © 2026 Nozomi Sakurada. All rights reserved. */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif;
+}
+
+input, textarea {
+  resize: none;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  color: #1d1d1f;
+  outline: none;
+  padding: 0;
+  width: 100%;
+  font-size: inherit;
+  line-height: inherit;
+  display: block;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #bbb;
+}
+
+/* ===================== TOOLBAR（編集時のみ表示） ===================== */
+.toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  background: #111;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  gap: 8px;
+}
+
+.toolbar .toolbar-title {
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  flex: 1;
+  font-family: Inter, sans-serif;
+}
+
+.toolbar button {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 11px;
+  border-radius: 99px;
+  padding: 4px 14px;
+}
+
+.toolbar .btn-add {
+  background: #ff9500;
+  color: #fff;
+  font-weight: 600;
+}
+
+.toolbar .btn-print {
+  background: #3a3a3c;
+  color: #fff;
+}
+
+.toolbar .btn-reset {
+  background: none;
+  color: #666;
+  border: 1px solid #444;
+  padding: 4px 12px;
+}
+
+/* ===================== DOCUMENT WRAP ===================== */
+#wrap {
+  background: #f0f0f2;
+  min-height: calc(100vh - 42px);
+  padding: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+#doc {
+  background: #fff;
+  width: 1100px;
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  font-size: 10px;
+  color: #1d1d1f;
+}
+
+/* ===================== HEADER BAND ===================== */
+.doc-band {
+  background: #ff9500;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  height: 32px;
+  gap: 16px;
+}
+
+.doc-band .doc-title {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  flex: 1;
+}
+
+.doc-band .doc-label {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: Inter, sans-serif;
+  white-space: nowrap;
+}
+
+.doc-band input {
+  color: #fff;
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  padding: 1px 5px;
+}
+
+.doc-band input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.doc-band .doc-input-docno {
+  width: 46px;
+  font-weight: 700;
+}
+
+.doc-band .doc-input-date {
+  width: 84px;
+}
+
+/* ===================== OVERVIEW + SCHEDULE ROW ===================== */
+.doc-toprow {
+  display: flex;
+  border-bottom: 1.5px solid #d2d2d7;
+}
+
+.doc-info {
+  width: 320px;
+  flex-shrink: 0;
+  padding: 9px 12px;
+  border-right: 1.5px solid #d2d2d7;
+}
+
+.doc-info-row {
+  display: flex;
+  align-items: baseline;
+  padding: 3px 0;
+  border-bottom: 1px solid #e8e8ed;
+  gap: 8px;
+}
+
+.doc-info-row:last-child {
+  border-bottom: none;
+}
+
+.doc-info-label {
+  font-size: 8px;
+  font-weight: 700;
+  color: #86868b;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: Inter, sans-serif;
+  white-space: nowrap;
+  width: 56px;
+  flex-shrink: 0;
+}
+
+.doc-info-row input.field-projectname {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.doc-info-row .tilde {
+  color: #aaa;
+  flex-shrink: 0;
+  padding: 0 3px;
+}
+
+/* 現場住所の下に組み込む地図セクション */
+.map-mini {
+  margin-top: 4px;
+  padding-top: 6px;
+  border-top: 1px dashed #e8e8ed;
+}
+
+.map-mini-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.map-embed-wrap {
+  width: 96px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #e8e8ed;
+  background: #f5f5f7;
+}
+
+.map-embed-wrap iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+.map-empty {
+  font-size: 8px;
+  color: #aaa;
+  padding: 6px;
+  margin: 0;
+}
+
+.map-upload-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.map-upload-zone {
+  border: 1px dashed #d2d2d7;
+  border-radius: 4px;
+  padding: 6px 8px;
+  font-size: 8px;
+  color: #86868b;
+  cursor: pointer;
+  text-align: center;
+}
+
+.map-upload-zone.drag-over {
+  border-color: #ff9500;
+  color: #ff9500;
+}
+
+#mapImageInput {
+  display: none;
+}
+
+.map-image-thumb {
+  max-width: 80px;
+  max-height: 40px;
+  display: block;
+  border-radius: 3px;
+  border: 1px solid #e8e8ed;
+}
+
+.map-image-remove {
+  background: none;
+  border: none;
+  color: #ff3b30;
+  font-size: 8px;
+  cursor: pointer;
+  padding: 1px 0;
+  text-align: left;
+}
+
+/* Schedule */
+.doc-sched {
+  flex: 1;
+  padding: 9px 12px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.doc-sched-label {
+  font-size: 7.5px;
+  font-weight: 700;
+  color: #86868b;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-family: Inter, sans-serif;
+  margin-bottom: 7px;
+}
+
+.sched-grid {
+  display: grid;
+  grid-auto-rows: 20px;
+}
+
+.sched-cell {
+  border-bottom: 1px solid #e8e8ed;
+  border-right: 1px solid #e8e8ed;
+  display: flex;
+  align-items: center;
+}
+
+.sched-head {
+  background: #f5f5f7;
+  border-bottom: 1px solid #d2d2d7;
+  font-size: 7px;
+  font-weight: 700;
+  color: #86868b;
+  font-family: Inter, sans-serif;
+  padding: 0 5px;
+}
+
+.sched-hour {
+  justify-content: center;
+  font-weight: 600;
+}
+
+.sched-name {
+  padding: 0 5px;
+  font-size: 8.5px;
+  color: #6e6e73;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-right: 1px solid #d2d2d7;
+}
+
+.sched-slot {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.sched-slot.on {
+  background: #ff9500;
+}
+
+/* ===================== MAIN BODY ===================== */
+.doc-main {
+  display: flex;
+  min-height: 460px;
+}
+
+/* Left fixed column */
+.doc-left {
+  width: 210px;
+  flex-shrink: 0;
+  border-right: 1.5px solid #d2d2d7;
+  display: flex;
+  flex-direction: column;
+}
+
+.doc-left-section {
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 0;
+  border-bottom: 1.5px solid #d2d2d7;
+}
+
+.doc-left-section:last-child {
+  border-bottom: none;
+}
+
+.doc-left-section.sz-2 { flex: 2; }
+.doc-left-section.sz-3 { flex: 3; }
+
+.sec-label {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #e8e8ed;
+  font-family: Inter, sans-serif;
+  flex-shrink: 0;
+  color: #6e6e73;
+}
+
+.sec-label.accent {
+  color: #ff9500;
+  border-bottom: 2px solid #ff9500;
+}
+
+.doc-left-section textarea {
+  flex: 1;
+  font-size: 9.5px;
+  line-height: 1.65;
+  min-height: 80px;
+}
+
+.doc-left-section.sz-3 textarea {
+  min-height: 130px;
+}
+
+/* Contractor columns */
+.doc-contractors {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+.c-col {
+  flex: 1;
+  min-width: 128px;
+  border-right: 1px solid #d2d2d7;
+  display: flex;
+  flex-direction: column;
+}
+
+.c-head {
+  background: #1d1d1f;
+  padding: 5px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  min-height: 30px;
+}
+
+.c-head input {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.c-head input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.c-remove {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  font-size: 15px;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.c-section {
+  padding: 7px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-height: 0;
+  border-bottom: 1px solid #d2d2d7;
+}
+
+.c-col .c-section:last-child {
+  border-bottom: none;
+}
+
+.c-section-content { flex: 3; }
+.c-section-notes { flex: 2; }
+.c-section-items { flex: 2; }
+
+.c-label {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding-bottom: 3px;
+  border-bottom: 1px solid #e8e8ed;
+  font-family: Inter, sans-serif;
+  flex-shrink: 0;
+  color: #6e6e73;
+}
+
+.c-label-accent {
+  color: #ff9500;
+  border-bottom: 1px solid #ffedd5;
+}
+
+.c-section textarea {
+  flex: 1;
+  font-size: 9px;
+  line-height: 1.6;
+  min-height: 55px;
+}
+
+.c-section-content textarea {
+  min-height: 90px;
+}
+
+/* ===================== FOOTER ===================== */
+.doc-footer {
+  border-top: 1px solid #e8e8ed;
+  background: #fafafa;
+  padding: 5px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.doc-footer span {
+  font-size: 8px;
+  color: #aaa;
+  font-family: Inter, sans-serif;
+}
+
+.doc-footer .saved-indicator {
+  color: #34c759;
+}
+
+/* ===================== PRINT MAP BLOCK（印刷専用） ===================== */
+#printMapBlock {
+  display: none;
+}
+
+/* ===================== PRINT ===================== */
+@page {
+  size: A4 landscape;
+  margin: 8mm;
+}
+
+@media print {
+  [data-np] {
+    display: none !important;
+  }
+
+  body {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  #wrap {
+    background: #fff !important;
+    padding: 0 !important;
+    min-height: 0 !important;
+  }
+
+  #doc {
+    box-shadow: none !important;
+    width: 100% !important;
+  }
+
+  .map-mini-row {
+    display: none !important;
+  }
+
+  .map-mini {
+    border-top: none !important;
+    padding-top: 0 !important;
+  }
+
+  #printMapBlock {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 40px;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+}
