@@ -328,12 +328,29 @@ input::placeholder, textarea::placeholder {
 }
 
 .sched-slot {
-  cursor: pointer;
+  padding: 0;
   transition: background 0.1s;
 }
 
 .sched-slot.on {
   background: #ff9500;
+}
+
+.sched-slot-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-size: 7.5px;
+  font-family: Inter, sans-serif;
+  color: #1d1d1f;
+  padding: 0 2px;
+}
+
+.sched-slot-input:focus {
+  outline: 1px solid #ff9500;
+  background: #fff;
 }
 
 /* ===================== MAIN BODY ===================== */
