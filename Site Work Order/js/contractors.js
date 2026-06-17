@@ -32,12 +32,15 @@ function updateContractorField(id, field, value) {
   if (field === 'name') renderScheduleGrid();
 }
 
-function updateScheduleCell(contractorId, hour, value) {
+function updateScheduleCell(el, contractorId, hour) {
   const key = contractorId + '_' + hour;
+  const value = el.value;
   if (value) {
     state.schedule[key] = value;
+    el.parentElement.classList.add('on');
   } else {
     delete state.schedule[key];
+    el.parentElement.classList.remove('on');
   }
   saveToStorage();
 }
