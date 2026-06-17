@@ -77,8 +77,13 @@ function renderScheduleGrid() {
   state.contractors.forEach(c => {
     html += '<div class="sched-cell sched-name">' + escapeHtml(c.name || ('業者' + c.id)) + '</div>';
     hours.forEach(h => {
-      const on = !!state.schedule[c.id + '_' + h];
-      html += '<div class="sched-cell sched-slot' + (on ? ' on' : '') + '" onclick="toggleScheduleCell(' + c.id + ',\'' + h + '\')"></div>';
+      const raw = state.schedule[c.id + '_' + h];
+      const value = typeof raw === 'string' ? raw : (raw ? '' : '');
+      const on = !!raw;
+      html += '<div class="sched-cell sched-slot' + (on ? ' on' : '') + '">' +
+        '<input type="text" class="sched-slot-input" value="' + escapeAttr(value) +
+        '" oninput="updateScheduleCell(' + c.id + ',\'' + h + '\',this.value)">' +
+        '</div>';
     });
   });
 
