@@ -81,11 +81,11 @@ function renderScheduleGrid() {
     html += '<div class="sched-cell sched-name">' + escapeHtml(c.name || ('業者' + c.id)) + '</div>';
     hours.forEach(h => {
       const raw = state.schedule[c.id + '_' + h];
-      const value = typeof raw === 'string' ? raw : (raw ? '' : '');
+      const value = typeof raw === 'string' ? raw : '';
       const on = !!raw;
       html += '<div class="sched-cell sched-slot' + (on ? ' on' : '') + '">' +
         '<input type="text" class="sched-slot-input" value="' + escapeAttr(value) +
-        '" oninput="updateScheduleCell(' + c.id + ',\'' + h + '\',this.value)">' +
+        '" oninput="updateScheduleCell(this,' + c.id + ',\'' + h + '\')">' +
         '</div>';
     });
   });
