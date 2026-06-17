@@ -135,7 +135,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .doc-band .doc-input-docno {
-  width: 46px;
+  width: 120px;
   font-weight: 700;
 }
 
