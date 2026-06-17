@@ -93,7 +93,7 @@ async function renderPrintMapBlock() {
     el.innerHTML = '<div id="printQrCanvas"></div>';
     if (typeof QRCode !== 'undefined') {
       document.getElementById('printQrCanvas').innerHTML = '';
-      new QRCode(document.getElementById('printQrCanvas'), { text: getMapsLinkUrl(state.address), width: 64, height: 64 });
+      new QRCode(document.getElementById('printQrCanvas'), { text: getMapsLinkUrl(state.address), width: 40, height: 40 });
     }
   } else {
     el.innerHTML = '';
