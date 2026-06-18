@@ -6,6 +6,7 @@
  */
 
 const SWO_GANTT_HOURS = ['7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18'];
+const SWO_MAX_PRINTABLE_CONTRACTORS = 12; // A4横1ページに収まる業者カードの上限（density-tiny時の実測値）
 
 function addContractor() {
   const id = state.nextId;
@@ -14,6 +15,9 @@ function addContractor() {
   saveToStorage();
   renderContractorList();
   renderScheduleGrid();
+  if (state.contractors.length === SWO_MAX_PRINTABLE_CONTRACTORS + 1) {
+    alert('業者数が' + SWO_MAX_PRINTABLE_CONTRACTORS + '社を超えました。印刷時に右端のカードが表示されない可能性があります。複数枚に分けて発行することをご検討ください。');
+  }
 }
 
 function removeContractor(id) {
@@ -22,6 +26,49 @@ function removeContractor(id) {
   saveToStorage();
   renderContractorList();
   renderScheduleGrid();
+}
+
+function reorderContractor(draggedId, targetId) {
+  if (draggedId === targetId) return;
+  const fromIndex = state.contractors.findIndex(c => c.id === draggedId);
+  const toIndex = state.contractors.findIndex(c => c.id === targetId);
+  if (fromIndex === -1 || toIndex === -1) return;
+  const [moved] = state.contractors.splice(fromIndex, 1);
+  state.contractors.splice(toIndex, 0, moved);
+  saveToStorage();
+  renderContractorList();
+  renderScheduleGrid();
+}
+
+let swoDraggedContractorId = null;
+
+function handleContractorDragStart(ev, id) {
+  swoDraggedContractorId = id;
+  ev.dataTransfer.effectAllowed = 'move';
+  ev.currentTarget.classList.add('dragging');
+}
+
+function handleContractorDragEnd(ev) {
+  ev.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.c-col.drag-over').forEach(el => el.classList.remove('drag-over'));
+  swoDraggedContractorId = null;
+}
+
+function handleContractorDragOver(ev, id) {
+  ev.preventDefault();
+  if (swoDraggedContractorId === null || swoDraggedContractorId === id) return;
+  ev.currentTarget.classList.add('drag-over');
+}
+
+function handleContractorDragLeave(ev) {
+  ev.currentTarget.classList.remove('drag-over');
+}
+
+function handleContractorDrop(ev, id) {
+  ev.preventDefault();
+  ev.currentTarget.classList.remove('drag-over');
+  if (swoDraggedContractorId === null) return;
+  reorderContractor(swoDraggedContractorId, id);
 }
 
 function updateContractorField(id, field, value) {
