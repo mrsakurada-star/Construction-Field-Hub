@@ -78,8 +78,10 @@ function renderContractorList() {
 function renderScheduleGrid() {
   const grid = document.getElementById('scheduleGrid');
   const hours = SWO_GANTT_HOURS;
+  const n = state.contractors.length;
+  const densityClass = n > 9 ? ' density-tiny' : (n > 6 ? ' density-compact' : '');
 
-  let html = '<div class="sched-grid" style="grid-template-columns:56px repeat(' + hours.length + ',1fr);">';
+  let html = '<div class="sched-grid' + densityClass + '" style="grid-template-columns:56px repeat(' + hours.length + ',1fr);">';
   html += '<div class="sched-cell sched-head">業者</div>';
   hours.forEach(h => { html += '<div class="sched-cell sched-head sched-hour">' + h + ':00</div>'; });
 
