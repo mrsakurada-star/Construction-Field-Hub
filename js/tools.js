@@ -101,7 +101,7 @@ const PORTAL_TOOLS = [
     },
     {
         id: "site_work_order",
-        title: "大規模現場工事指示書作成ツール",
+        title: "工事指示書",
         desc: "複数業者同時入場現場向け。現場概要・地図・業者別予定・持参品をA4指示書として出力",
         category: "site-mgmt",
         tags: ["工事指示書", "現場管理", "業者管理"],

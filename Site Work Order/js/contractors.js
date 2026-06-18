@@ -101,8 +101,14 @@ function renderContractorList() {
     container.classList.add('density-compact');
   }
   container.innerHTML = state.contractors.map(c => `
-    <div class="c-col">
+    <div class="c-col" draggable="true"
+      ondragstart="handleContractorDragStart(event,${c.id})"
+      ondragend="handleContractorDragEnd(event)"
+      ondragover="handleContractorDragOver(event,${c.id})"
+      ondragleave="handleContractorDragLeave(event)"
+      ondrop="handleContractorDrop(event,${c.id})">
       <div class="c-head">
+        <span class="c-drag-handle" title="ドラッグして並べ替え">⠿</span>
         <input type="text" value="${escapeAttr(c.name)}" oninput="updateContractorField(${c.id},'name',this.value)" placeholder="業者名">
         <button type="button" class="c-remove" onclick="removeContractor(${c.id})">×</button>
       </div>
