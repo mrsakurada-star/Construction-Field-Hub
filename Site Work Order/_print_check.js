@@ -15,7 +15,7 @@ const path = require('path');
   await page.waitForTimeout(300);
 
   // add many contractors to stress-test layout
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 11; i++) {
     await page.click('button.btn-add');
   }
   await page.waitForTimeout(300);
