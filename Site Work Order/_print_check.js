@@ -4,7 +4,8 @@ const path = require('path');
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage();
-  const fileUrl = 'file://' + path.resolve(__dirname, 'index.html').replace(/\\/g, '/');
+  const target = 'C:/Users/sakurada/Dropbox/claude thinking/Construction Field Hub/Site Work Order/index.html';
+  const fileUrl = 'file://' + target.replace(/ /g, '%20');
   await page.goto(fileUrl);
   await page.waitForTimeout(500);
 
