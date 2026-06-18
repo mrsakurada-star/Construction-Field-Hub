@@ -19,6 +19,8 @@ const path = require('path');
     await page.click('button.btn-add');
   }
   await page.waitForTimeout(300);
+  const cls = await page.evaluate(() => document.getElementById('contractorList').className);
+  console.log('density class:', cls);
 
   const contractorCount = await page.evaluate(() => document.querySelectorAll('.c-col').length);
   console.log('contractor columns:', contractorCount);
