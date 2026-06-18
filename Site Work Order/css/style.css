@@ -420,11 +420,51 @@ input::placeholder, textarea::placeholder {
 }
 
 .c-col {
-  flex: 1;
+  flex: 1 1 0;
   min-width: 128px;
   border-right: 1px solid #d2d2d7;
   display: flex;
   flex-direction: column;
+}
+
+/* 業者数が多い場合、列幅を段階的に圧縮して用紙幅(A4横)からはみ出さないようにする */
+#contractorList.density-compact .c-col {
+  min-width: 92px;
+}
+
+#contractorList.density-compact .c-head input {
+  font-size: 10px;
+}
+
+#contractorList.density-compact .c-label {
+  font-size: 6.3px;
+}
+
+#contractorList.density-compact .c-section textarea {
+  font-size: 8px;
+  line-height: 1.45;
+}
+
+#contractorList.density-tiny .c-col {
+  min-width: 66px;
+}
+
+#contractorList.density-tiny .c-section {
+  padding: 5px 5px;
+}
+
+#contractorList.density-tiny .c-head input {
+  font-size: 8.5px;
+}
+
+#contractorList.density-tiny .c-label {
+  font-size: 5.8px;
+  letter-spacing: 0.06em;
+}
+
+#contractorList.density-tiny .c-section textarea {
+  font-size: 7px;
+  line-height: 1.35;
 }
 
 .c-head {
