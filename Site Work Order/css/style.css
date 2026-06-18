@@ -295,6 +295,25 @@ input::placeholder, textarea::placeholder {
   grid-auto-rows: 20px;
 }
 
+/* 業者数が多い場合、工程表の行高を圧縮して縦方向のはみ出しを防ぐ */
+.sched-grid.density-compact {
+  grid-auto-rows: 15px;
+}
+
+.sched-grid.density-compact .sched-name,
+.sched-grid.density-compact .sched-slot-input {
+  font-size: 7px;
+}
+
+.sched-grid.density-tiny {
+  grid-auto-rows: 11px;
+}
+
+.sched-grid.density-tiny .sched-name,
+.sched-grid.density-tiny .sched-slot-input {
+  font-size: 6px;
+}
+
 .sched-cell {
   border-bottom: 1px solid #e8e8ed;
   border-right: 1px solid #e8e8ed;
