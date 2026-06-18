@@ -43,7 +43,7 @@ const path = require('path');
   });
   console.log('print doc size px:', printBox);
 
-  await page.pdf({ path: 'C:/Temp_pwcheck_out.pdf', format: 'A4', landscape: true, printBackground: true, margin: { top: '8mm', bottom: '8mm', left: '8mm', right: '8mm' } });
+  await page.pdf({ path: process.env.TEMP.replace(/\\/g, '/') + '/pwcheck_out.pdf', format: 'A4', landscape: true, printBackground: true, margin: { top: '8mm', bottom: '8mm', left: '8mm', right: '8mm' } });
   console.log('pdf saved');
 
   await browser.close();
