@@ -47,6 +47,12 @@ function updateScheduleCell(el, contractorId, hour) {
 
 function renderContractorList() {
   const container = document.getElementById('contractorList');
+  container.classList.remove('density-compact', 'density-tiny');
+  if (state.contractors.length > 9) {
+    container.classList.add('density-tiny');
+  } else if (state.contractors.length > 6) {
+    container.classList.add('density-compact');
+  }
   container.innerHTML = state.contractors.map(c => `
     <div class="c-col">
       <div class="c-head">
