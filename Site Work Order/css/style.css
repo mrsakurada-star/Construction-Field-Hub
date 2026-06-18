@@ -444,6 +444,24 @@ input::placeholder, textarea::placeholder {
   border-right: 1px solid #d2d2d7;
   display: flex;
   flex-direction: column;
+  cursor: grab;
+}
+
+.c-col.dragging {
+  opacity: 0.4;
+}
+
+.c-col.drag-over {
+  box-shadow: inset 2px 0 0 #ff9500;
+  background: #fff7ed;
+}
+
+.c-drag-handle {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 12px;
+  cursor: grab;
+  flex-shrink: 0;
+  line-height: 1;
 }
 
 /* 業者数が多い場合、列幅を段階的に圧縮して用紙幅(A4横)からはみ出さないようにする */
