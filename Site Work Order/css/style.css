@@ -604,6 +604,44 @@ input::placeholder, textarea::placeholder {
   color: #34c759;
 }
 
+/* ===================== スマホ・タブレット対応 ===================== */
+/* PC利用が基本のため#docの組版(1100px固定)は崩さず、
+   横スクロールで全体を表示・編集できるようにする */
+@media (max-width: 1140px) {
+  .toolbar {
+    overflow-x: auto;
+  }
+
+  .toolbar .toolbar-title {
+    flex: none;
+  }
+
+  .toolbar button {
+    flex-shrink: 0;
+  }
+
+  #wrap {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding: 10px;
+  }
+
+  #doc {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .toolbar {
+    height: auto;
+    padding: 8px 10px;
+  }
+
+  .toolbar button {
+    padding: 7px 14px;
+  }
+}
+
 /* ===================== PRINT MAP BLOCK（印刷専用） ===================== */
 #printMapBlock {
   display: none;

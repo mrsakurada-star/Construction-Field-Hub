@@ -6,6 +6,16 @@ const PORTAL_UPDATES = [
     {
         toolId: "site_work_order",
         toolName: "工事指示書",
+        date: "2026-06-22",
+        version: "v1.2",
+        changes: [
+            "スマホ・タブレットで開いた際に画面崩れせず横スクロールで全体を表示・編集できるよう対応",
+            "業者カードの並べ替えドラッグ操作をPointer Events化し、タッチ操作（スマホ・タブレット）でも並べ替え可能に"
+        ]
+    },
+    {
+        toolId: "site_work_order",
+        toolName: "工事指示書",
         date: "2026-06-18",
         version: "v1.1",
         changes: [

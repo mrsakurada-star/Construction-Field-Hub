@@ -40,35 +40,39 @@ function reorderContractor(draggedId, targetId) {
   renderScheduleGrid();
 }
 
-let swoDraggedContractorId = null;
+// Pointer Events採用（マウス・タッチ・ペン共通）。HTML5 DnDはタッチ非対応のため使用しない。
+let swoDragState = null;
 
 function handleContractorDragStart(ev, id) {
-  swoDraggedContractorId = id;
-  ev.dataTransfer.effectAllowed = 'move';
-  ev.currentTarget.classList.add('dragging');
+  ev.preventDefault();
+  const col = ev.currentTarget.closest('.c-col');
+  swoDragState = { id, col, targetId: null };
+  col.classList.add('dragging');
+  document.addEventListener('pointermove', handleContractorDragMove);
+  document.addEventListener('pointerup', handleContractorDragEnd, { once: true });
 }
 
-function handleContractorDragEnd(ev) {
-  ev.currentTarget.classList.remove('dragging');
+function handleContractorDragMove(ev) {
+  if (!swoDragState) return;
   document.querySelectorAll('.c-col.drag-over').forEach(el => el.classList.remove('drag-over'));
-  swoDraggedContractorId = null;
+  const el = document.elementFromPoint(ev.clientX, ev.clientY);
+  const targetCol = el && el.closest && el.closest('.c-col');
+  if (targetCol && targetCol !== swoDragState.col) {
+    targetCol.classList.add('drag-over');
+    swoDragState.targetId = Number(targetCol.dataset.id);
+  } else {
+    swoDragState.targetId = null;
+  }
 }
 
-function handleContractorDragOver(ev, id) {
-  ev.preventDefault();
-  if (swoDraggedContractorId === null || swoDraggedContractorId === id) return;
-  ev.currentTarget.classList.add('drag-over');
-}
-
-function handleContractorDragLeave(ev) {
-  ev.currentTarget.classList.remove('drag-over');
-}
-
-function handleContractorDrop(ev, id) {
-  ev.preventDefault();
-  ev.currentTarget.classList.remove('drag-over');
-  if (swoDraggedContractorId === null) return;
-  reorderContractor(swoDraggedContractorId, id);
+function handleContractorDragEnd() {
+  document.removeEventListener('pointermove', handleContractorDragMove);
+  if (!swoDragState) return;
+  document.querySelectorAll('.c-col.drag-over, .c-col.dragging').forEach(el => el.classList.remove('drag-over', 'dragging'));
+  if (swoDragState.targetId !== null) {
+    reorderContractor(swoDragState.id, swoDragState.targetId);
+  }
+  swoDragState = null;
 }
 
 function updateContractorField(id, field, value) {
@@ -101,14 +105,9 @@ function renderContractorList() {
     container.classList.add('density-compact');
   }
   container.innerHTML = state.contractors.map(c => `
-    <div class="c-col" draggable="true"
-      ondragstart="handleContractorDragStart(event,${c.id})"
-      ondragend="handleContractorDragEnd(event)"
-      ondragover="handleContractorDragOver(event,${c.id})"
-      ondragleave="handleContractorDragLeave(event)"
-      ondrop="handleContractorDrop(event,${c.id})">
+    <div class="c-col" data-id="${c.id}">
       <div class="c-head">
-        <span class="c-drag-handle" title="ドラッグして並べ替え">⠿</span>
+        <span class="c-drag-handle" title="ドラッグして並べ替え" onpointerdown="handleContractorDragStart(event,${c.id})">⠿</span>
         <input type="text" value="${escapeAttr(c.name)}" oninput="updateContractorField(${c.id},'name',this.value)" placeholder="業者名">
         <button type="button" class="c-remove" onclick="removeContractor(${c.id})">×</button>
       </div>
