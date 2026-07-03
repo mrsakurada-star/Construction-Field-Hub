@@ -1,372 +1,550 @@
-@import url('https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&display=swap');
+/* © 2026 Nozomi Sakurada. All rights reserved. */
 
-        /* © 2026 Nozomi Sakurada. All rights reserved. */
 :root {
-            --primary-color: #1d1d1f;
-            --accent-color: #1d1d1f;
-            --bg-color: #f5f5f7;
-            --text-color: #1d1d1f;
-            --border-color: #d2d2d7;
-        }
+    /* ─── Surfaces ─── */
+    --white: #FFFFFF;
+    --mist: #F6F5F3;
+    --mist-2: #EFEDE9;
 
-        /* ===== 共通リセット & ベース ===== */
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* ─── Borders ─── */
+    --hairline: #E3E1DC;
+    --hairline-dark: #C9C6BF;
+
+    /* ─── Typography ─── */
+    --ink: #1A1A1A;
+    --ash: #6E6E73;
+    --ash-2: #9B9A97;
+
+    /* ─── Accent (earth — used sparingly) ─── */
+    --clay: #A8572E;
+    --clay-soft: rgba(168, 87, 46, 0.16);
+
+    /* ─── Fonts ─── */
+    --font-sans: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    --font-serif: "Noto Serif JP", "Yu Mincho", "Hiragino Mincho ProN", serif;
+    --font-num: "Inter", "Noto Sans JP", sans-serif;
+
+    /* ─── Motion ─── */
+    --dur-base: 200ms;
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+    /* ─── Legacy variable mapping (for inline HTML styles) ─── */
+    --border-color: var(--hairline);
+    --accent-color: var(--clay);
+    --text-color: var(--ink);
+    --bg-color: var(--mist);
+    --primary-color: var(--ink);
+}
+
+/* ===== COMMON RESET & BASE ===== */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    background-color: var(--mist);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========================================
+   🖥️ SCREEN (画面表示・編集UI用)
+   ========================================= */
+@media screen {
+    body {
+        display: flex;
+        height: 100vh;
+        margin: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        position: relative;
+    }
+
+    /* エディタ領域 (左側) */
+    .editor-container {
+        flex: 1;
+        flex-shrink: 0;
+        padding: 32px 48px;
+        background: var(--white);
+        border-right: 1px solid var(--hairline);
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        min-width: 400px;
+    }
+
+    .editor-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 32px;
+        border-bottom: 1px solid var(--hairline);
+        padding-bottom: 16px;
+        gap: 24px;
+    }
+
+    .editor-header h1 {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--ink);
+        letter-spacing: 0.02em;
+        margin: 0;
+    }
+
+    /* Form Grid */
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 32px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group.full-width {
+        grid-column: span 2;
+    }
+
+    label {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--ash);
+        letter-spacing: 0.04em;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    input, select, textarea {
+        padding: 12px 14px;
+        border: 1px solid var(--hairline);
+        border-radius: 0;
+        font-size: 14px;
+        font-family: var(--font-sans);
+        color: var(--ink);
+        background: var(--white);
+        transition: border-color var(--dur-base) var(--ease-out);
+    }
+
+    input::placeholder, textarea::placeholder {
+        color: var(--ash-2);
+    }
+
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--ink);
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 120px;
+        line-height: 1.6;
+    }
+
+    select {
+        cursor: pointer;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%231A1A1A' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 36px;
+    }
+
+    /* 送付状プレビュー・A4シミュレーション (右側) */
+    .sheet {
+        flex-shrink: 0;
+        width: 190mm;
+        min-height: 267mm;
+        background: var(--white);
+        border: 1px solid var(--hairline);
+        position: relative;
+        margin: 20px auto;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        zoom: 0.65;
+    }
+
+    .sheet-content {
+        width: 100%;
+        height: 100%;
+        padding: 20mm 20mm;
+        display: flex;
+        flex-direction: column;
+        font-family: var(--font-serif);
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    /* Sheet Title */
+    .sheet-title {
+        text-align: center;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        margin-top: 5mm;
+        margin-bottom: 12mm;
+        border-bottom: 1px solid var(--ink);
+        padding-bottom: 4mm;
+    }
+
+    .sheet-header-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15mm;
+        gap: 10mm;
+    }
+
+    .recipient-info {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sender-info {
+        flex-shrink: 0;
+        text-align: right;
+        font-size: 13px;
+        line-height: 1.7;
+        max-width: 320px;
+    }
+
+    .date-line {
+        text-align: right;
+        margin-bottom: 8mm;
+        font-size: 14px;
+    }
+
+    .recipient-name-block {
+        margin-bottom: 4mm;
+        display: flex;
+        align-items: flex-end;
+        border-bottom: 1px solid var(--ink);
+        padding-bottom: 2px;
+    }
+
+    .recipient-name {
+        font-size: 18px;
+        font-weight: 700;
+        flex-grow: 1;
+        min-width: 0;
+        word-break: break-all;
+    }
+
+    .honorific {
+        margin-left: 10px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .subject-block {
+        margin: 12mm 0;
+        text-align: center;
+    }
+
+    .subject-line {
+        font-size: 18px;
+        font-weight: 700;
+        border-top: 1px solid var(--ink);
+        border-bottom: 1px solid var(--ink);
+        padding: 6mm 10mm;
+        display: inline-block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .transmission-details {
+        display: flex;
+        margin-bottom: 15mm;
+        border-top: 1px solid var(--ink);
+        border-bottom: 1px solid var(--ink);
+        padding: 12px 0;
+        font-size: 14px;
+    }
+
+    .transmission-label {
+        font-weight: 700;
+        width: 120px;
+    }
+
+    .main-message {
+        flex: 1;
+        font-size: 14px;
+        line-height: 1.8;
+        white-space: pre-wrap;
+        margin-bottom: 15mm;
+    }
+
+    .enclosed-items {
+        border: 1px solid var(--ink);
+        padding: 10mm;
+        margin-top: auto;
+        page-break-inside: avoid;
+    }
+
+    .enclosed-title {
+        text-align: center;
+        margin-bottom: 5mm;
+        font-weight: 700;
+        font-size: 14px;
+    }
+
+    /* Actions */
+    .actions {
+        margin-top: auto;
+        padding-top: 24px;
+        text-align: right;
+    }
+
+    .btn-print {
+        display: inline-block;
+        padding: 12px 28px;
+        background: var(--white);
+        color: var(--ink);
+        border: 1px solid var(--ink);
+        border-radius: 0;
+        font-family: var(--font-sans);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all var(--dur-base) var(--ease-out);
+        text-decoration: none;
+    }
+
+    .btn-print:hover {
+        background: var(--ink);
+        color: var(--white);
+    }
+
+    .btn-print:focus-visible {
+        outline: 2px solid var(--clay);
+        outline-offset: 2px;
+    }
+
+    /* Radio Toggle */
+    #file-type-toggle {
+        display: flex;
+        gap: 4px;
+        background: transparent;
+        padding: 0;
+        border-radius: 0;
+    }
+
+    #file-type-toggle input[type="radio"] {
+        display: none;
+    }
+
+    #file-type-toggle label {
+        white-space: nowrap;
+        padding: 8px 16px;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 500;
+        border-radius: 0;
+        margin: 0;
+        color: var(--ash);
+        border-bottom: 2px solid transparent;
+        transition: all var(--dur-base) var(--ease-out);
+    }
+
+    #file-type-toggle input[type="radio"]:checked + label {
+        color: var(--clay);
+        border-bottom-color: var(--clay);
+        font-weight: 600;
+    }
+
+    /* Responsive rules for smaller screens */
+    @media (max-width: 900px) {
         body {
-            font-family: 'Shippori Mincho', serif;
-            color: #000;   /* 送信票の特性上、黒ベース */
-            background-color: var(--bg-color);
+            flex-direction: column;
+            height: auto;
         }
 
-        /* =========================================
-           🖥️ SCREEN (画面表示・編集UI用)
-           ========================================= */
-        @media screen {
-            body {
-                display: flex;
-                height: 100vh;
-                margin: 0;
-                overflow-x: auto;
-                overflow-y: hidden;
-                position: relative;
-            }
-
-            /* エディタ領域 (左側) */
-            .editor-container {
-                flex: 1;
-                flex-shrink: 0;
-                padding: 25px 40px;
-                background: #fff;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-                display: flex;
-                flex-direction: column;
-                overflow-y: auto;
-                min-width: 400px;
-            }
-
-            .editor-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-end;
-                margin-bottom: 25px;
-                border-bottom: 2px solid var(--primary-color);
-                padding-bottom: 10px;
-            }
-
-            .editor-header h1 {
-                font-size: 1.6rem;
-                color: var(--primary-color);
-                margin: 0;
-            }
-
-            .form-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
-            }
-
-            .form-group {
-                display: flex;
-                flex-direction: column;
-            }
-
-            .form-group.full-width {
-                grid-column: span 2;
-            }
-
-            label {
-                font-size: 0.9rem;
-                font-weight: bold;
-                color: var(--primary-color);
-                margin-bottom: 6px;
-            }
-
-            input, select, textarea {
-                padding: 10px 12px;
-                border: 1px solid var(--border-color);
-                border-radius: 4px;
-                font-size: 1rem;
-                font-family: 'Shippori Mincho', serif;
-                transition: border-color 0.3s;
-            }
-
-            input:focus, select:focus, textarea:focus {
-                border-color: var(--accent-color);
-                outline: none;
-            }
-
-            textarea {
-                resize: vertical;
-                min-height: 120px;
-            }
-
-            /* 送付状プレビュー・A4シミュレーション (右側) */
-            .sheet {
-                flex-shrink: 0;
-                width: 190mm; /* A4の幅をシミュレート */
-                min-height: 267mm;
-                background: white;
-                box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-                position: relative;
-                margin: 20px auto; /* 中央寄せ */
-                overflow: hidden;
-                display: flex;
-                flex-direction: column;
-                zoom: 0.65; /* 📝 追加: プレビュー画面全体を確認できるように縮小表示 */
-            }
-
-            .sheet-content {
-                width: 100%;
-                height: 100%;
-                padding: 20mm 20mm;
-                display: flex;
-                flex-direction: column;
-            }
-
-            /* シート内部デザイン */
-            .sheet-title {
-                text-align: center;
-                font-size: 2.4rem;
-                letter-spacing: 0.8rem;
-                margin-top: 5mm;
-                margin-bottom: 12mm;
-                border-bottom: 4px double #000;
-                padding-bottom: 4mm;
-                font-weight: 700;
-                text-indent: 0.8rem;
-            }
-
-            .sheet-header-info {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                margin-bottom: 15mm;
-                gap: 10mm;
-            }
-
-            .recipient-info {
-                flex: 1;
-                min-width: 0;
-            }
-
-            .sender-info {
-                flex-shrink: 0;
-                text-align: right;
-                font-size: 0.95rem;
-                line-height: 1.6;
-                max-width: 320px;
-            }
-
-            .date-line {
-                text-align: right;
-                margin-bottom: 8mm;
-                font-size: 1.1rem;
-            }
-
-            .recipient-name-block {
-                margin-bottom: 4mm;
-                display: flex;
-                align-items: flex-end;
-                border-bottom: 1.5px solid #000;
-                padding-bottom: 2px;
-            }
-
-            .recipient-name {
-                font-size: 1.6rem;
-                font-weight: 700;
-                flex-grow: 1;
-                min-width: 0;
-                word-break: break-all;
-            }
-
-            .honorific {
-                margin-left: 10px;
-                font-size: 1.2rem;
-                white-space: nowrap;
-            }
-
-            .subject-block {
-                margin: 12mm 0;
-                text-align: center;
-            }
-
-            .subject-line {
-                font-size: 1.7rem;
-                font-weight: 700;
-                border-top: 2.5px solid #000;
-                border-bottom: 2.5px solid #000;
-                padding: 6mm 10mm;
-                display: inline-block;
-                width: 100%;
-                box-sizing: border-box;
-            }
-
-            .transmission-details {
-                display: flex;
-                margin-bottom: 15mm;
-                border-top: 1px solid #000;
-                border-bottom: 1px solid #000;
-                padding: 12px 0;
-                font-size: 1.1rem;
-            }
-
-            .transmission-label {
-                font-weight: 700;
-                width: 120px;
-            }
-
-            .main-message {
-                flex: 1;
-                font-size: 1.15rem;
-                line-height: 1.9;
-                white-space: pre-wrap;
-                margin-bottom: 15mm;
-            }
-
-            .enclosed-items {
-                border: 1px solid #000;
-                padding: 10mm;
-                margin-top: auto; /* Boxを最下部へ押し出す */
-                page-break-inside: avoid;
-            }
-
-            .enclosed-title {
-                text-align: center;
-                margin-bottom: 5mm;
-                font-weight: 700;
-                font-size: 1.2rem;
-            }
-
-            .actions {
-                margin-top: auto;
-                padding-top: 20px;
-                text-align: right;
-            }
-
-            .btn-print {
-                background-color: var(--accent-color);
-                color: #fff;
-                padding: 12px 30px;
-                border: none;
-                border-radius: 4px;
-                font-size: 1.1rem;
-                font-weight: bold;
-                cursor: pointer;
-                box-shadow: 0 4px 6px rgba(29, 29, 31, 0.2);
-                transition: transform 0.2s, box-shadow 0.2s;
-            }
-
-            .btn-print:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 6px 12px rgba(29, 29, 31, 0.3);
-            }
-
-            #file-type-toggle {
-                display: flex;
-                background: #f1f2f6;
-                padding: 4px;
-                border-radius: 6px;
-            }
-
-            #file-type-toggle input[type="radio"] {
-                display: none;
-            }
-
-            #file-type-toggle label {
-                white-space: nowrap;
-                padding: 6px 16px;
-                cursor: pointer;
-                font-size: 0.9rem;
-                border-radius: 4px;
-                margin: 0;
-                font-weight: normal;
-                color: #555;
-            }
-
-            #file-type-toggle input[type="radio"]:checked+label {
-                background: #fff;
-                color: var(--accent-color);
-                font-weight: bold;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            }
-
-            /* Responsive rules for smaller screens */
-            @media (max-width: 900px) {
-                body { flex-direction: column; height: auto; }
-                .editor-container { min-width: auto; }
-                .sheet { width: 95vw; height: auto; min-height: 297mm; padding: 10mm; }
-                .form-grid { grid-template-columns: 1fr; }
-                .form-group.full-width { grid-column: span 1; }
-            }
+        .editor-container {
+            min-width: auto;
         }
 
-        /* =========================================
-           🖨️ PRINT (印刷出力用) の完全分離A4ネイティブCSS
-           ========================================= */
-        @page {
-            size: A4 portrait;
-            margin: 20mm 15mm; /* 上下20mm、左右15mm */
+        .sheet {
+            width: 95vw;
+            height: auto;
+            min-height: 297mm;
+            padding: 10mm;
         }
-        
-        @media print {
-            body {
-                background: white;
-                margin: 0 !important;
-                padding: 0 !important;
-                display: block !important;
-            }
-            
-            html {
-                font-size: 80% !important; /* 送付状の巨大な文字を確実に収めるための等倍スケーリング */
-            }
 
-            .no-print, .editor-container, .actions {
-                display: none !important;
-            }
-
-            /* 印刷時のみ物理寸法固定の枠を適用 */
-            .sheet {
-                width: 190mm !important;
-                height: 267mm !important; 
-                margin: 0 !important;
-                padding: 0 !important;
-                box-shadow: none !important;
-                overflow: hidden !important;
-                border: none !important;
-                display: flex !important;
-                flex-direction: column !important;
-                background: white !important;
-            }
-
-            .sheet-content {
-                padding: 12mm 15mm !important;
-                height: 100% !important; /* 親枠272mmに追従 */
-                display: flex !important;
-                flex-direction: column !important;
-            }
-
-            /* シート内部デザイン（印刷時のみ微細に数値を圧縮） */
-            .sheet-title {
-                text-align: center; margin-top: 0; margin-bottom: 10mm; padding-bottom: 3mm;
-                font-size: 2.2rem; letter-spacing: 0.8rem; border-bottom: 3px double #000; text-indent: 0.8rem; font-weight: 700;
-            }
-            .sheet-header-info { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14mm; gap: 10mm; }
-            .recipient-info { flex: 1; }
-            .sender-info { flex-shrink: 0; text-align: right; font-size: 0.95rem; line-height: 1.6; max-width: 320px; }
-            .date-line { text-align: right; margin-bottom: 8mm; font-size: 1.1rem; }
-            .recipient-name-block { margin-bottom: 4mm; display: flex; align-items: flex-end; border-bottom: 1.5px solid #000; padding-bottom: 2px; }
-            .recipient-name { font-size: 1.6rem; font-weight: 700; flex-grow: 1; word-break: break-all; }
-            .honorific { margin-left: 10px; font-size: 1.2rem; white-space: nowrap; }
-            .subject-block { margin: 10mm 0; text-align: center; }
-            .subject-line { font-size: 1.7rem; font-weight: 700; border-top: 2.5px solid #000; border-bottom: 2.5px solid #000; padding: 6mm 10mm; display: inline-block; width: 100%; box-sizing: border-box; }
-            .transmission-details { display: flex; margin-bottom: 12mm; border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 12px 0; font-size: 1.1rem; }
-            .transmission-label { font-weight: 700; width: 120px; }
-            .main-message { flex: 1; font-size: 1.15rem; line-height: 1.8; white-space: pre-wrap; margin-bottom: 10mm; }
-            
-            .enclosed-items {
-                border: 1px solid #000;
-                padding: 8mm;
-                margin-top: auto !important; /* height:100% と併用し、確実に最下部へ配置 */
-                page-break-inside: avoid;
-            }
-            .enclosed-title { text-align: center; margin-bottom: 5mm; font-weight: 700; font-size: 1.2rem; }
+        .form-grid {
+            grid-template-columns: 1fr;
         }
+
+        .form-group.full-width {
+            grid-column: span 1;
+        }
+    }
+}
+
+/* =========================================
+   🖨️ PRINT (印刷出力用)
+   ========================================= */
+@page {
+    size: A4 portrait;
+    margin: 20mm 15mm;
+}
+
+@media print {
+    body {
+        background: var(--white);
+        margin: 0 !important;
+        padding: 0 !important;
+        display: block !important;
+        font-size: 14px;
+    }
+
+    html {
+        font-size: 16px !important;
+    }
+
+    .no-print, .editor-container, .actions {
+        display: none !important;
+    }
+
+    /* 印刷時のみ物理寸法固定の枠を適用 */
+    .sheet {
+        width: 190mm !important;
+        height: 267mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
+        border: none !important;
+        display: flex !important;
+        flex-direction: column !important;
+        background: var(--white) !important;
+        zoom: 1 !important;
+    }
+
+    .sheet-content {
+        padding: 12mm 15mm !important;
+        height: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        font-family: var(--font-serif);
+        color: var(--ink);
+    }
+
+    /* Sheet Title - Print */
+    .sheet-title {
+        text-align: center;
+        font-size: 24px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        margin-top: 0;
+        margin-bottom: 10mm;
+        border-bottom: 1px solid var(--ink);
+        padding-bottom: 3mm;
+    }
+
+    /* Sheet Header Info - Print */
+    .sheet-header-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 14mm;
+        gap: 10mm;
+    }
+
+    .recipient-info {
+        flex: 1;
+    }
+
+    .sender-info {
+        flex-shrink: 0;
+        text-align: right;
+        font-size: 13px;
+        line-height: 1.7;
+        max-width: 320px;
+    }
+
+    .date-line {
+        text-align: right;
+        margin-bottom: 8mm;
+        font-size: 14px;
+    }
+
+    .recipient-name-block {
+        margin-bottom: 4mm;
+        display: flex;
+        align-items: flex-end;
+        border-bottom: 1px solid var(--ink);
+        padding-bottom: 2px;
+    }
+
+    .recipient-name {
+        font-size: 18px;
+        font-weight: 700;
+        flex-grow: 1;
+        word-break: break-all;
+    }
+
+    .honorific {
+        margin-left: 10px;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+
+    .subject-block {
+        margin: 10mm 0;
+        text-align: center;
+    }
+
+    .subject-line {
+        font-size: 18px;
+        font-weight: 700;
+        border-top: 1px solid var(--ink);
+        border-bottom: 1px solid var(--ink);
+        padding: 6mm 10mm;
+        display: inline-block;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .transmission-details {
+        display: flex;
+        margin-bottom: 12mm;
+        border-top: 1px solid var(--ink);
+        border-bottom: 1px solid var(--ink);
+        padding: 12px 0;
+        font-size: 14px;
+    }
+
+    .transmission-label {
+        font-weight: 700;
+        width: 120px;
+    }
+
+    .main-message {
+        flex: 1;
+        font-size: 14px;
+        line-height: 1.8;
+        white-space: pre-wrap;
+        margin-bottom: 10mm;
+    }
+
+    .enclosed-items {
+        border: 1px solid var(--ink);
+        padding: 8mm;
+        margin-top: auto !important;
+        page-break-inside: avoid;
+    }
+
+    .enclosed-title {
+        text-align: center;
+        margin-bottom: 5mm;
+        font-weight: 700;
+        font-size: 14px;
+    }
+}
