@@ -364,7 +364,6 @@ body {
                 color var(--dur-base) var(--ease-out);
 }
 
-.card-icon-wrap :global(svg),
 .card-icon-wrap svg {
     width: 16px;
     height: 16px;
