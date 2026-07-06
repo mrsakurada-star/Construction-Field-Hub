@@ -15,6 +15,16 @@
   <script src="js/common.js"></script>
   <!-- IndexedDB 操作モジュール -->
   <script src="js/db.js"></script>
+  <!--
+    === 更新内容 (2026-07-06) ===
+    - フォームラベル: label-input 関連付け（for属性）で axe/forms 検査に対応
+    - アクセシビリティ: 非表示 file input に aria-label を追加
+    - スタイル: インラインスタイルを CSS クラスに移行
+      * .work-date-label: 工事日ラベルのflex レイアウト
+      * .auto-get-btn: 自動取得ボタンのスタイル
+      * .form-row > div: 工事日開始/終了日の label/input ラッパー
+    - 複数行対応: 写真説明の改行を PDF プレビューで正しく表示
+  -->
 </head>
 <body>
   <!-- Header -->
