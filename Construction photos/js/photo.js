@@ -16,9 +16,13 @@ function initUpload() {
   });
 }
 
+// PDF出力時の html2canvas scale:2 でも十分な画質になる長辺サイズ（プレビュー幅794pxの2倍相当）
+const PHOTO_MAX_EDGE = 1600;
+const PHOTO_JPEG_QUALITY = 0.9;
+
 async function handleFiles(files) {
   for (const file of files) {
-    const src = await readFileAsDataURL(file);
+    const src = await resizeImageToDataURL(file, PHOTO_MAX_EDGE, PHOTO_JPEG_QUALITY);
     let exifDate = null;
 
     try {
@@ -67,6 +71,38 @@ function readFileAsDataURL(file) {
     const reader = new FileReader();
     reader.onload = e => resolve(e.target.result);
     reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * 画像の長辺が maxEdge を超える場合のみ縮小し、JPEG DataURL として返す。
+ * スマホ写真（4000px級）をそのまま保持すると保存・プレビュー再描画・PDF出力が
+ * 全て重くなるため、印刷に必要な解像度まで先に落としておく。
+ */
+function resizeImageToDataURL(file, maxEdge, quality) {
+  return new Promise(resolve => {
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      let { width, height } = img;
+      const longEdge = Math.max(width, height);
+      if (longEdge > maxEdge) {
+        const scale = maxEdge / longEdge;
+        width = Math.round(width * scale);
+        height = Math.round(height * scale);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      resolve(canvas.toDataURL('image/jpeg', quality));
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      readFileAsDataURL(file).then(resolve); // リサイズ失敗時は元画像をそのまま使用
+    };
+    img.src = objectUrl;
   });
 }
 
@@ -127,6 +163,7 @@ function movePhoto(id, dir) {
 function removePhoto(id) {
   photos = photos.filter(x => x.id !== id);
   deletePhotoSrc(id); // IndexedDB からも削除
+  savedPhotoIds.delete(id);
   renderPhotoList();
   updatePreview();
   document.getElementById('photoCount').textContent = photos.length;
@@ -136,6 +173,7 @@ async function clearAllPhotos() {
   if (!photos.length || confirm('すべての写真を削除しますか？')) {
     photos = [];
     await clearAllPhotoSrcs(); // IndexedDB からも全削除
+    savedPhotoIds.clear();
     renderPhotoList();
     updatePreview();
     document.getElementById('photoCount').textContent = 0;
