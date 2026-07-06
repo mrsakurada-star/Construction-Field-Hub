@@ -117,6 +117,22 @@
             <p>写真をドラッグ＆ドロップ<br>またはクリックして選択</p>
           </div>
           <input type="file" id="fileInput" multiple accept="image/*" aria-label="写真をアップロード">
+          <div class="selection-toolbar" id="selectionToolbar" hidden>
+            <span class="selection-count" id="selectionCount">0枚選択中</span>
+            <button class="btn btn-outline" type="button" onclick="clearSelection()">選択を解除</button>
+            <select id="bulkMoveProcessSelect" aria-label="移動先の工程"></select>
+            <select id="bulkMovePhaseSelect" aria-label="移動先の状態">
+              <option value="before">前</option>
+              <option value="during">中</option>
+              <option value="after">後</option>
+            </select>
+            <button class="btn btn-outline" type="button" onclick="bulkMoveSelected()">
+              <i data-lucide="move"></i>移動
+            </button>
+            <button class="btn btn-danger" type="button" onclick="bulkDeleteSelected()">
+              <i data-lucide="trash-2"></i>削除
+            </button>
+          </div>
           <div class="photo-list" id="photoList"></div>
         </div>
         <div class="panel-footer">

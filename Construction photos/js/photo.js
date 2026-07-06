@@ -118,9 +118,76 @@ function togglePhotoSelection(id, checked) {
   renderSelectionToolbar();
 }
 
-/** 選択状態に応じてフローティングツールバーの表示を更新する（本体は Task 2 で実装） */
+/** 選択状態に応じてフローティングツールバーの表示を更新する */
 function renderSelectionToolbar() {
-  // Task 2 で実装
+  const toolbar = document.getElementById('selectionToolbar');
+  const count = selectedPhotoIds.size;
+
+  if (count === 0) {
+    toolbar.hidden = true;
+    return;
+  }
+
+  toolbar.hidden = false;
+  document.getElementById('selectionCount').textContent = `${count}枚選択中`;
+
+  // 工程プルダウンを最新の processes 一覧で再構築する
+  const processSelect = document.getElementById('bulkMoveProcessSelect');
+  const currentValue = processSelect.value;
+  processSelect.innerHTML = '<option value="">未分類</option>' +
+    processes.map(pr => `<option value="${pr.id}">${escapeHtml(pr.name)}</option>`).join('');
+  // 直前の選択値が引き続き有効なら復元する
+  if ([...processSelect.options].some(o => o.value === currentValue)) {
+    processSelect.value = currentValue;
+  }
+}
+
+/** 選択をすべて解除する */
+function clearSelection() {
+  selectedPhotoIds.clear();
+  renderPhotoList();
+  renderSelectionToolbar();
+}
+
+/** 選択中の写真をまとめて削除する */
+function bulkDeleteSelected() {
+  if (!selectedPhotoIds.size) return;
+  if (!confirm(`選択した${selectedPhotoIds.size}枚を削除しますか？`)) return;
+
+  selectedPhotoIds.forEach(id => {
+    photos = photos.filter(x => x.id !== id);
+    deletePhotoSrc(id); // IndexedDB からも削除
+    savedPhotoIds.delete(id);
+  });
+  selectedPhotoIds.clear();
+  renderPhotoList();
+  renderSelectionToolbar();
+  updatePreview();
+  document.getElementById('photoCount').textContent = photos.length;
+}
+
+/** 選択中の写真をまとめて別の工程/phaseへ移動する */
+function bulkMoveSelected() {
+  if (!selectedPhotoIds.size) return;
+
+  const processSelect = document.getElementById('bulkMoveProcessSelect');
+  const phaseSelect = document.getElementById('bulkMovePhaseSelect');
+  const targetProcessId = processSelect.value === '' ? null : parseInt(processSelect.value);
+  const targetPhase = phaseSelect.value;
+
+  selectedPhotoIds.forEach(id => {
+    const p = photos.find(x => x.id === id);
+    if (p) {
+      p.processId = targetProcessId;
+      p.phase = targetPhase;
+    }
+  });
+
+  selectedPhotoIds.clear();
+  saveToStorage();
+  renderPhotoList();
+  renderSelectionToolbar();
+  updatePreview();
 }
 
 const PHASE_LABELS = { before: '前', during: '中', after: '後' };

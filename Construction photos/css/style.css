@@ -417,6 +417,47 @@
       opacity: 0.4;
     }
 
+    /* 複数選択 一括操作バー */
+    .selection-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: var(--stamp-soft);
+      border: 1.5px solid var(--stamp);
+      border-radius: 4px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .selection-toolbar[hidden] {
+      display: none;
+    }
+
+    .selection-count {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-right: auto;
+    }
+
+    .selection-toolbar select {
+      background: var(--surface);
+      border: 1.5px solid var(--rule-soft);
+      border-radius: 2px;
+      padding: 6px 8px;
+      font-size: 12px;
+      color: var(--ink);
+    }
+
+    .selection-toolbar .btn {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+
     /* Photo list */
     .photo-list {
       display: flex;
