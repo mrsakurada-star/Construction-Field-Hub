@@ -503,6 +503,11 @@
       font-size: 13px;
     }
 
+    /* 工事内容など、ユーザー入力の改行をそのまま表示する */
+    .pre-line {
+      white-space: pre-line;
+    }
+
     .cover-table td:first-child {
       background: #f0f0f0;
       width: 120px;
