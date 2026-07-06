@@ -34,8 +34,8 @@ function buildCoverPage(cover) {
       <tr><td>管理番号/注文番号</td><td>${escapeHtml(cover.manageNo) || '　'}</td></tr>
     </table>
     <table class="cover-table" style="margin-bottom:12px">
-      <tr><td>現場名</td><td>${escapeHtml(cover.siteName) || '　'}</td></tr>
-      <tr><td>現場住所</td><td>${escapeHtml(cover.address) || '　'}</td></tr>
+      <tr><td>現場名</td><td class="pre-line">${escapeHtml(cover.siteName) || '　'}</td></tr>
+      <tr><td>現場住所</td><td class="pre-line">${escapeHtml(cover.address) || '　'}</td></tr>
       <tr><td>工事内容</td><td class="pre-line">${escapeHtml(cover.workContent) || '　'}</td></tr>
       <tr><td>工事日</td><td>${formatWorkPeriod(cover.workStartDate, cover.workEndDate)}</td></tr>
     </table>
