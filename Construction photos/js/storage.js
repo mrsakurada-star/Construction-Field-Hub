@@ -24,13 +24,20 @@ function saveToStorage() {
   // メタ情報のみ localStorage に保存（src は含めない）
   const photosMeta = photos.map(p => ({
     id: p.id, date: p.date, title: p.title,
-    desc: p.desc, exifDate: p.exifDate, name: p.name
+    desc: p.desc, exifDate: p.exifDate, name: p.name,
+    processId: p.processId ?? null,
+    phase: p.phase || 'before'
   }));
 
   // 並べ替え順番を id 配列として保存
   const photoOrder = photos.map(p => p.id);
 
-  localStorage.setItem(STORAGE_KEY, JSON.stringify({ cover: data, photosMeta, photoOrder }));
+  // 工程マスターの並び順を id 配列として保存
+  const processOrder = processes.map(pr => pr.id);
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({
+    cover: data, photosMeta, photoOrder, processes, processOrder
+  }));
 
   // 画像 src は未保存の写真のみ IndexedDB に書き込む
   photos.forEach(p => {
@@ -68,6 +75,17 @@ async function loadFromStorage() {
       setVal('coverWorkEndDate',   c.workEndDate);
     }
 
+    // 工程マスターの復元
+    const rawProcesses = data.processes || [];
+    const processOrder = data.processOrder || rawProcesses.map(p => p.id);
+    const processById = new Map(rawProcesses.map(p => [p.id, p]));
+    processes = processOrder
+      .filter(id => processById.has(id))
+      .map(id => processById.get(id));
+    if (processes.length > 0) {
+      nextProcessId = Math.max(...processes.map(p => p.id)) + 1;
+    }
+
     // 写真メタ情報の復元
     if (data.photosMeta && data.photosMeta.length > 0) {
       // IndexedDB から全 src を取得
@@ -90,7 +108,9 @@ async function loadFromStorage() {
             date:     m.date,
             exifDate: m.exifDate,
             title:    m.title,
-            desc:     m.desc
+            desc:     m.desc,
+            processId: m.processId ?? null,
+            phase:     m.phase || 'before'
           };
         });
 
@@ -147,4 +167,43 @@ function getCoverData() {
     workStartDate: document.getElementById('coverWorkStartDate').value,
     workEndDate:   document.getElementById('coverWorkEndDate').value
   };
+}
+
+/**
+ * 工程を新規追加する。
+ * @param {string} name
+ */
+function addProcess(name) {
+  const trimmed = (name || '').trim();
+  if (!trimmed) return;
+  processes.push({ id: nextProcessId++, name: trimmed });
+  saveToStorage();
+  renderProcessList();
+  renderPhotoList();
+}
+
+/**
+ * 工程を削除する。割り当てられていた写真は未分類（processId: null）に戻す。
+ * @param {number} id
+ */
+function removeProcess(id) {
+  processes = processes.filter(p => p.id !== id);
+  photos.forEach(p => { if (p.processId === id) p.processId = null; });
+  saveToStorage();
+  renderProcessList();
+  renderPhotoList();
+}
+
+/**
+ * 工程の並び順を入れ替える。
+ * @param {number} id
+ * @param {number} dir -1 または 1
+ */
+function moveProcess(id, dir) {
+  const idx = processes.findIndex(p => p.id === id);
+  const newIdx = idx + dir;
+  if (idx === -1 || newIdx < 0 || newIdx >= processes.length) return;
+  [processes[idx], processes[newIdx]] = [processes[newIdx], processes[idx]];
+  saveToStorage();
+  renderProcessList();
 }

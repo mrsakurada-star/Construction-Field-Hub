@@ -139,6 +139,8 @@
   <script>
     let photos = [];
     let nextId = 1;
+    let processes = [];
+    let nextProcessId = 1;
 
     function switchTab(name, btn) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
