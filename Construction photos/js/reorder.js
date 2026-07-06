@@ -6,9 +6,9 @@
  * - IndexedDB から画像 src を読み込む
  * - HTML5 Drag and Drop API で並べ替える
  * - 保存で photoOrder を localStorage に書き込む
+ *
+ * STORAGE_KEY・formatDate は js/common.js で定義（index 側と共用）。
  */
-
-const STORAGE_KEY = 'kojiReport_v1';
 
 // 現在の並び順で管理する配列
 let photoItems = []; // { id, src, title, name, date }
@@ -118,7 +118,7 @@ function createCard(item, idx) {
 
   const metaEl = document.createElement('div');
   metaEl.className   = 'thumb-meta';
-  metaEl.textContent = item.date ? formatDateJp(item.date) : '';
+  metaEl.textContent = item.date ? formatDate(item.date) : '';
 
   info.appendChild(titleEl);
   info.appendChild(metaEl);
