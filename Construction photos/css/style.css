@@ -180,6 +180,36 @@
       gap: 12px;
     }
 
+    .form-row > div {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-row > div > label {
+      display: block;
+      font-size: 12px;
+      color: var(--text2);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .form-row > div > input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .form-row > div > input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
     .section-title {
       font-size: 11px;
       font-weight: 700;
