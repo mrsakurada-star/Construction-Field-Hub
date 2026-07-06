@@ -71,6 +71,7 @@ async function loadFromStorage() {
       setVal('coverSiteName',      c.siteName);
       setVal('coverAddress',       c.address);
       setVal('coverWorkContent',   c.workContent);
+      setVal('coverSupplement',    c.supplement);
       setVal('coverWorkStartDate', c.workStartDate);
       setVal('coverWorkEndDate',   c.workEndDate);
     }
@@ -164,6 +165,7 @@ function getCoverData() {
     siteName:      document.getElementById('coverSiteName').value,
     address:       document.getElementById('coverAddress').value,
     workContent:   document.getElementById('coverWorkContent').value,
+    supplement:    document.getElementById('coverSupplement').value,
     workStartDate: document.getElementById('coverWorkStartDate').value,
     workEndDate:   document.getElementById('coverWorkEndDate').value
   };
