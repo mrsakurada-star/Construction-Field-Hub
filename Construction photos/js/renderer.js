@@ -87,7 +87,7 @@ function buildReportPage(cover, pagePhotos, pageNum, totalPagesAll) {
             </div>
             <div class="meta-row meta-desc">
               <span class="meta-label">説　明</span>
-              <span class="meta-value">${escapeHtml(p.desc) || '　'}</span>
+              <span class="meta-value pre-line">${escapeHtml(p.desc) || '　'}</span>
             </div>
           </div>
         </div>`;
