@@ -49,6 +49,12 @@ function updatePreview() {
   const coverPage = buildCoverPage(cover);
   area.appendChild(coverPage);
 
+  const hasSupplement = !!(cover.supplement && cover.supplement.trim());
+  if (hasSupplement) {
+    area.appendChild(buildSupplementPage(cover));
+  }
+  const frontPageCount = 1 + (hasSupplement ? 1 : 0); // 表紙 + （あれば）補足ページ
+
   const sortedPhotos = getSortedPhotosForExport();
   const totalPages = Math.max(Math.ceil(sortedPhotos.length / 3), 1);
   let lastProcessName = null;
@@ -57,7 +63,7 @@ function updatePreview() {
     const pageProcessName = pagePhotos.length ? getProcessNameForPhoto(pagePhotos[0]) : null;
     const showProcessName = pageProcessName !== null && pageProcessName !== lastProcessName;
     lastProcessName = pageProcessName !== null ? pageProcessName : lastProcessName;
-    const reportPage = buildReportPage(cover, pagePhotos, page + 1, totalPages + 1, showProcessName ? pageProcessName : '');
+    const reportPage = buildReportPage(cover, pagePhotos, page + 1, totalPages + frontPageCount, showProcessName ? pageProcessName : '', frontPageCount);
     area.appendChild(reportPage);
   }
 }
@@ -87,7 +93,19 @@ function buildCoverPage(cover) {
   return page;
 }
 
-function buildReportPage(cover, pagePhotos, pageNum, totalPagesAll, processName) {
+/** 補足情報ページを構築する（cover.supplement が空なら呼び出し側でスキップする） */
+function buildSupplementPage(cover) {
+  const page = document.createElement('div');
+  page.className = 'report-page';
+  page.setAttribute('data-page', 'supplement');
+  page.innerHTML = `
+    <div class="cover-title supplement-title">工事報告書 補足事項</div>
+    <div class="supplement-body pre-line">${escapeHtml(cover.supplement)}</div>
+  `;
+  return page;
+}
+
+function buildReportPage(cover, pagePhotos, pageNum, totalPagesAll, processName, frontPageCount = 1) {
   const page = document.createElement('div');
   page.className = 'report-page';
   page.setAttribute('data-page', pageNum);
@@ -149,7 +167,7 @@ function buildReportPage(cover, pagePhotos, pageNum, totalPagesAll, processName)
   }
   rowsHTML += '</div>';
 
-  const footerHTML = `<div class="report-footer">${pageNum + 1} / ${totalPagesAll} ページ</div>`;
+  const footerHTML = `<div class="report-footer">${pageNum + frontPageCount} / ${totalPagesAll} ページ</div>`;
 
   page.innerHTML = headerHTML + rowsHTML + footerHTML;
   return page;

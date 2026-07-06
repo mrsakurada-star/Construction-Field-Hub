@@ -713,6 +713,16 @@
       letter-spacing: 6px;
     }
 
+    .supplement-title {
+      margin-bottom: 20px;
+    }
+
+    .supplement-body {
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--ink);
+    }
+
     .cover-table {
       width: 100%;
       border-collapse: collapse;
