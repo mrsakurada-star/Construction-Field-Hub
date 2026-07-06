@@ -41,7 +41,7 @@ async function handleFiles(files) {
 
     const photo = {
       id: nextId++,
-      file, src, name: file.name,
+      src, name: file.name,
       date: fallbackDate,
       exifDate: exifDate,
       title: '',
