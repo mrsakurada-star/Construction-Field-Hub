@@ -70,7 +70,7 @@ function buildReportPage(cover, pagePhotos, pageNum, totalPagesAll) {
         </table>
         <table class="header-info-table">
           <tr><td>工　事　名</td><td class="pre-line">${siteName}　${workContent}</td></tr>
-          <tr><td>住　　　所</td><td>${address}</td></tr>
+          <tr><td>住　　　所</td><td class="pre-line">${address}</td></tr>
           <tr><td>工　事　内　容</td><td class="pre-line">${workContent}</td></tr>
           <tr><td>工　事　日</td><td>${formatWorkPeriod(cover.workStartDate, cover.workEndDate)}</td></tr>
         </table>
