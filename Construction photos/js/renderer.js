@@ -98,7 +98,7 @@ function buildReportPage(cover, pagePhotos, pageNum, totalPagesAll) {
           <div class="photo-meta-cell">
             <div class="meta-row"><span class="meta-label">撮影日</span><span class="meta-value">　</span></div>
             <div class="meta-row"><span class="meta-label">タイトル</span><span class="meta-value">　</span></div>
-            <div class="meta-row meta-desc"><span class="meta-label">説　明</span><span class="meta-value">　</span></div>
+            <div class="meta-row meta-desc"><span class="meta-label">説　明</span><span class="meta-value pre-line">　</span></div>
           </div>
         </div>`;
     }
