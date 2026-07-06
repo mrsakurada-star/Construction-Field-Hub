@@ -45,7 +45,9 @@ async function handleFiles(files) {
       date: fallbackDate,
       exifDate: exifDate,
       title: '',
-      desc: ''
+      desc: '',
+      processId: null,
+      phase: 'before'
     };
     photos.push(photo);
   }
@@ -106,42 +108,157 @@ function resizeImageToDataURL(file, maxEdge, quality) {
   });
 }
 
+const PHASE_LABELS = { before: '前', during: '中', after: '後' };
+const PHASE_ORDER = ['before', 'during', 'after'];
+
 function renderPhotoList() {
   const list = document.getElementById('photoList');
   list.innerHTML = '';
+
+  // グルーピングキー: processId (null は '未分類'扱い) -> phase -> photos[]
+  const groups = new Map(); // processId(or null) -> Map(phase -> photo[])
   photos.forEach(p => {
-    const div = document.createElement('div');
-    div.className = 'photo-item';
-    div.innerHTML = `
-      <div class="photo-item-header">
-        <img class="photo-thumb" src="${p.src}" alt="">
-        <span class="photo-name" title="${p.name}">${p.name}</span>
-        <div class="photo-actions">
-          <button class="btn-icon up" onclick="movePhoto(${p.id}, -1)" title="上へ">
-            <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg>
-          </button>
-          <button class="btn-icon down" onclick="movePhoto(${p.id}, 1)" title="下へ">
-            <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-          </button>
-          <button class="btn-icon" onclick="removePhoto(${p.id})" title="削除">
-            <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-          </button>
-        </div>
-      </div>
-      <div class="photo-item-fields">
-        <label>撮影日</label>
-        <div class="photo-date-row">
-          <input type="date" value="${p.date || ''}" onchange="updatePhotoField(${p.id}, 'date', this.value)" style="flex:1">
-          ${p.exifDate ? '<span class="exif-badge"><svg class="icon-svg" style="width:1em;height:1em;margin-right:2px;" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>EXIF自動取得</span>' : ''}
-        </div>
-        <label>タイトル</label>
-        <input type="text" value="${escapeAttr(p.title)}" placeholder="作業前①" oninput="updatePhotoField(${p.id}, 'title', this.value)">
-        <label>説明</label>
-        <textarea rows="2" placeholder="外観" oninput="updatePhotoField(${p.id}, 'desc', this.value)">${escapeHtml(p.desc)}</textarea>
-      </div>
-    `;
-    list.appendChild(div);
+    const pid = p.processId ?? null;
+    if (!groups.has(pid)) groups.set(pid, { before: [], during: [], after: [] });
+    const phase = PHASE_ORDER.includes(p.phase) ? p.phase : 'before';
+    groups.get(pid)[phase].push(p);
   });
+
+  // 表示順: processes の並び順 → 末尾に未分類
+  const orderedGroupKeys = [...processes.map(pr => pr.id), null];
+
+  orderedGroupKeys.forEach(pid => {
+    const group = groups.get(pid);
+    if (!group) return; // この工程には写真が1枚もない
+
+    const section = document.createElement('div');
+    section.className = 'process-section';
+    section.dataset.processId = pid === null ? '' : String(pid);
+
+    const header = document.createElement('div');
+    header.className = 'process-section-header';
+    header.textContent = pid === null
+      ? '未分類'
+      : (processes.find(pr => pr.id === pid)?.name || '未分類');
+    header.addEventListener('dragover', onProcessHeaderDragOver);
+    header.addEventListener('dragleave', onProcessHeaderDragLeave);
+    header.addEventListener('drop', e => onProcessHeaderDrop(e, pid, header));
+    section.appendChild(header);
+
+    PHASE_ORDER.forEach(phase => {
+      const items = group[phase];
+      if (!items.length) return;
+
+      const phaseHeading = document.createElement('div');
+      phaseHeading.className = 'phase-heading';
+      phaseHeading.textContent = PHASE_LABELS[phase];
+      section.appendChild(phaseHeading);
+
+      items.forEach(p => section.appendChild(buildPhotoCard(p)));
+    });
+
+    list.appendChild(section);
+  });
+}
+
+/** 1枚の写真カード DOM を構築する */
+function buildPhotoCard(p) {
+  const div = document.createElement('div');
+  div.className = 'photo-item';
+  div.draggable = true;
+  div.dataset.photoId = String(p.id);
+  div.addEventListener('dragstart', onPhotoCardDragStart);
+  div.addEventListener('dragend', onPhotoCardDragEnd);
+
+  const phaseTabsHTML = PHASE_ORDER.map(ph => `
+    <button type="button"
+      class="phase-tab-btn${(p.phase || 'before') === ph ? ' active' : ''}"
+      onclick="setPhotoPhase(${p.id}, '${ph}')">${PHASE_LABELS[ph]}</button>
+  `).join('');
+
+  div.innerHTML = `
+    <div class="photo-item-header">
+      <img class="photo-thumb" src="${p.src}" alt="">
+      <span class="photo-name" title="${p.name}">${p.name}</span>
+      <div class="photo-actions">
+        <button class="btn-icon up" onclick="movePhoto(${p.id}, -1)" title="上へ">
+          <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg>
+        </button>
+        <button class="btn-icon down" onclick="movePhoto(${p.id}, 1)" title="下へ">
+          <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
+        <button class="btn-icon" onclick="removePhoto(${p.id})" title="削除">
+          <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+    <div class="phase-tabs">${phaseTabsHTML}</div>
+    <div class="photo-item-fields">
+      <label>撮影日</label>
+      <div class="photo-date-row">
+        <input type="date" value="${p.date || ''}" onchange="updatePhotoField(${p.id}, 'date', this.value)" style="flex:1">
+        ${p.exifDate ? '<span class="exif-badge"><svg class="icon-svg" style="width:1em;height:1em;margin-right:2px;" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>EXIF自動取得</span>' : ''}
+      </div>
+      <label>タイトル</label>
+      <input type="text" value="${escapeAttr(p.title)}" placeholder="作業前①" oninput="updatePhotoField(${p.id}, 'title', this.value)">
+      <label>説明</label>
+      <textarea rows="2" placeholder="外観" oninput="updatePhotoField(${p.id}, 'desc', this.value)">${escapeHtml(p.desc)}</textarea>
+    </div>
+  `;
+  return div;
+}
+
+/** 写真の phase（前/中/後）を切り替える */
+function setPhotoPhase(id, phase) {
+  const p = photos.find(x => x.id === id);
+  if (!p) return;
+  p.phase = phase;
+  saveToStorage();
+  renderPhotoList();
+  updatePreview();
+}
+
+/** 写真の所属工程を切り替える（D&D からも呼ばれる） */
+function setPhotoProcess(id, processId) {
+  const p = photos.find(x => x.id === id);
+  if (!p) return;
+  p.processId = processId;
+  saveToStorage();
+  renderPhotoList();
+  updatePreview();
+}
+
+// ======================== 工程セクションへの D&D ========================
+
+let dragPhotoId = null;
+
+function onPhotoCardDragStart(e) {
+  dragPhotoId = parseInt(this.dataset.photoId);
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', String(dragPhotoId));
+}
+
+function onPhotoCardDragEnd() {
+  this.classList.remove('dragging');
+  dragPhotoId = null;
+}
+
+function onProcessHeaderDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  this.classList.add('drag-over');
+}
+
+function onProcessHeaderDragLeave() {
+  this.classList.remove('drag-over');
+}
+
+function onProcessHeaderDrop(e, processId, headerEl) {
+  e.preventDefault();
+  (headerEl || e.currentTarget).classList.remove('drag-over');
+  if (dragPhotoId === null) return;
+  setPhotoProcess(dragPhotoId, processId);
 }
 
 function updatePhotoField(id, field, val) {
