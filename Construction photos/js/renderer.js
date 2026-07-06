@@ -14,8 +14,8 @@ function updatePreview() {
   const coverPage = buildCoverPage(cover);
   area.appendChild(coverPage);
 
-  const totalPages = Math.ceil(photos.length / 3) || 1;
-  for (let page = 0; page < Math.max(photos.length === 0 ? 1 : Math.ceil(photos.length / 3), 1); page++) {
+  const totalPages = Math.max(Math.ceil(photos.length / 3), 1);
+  for (let page = 0; page < totalPages; page++) {
     const pagePhotos = photos.slice(page * 3, page * 3 + 3);
     const reportPage = buildReportPage(cover, pagePhotos, page + 1, totalPages + 1);
     area.appendChild(reportPage);
