@@ -71,6 +71,14 @@
           <div class="form-group"><label>現場名 / 工事名</label><textarea id="coverSiteName" rows="2" placeholder="○○マンション"></textarea></div>
           <div class="form-group"><label>現場住所</label><textarea id="coverAddress" rows="2" placeholder="東京都○○区○○1-2-3"></textarea></div>
           <div class="form-group"><label>工事内容</label><textarea id="coverWorkContent" rows="4" placeholder="給湯器取替工事"></textarea></div>
+          <div class="section-title">工程一覧</div>
+          <div class="process-add-row">
+            <input type="text" id="processNameInput" placeholder="例：基礎工事" aria-label="工程名">
+            <button class="btn btn-outline" type="button" onclick="handleAddProcess()">
+              <i data-lucide="plus"></i>追加
+            </button>
+          </div>
+          <div class="process-list" id="processList"></div>
           <div class="form-group">
             <label class="work-date-label">
               <span>工事日</span>
@@ -174,6 +182,7 @@
       // IndexedDB を初期化してからデータを読み込む
       await initDB();
       await loadFromStorage();
+      renderProcessList();
       initUpload();
       updatePreview();
       document.querySelectorAll('#tab-cover input, #tab-cover textarea').forEach(el => {
@@ -185,6 +194,38 @@
     function openReorderPage() {
       saveToStorage(); // 最新情報を保存してから遷移
       window.open('reorder.html', '_blank');
+    }
+
+    /** 工程追加ボタンのハンドラ。入力欄をクリアしてから追加する */
+    function handleAddProcess() {
+      const input = document.getElementById('processNameInput');
+      addProcess(input.value);
+      input.value = '';
+    }
+
+    /** 表紙タブの工程一覧を再描画する */
+    function renderProcessList() {
+      const list = document.getElementById('processList');
+      list.innerHTML = '';
+      processes.forEach((pr, idx) => {
+        const row = document.createElement('div');
+        row.className = 'process-row';
+        row.innerHTML = `
+          <span class="process-name">${escapeHtml(pr.name)}</span>
+          <div class="process-row-actions">
+            <button class="btn-icon" onclick="moveProcess(${pr.id}, -1)" title="上へ">
+              <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </button>
+            <button class="btn-icon" onclick="moveProcess(${pr.id}, 1)" title="下へ">
+              <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <button class="btn-icon" onclick="removeProcess(${pr.id})" title="削除">
+              <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
     }
   </script>
 </body>

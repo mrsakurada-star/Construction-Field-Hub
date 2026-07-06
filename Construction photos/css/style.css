@@ -241,6 +241,59 @@
       border-bottom: 2px solid var(--rule);
     }
 
+    /* 工程一覧セクション */
+    .process-add-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .process-add-row input {
+      flex: 1;
+      background: var(--surface);
+      border: 1.5px solid var(--rule-soft);
+      border-radius: 2px;
+      padding: 8px 10px;
+      color: var(--ink);
+      font-size: 13px;
+    }
+
+    .process-add-row input:focus {
+      outline: none;
+      border-color: var(--stamp);
+    }
+
+    .process-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .process-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface2);
+      border: 1.5px solid var(--rule-soft);
+      border-radius: 2px;
+      padding: 6px 10px;
+    }
+
+    .process-name {
+      font-size: 13px;
+      color: var(--ink);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
+    }
+
+    .process-row-actions {
+      display: flex;
+      gap: 2px;
+    }
+
     /* 工事日直下の操作ボタン行 */
     .cover-action-row {
       display: grid;
