@@ -11,6 +11,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="stylesheet" href="css/style.css">
+  <!-- 共通ユーティリティ（STORAGE_KEY・日付整形） -->
+  <script src="js/common.js"></script>
   <!-- IndexedDB 操作モジュール -->
   <script src="js/db.js"></script>
 </head>
@@ -142,14 +144,10 @@
       setTimeout(() => t.classList.remove('show'), 3500);
     }
 
-    // Helper (Legacy code dependencies)
+    // Helper（escapeHtml/escapeAttr/formatDateSlash/formatWorkPeriod）
+    // STORAGE_KEY と formatDate は js/common.js に集約済み
     const escapeHtml = s => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const escapeAttr = s => (s || '').replace(/"/g, '&quot;');
-    const formatDate = d => {
-       if(!d) return '';
-       const [y,m,d_] = d.split('-');
-       return y + '年' + parseInt(m) + '月' + parseInt(d_) + '日';
-    };
     const formatDateSlash = d => d ? d.replace(/-/g, '/') : '';
     const formatWorkPeriod = (s, e) => {
        if(!s && !e) return '　';

@@ -5,9 +5,9 @@
  * - メタ情報（日付・タイトル・説明等）→ localStorage
  * - 写真 src（Base64）                 → IndexedDB（db.js）
  * - 並べ替え順番（photoOrder）          → localStorage
+ *
+ * STORAGE_KEY は js/common.js で定義（reorder.js と共用）。
  */
-
-const STORAGE_KEY = 'kojiReport_v1';
 
 // IndexedDB に保存済みの写真 id を追跡し、未変更の写真を毎回書き直さないようにする。
 // photo.src はアップロード後に変更されない（差し替え機能が無い）ため、
@@ -90,8 +90,7 @@ async function loadFromStorage() {
             date:     m.date,
             exifDate: m.exifDate,
             title:    m.title,
-            desc:     m.desc,
-            file:     null // リロード後はファイルオブジェクト無し
+            desc:     m.desc
           };
         });
 
