@@ -294,6 +294,34 @@ body {
   margin-right: 5px;
 }
 
+/* ロゴ SVG */
+.logo-svg {
+  width: 20px;
+  height: 20px;
+  stroke: #2a2a24;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* 空状態 SVG */
+.empty-state-svg {
+  width: 48px;
+  height: 48px;
+  stroke: #aaa;
+  stroke-width: 1.5;
+  fill: none;
+  margin-bottom: 16px;
+}
+
+/* 空状態テキスト */
+.empty-state p {
+  font-size: 13px;
+  color: #888;
+  margin-top: 8px;
+}
+
 /* ===================== スクロールバー ===================== */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
