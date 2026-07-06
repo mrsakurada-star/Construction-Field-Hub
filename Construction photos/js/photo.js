@@ -116,7 +116,9 @@ function renderPhotoList() {
   list.innerHTML = '';
 
   // グルーピングキー: processId (null は '未分類'扱い) -> phase -> photos[]
+  // 工程セクションは写真が0枚でもD&Dのドロップ対象として常に表示する（未分類セクションは写真がある場合のみ表示）
   const groups = new Map(); // processId(or null) -> Map(phase -> photo[])
+  processes.forEach(pr => groups.set(pr.id, { before: [], during: [], after: [] }));
   photos.forEach(p => {
     const pid = p.processId ?? null;
     if (!groups.has(pid)) groups.set(pid, { before: [], during: [], after: [] });
@@ -129,7 +131,8 @@ function renderPhotoList() {
 
   orderedGroupKeys.forEach(pid => {
     const group = groups.get(pid);
-    if (!group) return; // この工程には写真が1枚もない
+    if (!group) return; // 未分類グループに写真が1枚もない場合のみここに該当
+    if (pid === null && !Object.values(group).some(arr => arr.length)) return; // 未分類は空なら非表示
 
     const section = document.createElement('div');
     section.className = 'process-section';
