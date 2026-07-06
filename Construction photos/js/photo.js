@@ -108,12 +108,31 @@ function resizeImageToDataURL(file, maxEdge, quality) {
   });
 }
 
+// 複数選択機能: セッション内のみ保持し、localStorage/IndexedDB には保存しない
+const selectedPhotoIds = new Set();
+
+/** チェックボックスの状態変化を selectedPhotoIds に反映する */
+function togglePhotoSelection(id, checked) {
+  if (checked) selectedPhotoIds.add(id);
+  else selectedPhotoIds.delete(id);
+  renderSelectionToolbar();
+}
+
+/** 選択状態に応じてフローティングツールバーの表示を更新する（本体は Task 2 で実装） */
+function renderSelectionToolbar() {
+  // Task 2 で実装
+}
+
 const PHASE_LABELS = { before: '前', during: '中', after: '後' };
 const PHASE_ORDER = ['before', 'during', 'after'];
 
 function renderPhotoList() {
   const list = document.getElementById('photoList');
   list.innerHTML = '';
+
+  // 削除済み写真の id が selectedPhotoIds に残らないようにする
+  const existingIds = new Set(photos.map(p => p.id));
+  Array.from(selectedPhotoIds).forEach(id => { if (!existingIds.has(id)) selectedPhotoIds.delete(id); });
 
   // グルーピングキー: processId (null は '未分類'扱い) -> phase -> photos[]
   // 工程セクションは写真が0枚でもD&Dのドロップ対象として常に表示する（未分類セクションは写真がある場合のみ表示）
@@ -181,6 +200,7 @@ function buildPhotoCard(p) {
 
   div.innerHTML = `
     <div class="photo-item-header">
+      <input type="checkbox" class="photo-select-checkbox" data-photo-id="${p.id}" ${selectedPhotoIds.has(p.id) ? 'checked' : ''} onchange="togglePhotoSelection(${p.id}, this.checked)" aria-label="この写真を選択">
       <img class="photo-thumb" src="${p.src}" alt="">
       <span class="photo-name" title="${p.name}">${p.name}</span>
       <div class="photo-actions">

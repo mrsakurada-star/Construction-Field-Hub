@@ -440,6 +440,14 @@
       gap: 10px;
     }
 
+    .photo-select-checkbox {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      cursor: pointer;
+      accent-color: var(--stamp);
+    }
+
     .photo-thumb {
       width: 64px;
       height: 48px;
