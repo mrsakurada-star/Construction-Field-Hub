@@ -50,7 +50,7 @@
       <div class="tab-panel active" id="tab-cover">
         <div class="panel-body">
           <div class="section-title">作成者・日付</div>
-          <div class="form-group"><label>作成日</label><input type="date" id="coverDate"></div>
+          <div class="form-group"><label for="coverDate">作成日</label><input type="date" id="coverDate"></div>
           <div class="form-group"><label>管理番号/注文番号</label><input type="text" id="coverManageNo" placeholder="例：2026-0304-001"></div>
           <div class="form-group"><label>弊社管理No</label><input type="text" id="coverOurManageNo" placeholder="例：ABC-12345"></div>
           <div class="form-row">
@@ -62,15 +62,15 @@
           <div class="form-group"><label>現場住所</label><textarea id="coverAddress" rows="2" placeholder="東京都○○区○○1-2-3"></textarea></div>
           <div class="form-group"><label>工事内容</label><textarea id="coverWorkContent" rows="4" placeholder="給湯器取替工事"></textarea></div>
           <div class="form-group">
-            <label style="display:flex; align-items:center; justify-content:space-between;">
-              工事日
-              <button class="btn-icon" type="button" onclick="applyAutoWorkDates()" title="写真の撮影日から自動設定" style="padding:2px 6px; font-size:10px;">
-                <i data-lucide="refresh-cw" style="width:12px;height:12px;"></i>自動取得
+            <label class="work-date-label">
+              <span>工事日</span>
+              <button class="btn-icon auto-get-btn" type="button" onclick="applyAutoWorkDates()" title="写真の撮影日から自動設定">
+                <i data-lucide="refresh-cw"></i>自動取得
               </button>
             </label>
             <div class="form-row">
-              <input type="date" id="coverWorkStartDate">
-              <input type="date" id="coverWorkEndDate">
+              <div><label for="coverWorkStartDate">開始日</label><input type="date" id="coverWorkStartDate"></div>
+              <div><label for="coverWorkEndDate">終了日</label><input type="date" id="coverWorkEndDate"></div>
             </div>
           </div>
           <!-- 工事日借の直下に配置する操作ボタン -->
@@ -92,7 +92,7 @@
             <div class="upload-icon"><i data-lucide="upload-cloud"></i></div>
             <p>写真をドラッグ＆ドロップ<br>またはクリックして選択</p>
           </div>
-          <input type="file" id="fileInput" multiple accept="image/*">
+          <input type="file" id="fileInput" multiple accept="image/*" aria-label="写真をアップロード">
           <div class="photo-list" id="photoList"></div>
         </div>
         <div class="panel-footer">
