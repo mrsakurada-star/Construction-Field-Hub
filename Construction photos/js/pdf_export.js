@@ -78,7 +78,7 @@ async function exportPDF() {
     label.textContent = 'PDF を保存中...';
 
     // ファイル名を現場名から生成（使えない文字は除去）
-    const siteName = document.getElementById('coverSiteName').value || '工事写真報告書';
+    const siteName = document.getElementById('coverSiteName').value.replace(/\r?\n/g, ' ') || '工事写真報告書';
     const date     = document.getElementById('coverDate').value || '';
     const safeName = (siteName + (date ? '_' + date : '')).replace(/[\\/:*?"<>|]/g, '');
     pdf.save(safeName + '.pdf');
