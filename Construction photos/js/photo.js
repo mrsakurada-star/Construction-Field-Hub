@@ -109,7 +109,7 @@ function resizeImageToDataURL(file, maxEdge, quality) {
 function renderPhotoList() {
   const list = document.getElementById('photoList');
   list.innerHTML = '';
-  photos.forEach((p, idx) => {
+  photos.forEach(p => {
     const div = document.createElement('div');
     div.className = 'photo-item';
     div.innerHTML = `
