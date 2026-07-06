@@ -9,6 +9,11 @@
 
 const STORAGE_KEY = 'kojiReport_v1';
 
+// IndexedDB に保存済みの写真 id を追跡し、未変更の写真を毎回書き直さないようにする。
+// photo.src はアップロード後に変更されない（差し替え機能が無い）ため、
+// 一度保存した id は再保存不要。
+const savedPhotoIds = new Set();
+
 /**
  * 現在の状態を localStorage（メタ情報・順番）と
  * IndexedDB（画像 src）に保存する。
@@ -27,9 +32,12 @@ function saveToStorage() {
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify({ cover: data, photosMeta, photoOrder }));
 
-  // 画像 src を IndexedDB に保存
+  // 画像 src は未保存の写真のみ IndexedDB に書き込む
   photos.forEach(p => {
-    if (p.src) savePhotoSrc(p.id, p.src);
+    if (p.src && !savedPhotoIds.has(p.id)) {
+      savePhotoSrc(p.id, p.src);
+      savedPhotoIds.add(p.id);
+    }
   });
 }
 
@@ -91,6 +99,9 @@ async function loadFromStorage() {
       if (photos.length > 0) {
         nextId = Math.max(...photos.map(p => p.id)) + 1;
       }
+
+      // IndexedDB から復元した写真は既に保存済みとして記録（再書き込み防止）
+      photos.forEach(p => { if (p.src) savedPhotoIds.add(p.id); });
 
       renderPhotoList();
       document.getElementById('photoCount').textContent = photos.length;
