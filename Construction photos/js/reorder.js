@@ -137,13 +137,6 @@ function createCard(item, idx) {
   return card;
 }
 
-/** 日付文字列（YYYY-MM-DD）を「YYYY年M月D日」形式に変換 */
-function formatDateJp(dateStr) {
-  if (!dateStr) return '';
-  const [y, m, d] = dateStr.split('-');
-  return `${y}年${parseInt(m)}月${parseInt(d)}日`;
-}
-
 // ======================== Drag & Drop ========================
 
 function onDragStart(e) {
