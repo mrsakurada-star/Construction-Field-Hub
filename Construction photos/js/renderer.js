@@ -1,4 +1,39 @@
 /* © 2026 Nozomi Sakurada. All rights reserved. */
+
+/**
+ * PDF/プレビュー出力用に、工程順 → phase順（前中後）→ 元の相対順序でソートした
+ * photos のコピーを返す。photos 本体（写真管理タブでの表示順）は変更しない。
+ */
+function getSortedPhotosForExport() {
+  const phaseRank = { before: 0, during: 1, after: 2 };
+  const processRank = new Map(processes.map((pr, idx) => [pr.id, idx]));
+  const UNASSIGNED_RANK = processes.length; // 未分類は最後
+
+  return photos
+    .map((p, idx) => ({ p, idx })) // 元の相対順序を保持するためのタイブレーカー
+    .sort((a, b) => {
+      const pidA = a.p.processId ?? null;
+      const pidB = b.p.processId ?? null;
+      const rankA = pidA === null ? UNASSIGNED_RANK : (processRank.get(pidA) ?? UNASSIGNED_RANK);
+      const rankB = pidB === null ? UNASSIGNED_RANK : (processRank.get(pidB) ?? UNASSIGNED_RANK);
+      if (rankA !== rankB) return rankA - rankB;
+
+      const phaseA = phaseRank[a.p.phase] ?? 0;
+      const phaseB = phaseRank[b.p.phase] ?? 0;
+      if (phaseA !== phaseB) return phaseA - phaseB;
+
+      return a.idx - b.idx;
+    })
+    .map(entry => entry.p);
+}
+
+/** 写真1枚が属する工程名を返す（未分類は 'その他'） */
+function getProcessNameForPhoto(p) {
+  if (p.processId === null || p.processId === undefined) return 'その他';
+  const pr = processes.find(pr => pr.id === p.processId);
+  return pr ? pr.name : 'その他';
+}
+
 function updatePreview() {
   saveToStorage();
   const area = document.getElementById('previewArea');
@@ -14,10 +49,15 @@ function updatePreview() {
   const coverPage = buildCoverPage(cover);
   area.appendChild(coverPage);
 
-  const totalPages = Math.max(Math.ceil(photos.length / 3), 1);
+  const sortedPhotos = getSortedPhotosForExport();
+  const totalPages = Math.max(Math.ceil(sortedPhotos.length / 3), 1);
+  let lastProcessName = null;
   for (let page = 0; page < totalPages; page++) {
-    const pagePhotos = photos.slice(page * 3, page * 3 + 3);
-    const reportPage = buildReportPage(cover, pagePhotos, page + 1, totalPages + 1);
+    const pagePhotos = sortedPhotos.slice(page * 3, page * 3 + 3);
+    const pageProcessName = pagePhotos.length ? getProcessNameForPhoto(pagePhotos[0]) : null;
+    const showProcessName = pageProcessName !== null && pageProcessName !== lastProcessName;
+    lastProcessName = pageProcessName !== null ? pageProcessName : lastProcessName;
+    const reportPage = buildReportPage(cover, pagePhotos, page + 1, totalPages + 1, showProcessName ? pageProcessName : '');
     area.appendChild(reportPage);
   }
 }
@@ -47,7 +87,7 @@ function buildCoverPage(cover) {
   return page;
 }
 
-function buildReportPage(cover, pagePhotos, pageNum, totalPagesAll) {
+function buildReportPage(cover, pagePhotos, pageNum, totalPagesAll, processName) {
   const page = document.createElement('div');
   page.className = 'report-page';
   page.setAttribute('data-page', pageNum);
@@ -55,6 +95,9 @@ function buildReportPage(cover, pagePhotos, pageNum, totalPagesAll) {
   // 写真ページのヘッダーは工事名（現場名）のみ。詳細は表紙ページに集約し、
   // 重複していた工事内容行と、空欄だった承認欄（□）は削除した。
   const siteName = escapeHtml(cover.siteName || '');
+  const processRow = processName
+    ? `<tr><td>工　程</td><td>${escapeHtml(processName)}</td></tr>`
+    : '';
 
   const headerHTML = `
     <div class="report-main-title">工事写真報告書</div>
@@ -62,6 +105,7 @@ function buildReportPage(cover, pagePhotos, pageNum, totalPagesAll) {
       <div class="header-left">
         <table class="header-info-table">
           <tr><td>工　事　名</td><td class="pre-line">${siteName}</td></tr>
+          ${processRow}
         </table>
       </div>
     </div>
