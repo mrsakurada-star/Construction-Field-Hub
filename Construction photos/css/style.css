@@ -898,7 +898,6 @@
       height: 1.1em;
     }
 
-<<<<<<< Updated upstream
     /* Work date label with flex layout */
     .work-date-label {
       display: flex;
@@ -916,7 +915,7 @@
       width: 12px;
       height: 12px;
     }
-=======
+
     /* Responsive */
     @media (max-width: 900px) {
       html, body {
@@ -952,4 +951,3 @@
         padding: 9px 10px;
       }
     }
->>>>>>> Stashed changes

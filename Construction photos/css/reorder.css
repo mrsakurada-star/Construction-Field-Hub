@@ -159,11 +159,7 @@ body {
   border-radius: 4px;
   overflow: hidden;
   cursor: grab;
-<<<<<<< Updated upstream
-  transition: box-shadow 0.2s, border-color 0.2s, opacity 0.2s;
-=======
   transition: box-shadow 0.15s, border-color 0.15s, opacity 0.15s;
->>>>>>> Stashed changes
   -webkit-user-select: none;
   user-select: none;
   position: relative;
@@ -323,34 +319,6 @@ body {
   fill: none;
   vertical-align: middle;
   margin-right: 5px;
-}
-
-/* ロゴ SVG */
-.logo-svg {
-  width: 20px;
-  height: 20px;
-  stroke: #2a2a24;
-  stroke-width: 2;
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* 空状態 SVG */
-.empty-state-svg {
-  width: 48px;
-  height: 48px;
-  stroke: #aaa;
-  stroke-width: 1.5;
-  fill: none;
-  margin-bottom: 16px;
-}
-
-/* 空状態テキスト */
-.empty-state p {
-  font-size: 13px;
-  color: #888;
-  margin-top: 8px;
 }
 
 /* ===================== スクロールバー ===================== */
