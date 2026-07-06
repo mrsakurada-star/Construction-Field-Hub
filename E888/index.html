@@ -5,193 +5,185 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>パーパス製給湯器の「あんしん点検」とリモコン「888」表示について</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<div class="container">
+<header class="hero">
+    <p class="eyebrow">パーパス製 給湯器・ふろがま</p>
 
-    <h1>パーパス製給湯器の「あんしん点検」と<br>リモコンの「888」表示について</h1>
-
-    <!-- アラートボックス（最優先で強調） -->
-    <div class="alert-box">
-        <div class="alert-title">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-            リモコンの「888」表示は故障ではありません！
-        </div>
-        <p class="alert-text">標準的なご使用期間に達したことによる<b>「点検時期のお知らせ」</b>です。<br>そのままご使用いただけますが、安全のため「あんしん点検」をご依頼ください。</p>
+    <div class="signature" aria-hidden="true">
+        <span class="signature-ring"></span>
+        <span class="signature-ring signature-ring--delay"></span>
+        <span class="signature-number">888</span>
     </div>
 
-    <!-- 1. あんしん点検とは？ -->
-    <div class="section">
-        <h2>1. 「あんしん点検」とは？（対象となる製品）</h2>
-        <p>パーパス製の家庭用ガス温水機器（給湯器、ふろがま、給湯暖房用熱源機など）を安全に長くお使いいただくための点検制度（有料）です。<br>長年の使用による経年劣化での事故を未然に防ぐため、メーカーが推奨しています。</p>
-    </div>
+    <h1 class="hero-title">リモコンに「888」と表示されても、<br>故障ではありません。</h1>
+    <p class="hero-lead">標準的なご使用期間に達したことによる<strong>「点検時期のお知らせ」</strong>です。<br>そのままご使用いただけますが、安全のため「あんしん点検」をご依頼ください。</p>
 
-    <!-- 2. 所有者登録 -->
-    <div class="section">
-        <h2>2. 新規購入時の「所有者登録」のお願い</h2>
+    <div class="hero-actions">
+        <a class="cta-phone" href="tel:0120323884">
+            <span class="cta-phone-label">パーパス点検受付センター</span>
+            <span class="cta-phone-number">0120-323-884</span>
+        </a>
+        <a class="cta-link" href="#remote">まずは自分のリモコンを確認する &nbsp;→</a>
+    </div>
+</header>
+
+<nav class="quicknav no-print" aria-label="ページ内リンク">
+    <a href="#remote">リモコンを確認</a>
+    <a href="#inspection">あんしん点検とは</a>
+    <a href="#registration">所有者登録</a>
+    <a href="#pricing">点検料金</a>
+    <a href="#contact">お問い合わせ</a>
+</nav>
+
+<main>
+
+    <!-- リモコン確認 -->
+    <section id="remote" class="section">
+        <h2>あなたのリモコンをご確認ください</h2>
+        <p class="section-lead">標準的な設計上の使用期間（またはそれに相当する使用回数）に達すると、リモコンの画面に「888」または「88」が点滅したり、本体の「点検」ランプが点灯します。点検を受けるまでの間、以下の操作で一時的にアラーム表示を消すことができます（※約1年後に再度表示されます）。ご自宅のリモコンのシリーズに合わせてご確認ください。</p>
+
+        <ul class="remote-list">
+            <li class="remote-item">
+                <img class="remote-image" src="icon/remote_900.png" alt="900シリーズリモコン" loading="lazy">
+                <div class="remote-body">
+                    <h3>900シリーズ</h3>
+                    <ol>
+                        <li>「設定」ボタンを押す（給湯温度が表示されている場合は不要）</li>
+                        <li>「給湯温度の▼（下）」を押しながら「電源」を2秒以上長押し</li>
+                    </ol>
+                </div>
+            </li>
+
+            <li class="remote-item">
+                <img class="remote-image" src="icon/remote_700.png" alt="700シリーズリモコン" loading="lazy">
+                <div class="remote-body">
+                    <h3>700シリーズ／PGシリーズ</h3>
+                    <ol>
+                        <li>アラーム表示中に「給湯温度の▼（下）」を押しながら「運転」を2秒以上長押し</li>
+                        <li>「ピピッ」と鳴り、現在時刻や温度表示に戻る</li>
+                    </ol>
+                </div>
+            </li>
+
+            <li class="remote-item">
+                <img class="remote-image" src="icon/remote_GS.png" alt="GSシリーズリモコン" loading="lazy">
+                <div class="remote-body">
+                    <h3>GSシリーズ</h3>
+                    <ol>
+                        <li>「▼」を押しながら「運転」を2秒以上長押し</li>
+                    </ol>
+                </div>
+            </li>
+
+            <li class="remote-item">
+                <img class="remote-image" src="icon/remote_PG.png" alt="PGシリーズリモコン" loading="lazy">
+                <div class="remote-body">
+                    <h3>PGシリーズ</h3>
+                    <ol>
+                        <li>「▼」を押しながら「運転」を2秒以上長押し</li>
+                    </ol>
+                </div>
+            </li>
+
+            <li class="remote-item remote-item--wide">
+                <div class="remote-image remote-image--pair">
+                    <img src="icon/furo_A100.png" alt="ふろがま操作パネル GF-A100SC／GF-A101SC" loading="lazy">
+                    <img src="icon/furo_A550.png" alt="ふろがま操作パネル GF-A550SC／GF-A551SC" loading="lazy">
+                </div>
+                <div class="remote-body">
+                    <h3>ふろがま（GFシリーズ）</h3>
+                    <p>製品により異なりますが、基本的には口火点火操作を行い、<strong>「操作パネルの▲ボタンを、お知らせランプが消えるまで（10秒以上）長押しする」</strong>ことでリセットが可能です。</p>
+                </div>
+            </li>
+        </ul>
+
+        <p class="note">参考：<a href="https://www.purpose.co.jp/home/system/timestamp.html" target="_blank" rel="noopener">パーパス社 タイムスタンプ解説ページ</a>（各リモコンの図解を掲載）</p>
+    </section>
+
+    <!-- あんしん点検とは -->
+    <section id="inspection" class="section">
+        <h2>「あんしん点検」とは（対象となる製品）</h2>
+        <p>パーパス製の家庭用ガス温水機器（給湯器、ふろがま、給湯暖房用熱源機など）を安全に長くお使いいただくための点検制度（有料）です。長年の使用による経年劣化での事故を未然に防ぐため、メーカーが推奨しています。</p>
+    </section>
+
+    <!-- 所有者登録 -->
+    <section id="registration" class="section">
+        <h2>新規購入時の「所有者登録」のお願い</h2>
         <p>新しく対象製品をご購入されたお客様や、アパート・マンションのオーナー様は「所有者登録」を事前に行うことをお勧めします。登録しておくことで、点検時期が近づいた際にメーカーより案内通知が届くようになります。</p>
-        
-        <div class="card-grid">
-            <div class="card">
-                <h4>インターネットでのご登録</h4>
+
+        <div class="registration-grid">
+            <div class="registration-item">
+                <h3>インターネットでのご登録</h3>
                 <p>パソコンやスマホから専用フォームで登録可能です。製品同梱の「所有者票（はがき）」に記載されている「16桁の登録用コード」をご用意ください。</p>
             </div>
-            <div class="card">
-                <h4>はがきでのご登録</h4>
-                <p>同梱の「所有者票」に必要事項をご記入いただき、ポストへ投函するだけで完了です。（切手不要）</p>
+            <div class="registration-item">
+                <h3>はがきでのご登録</h3>
+                <p>同梱の「所有者票」に必要事項をご記入いただき、ポストへ投函するだけで完了です（切手不要）。</p>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- 3. 「888」表示が出たら -->
-    <div class="section">
-        <h2>3. リモコンに「888」や「88」と表示されたら？</h2>
-        <p>標準的な設計上の使用期間（またはそれに相当する使用回数）に達すると、リモコンの画面に「888」または「88」が点滅したり、本体の「点検」ランプが点灯します。点検を受けるまでの間、以下の操作で<strong>一時的にアラーム表示を消す</strong>ことができます（※約1年後に再度表示されます）。</p>
-        
-        <div class="remote-list">
-            <!-- 900シリーズ -->
-            <div class="remote-item">
-                <h3>■ 900シリーズのリモコン</h3>
-                <div class="remote-inner-col">
-                    <img class="remote-img remote-img-landscape" src="icon/remote_900.png" alt="900シリーズリモコン">
-                    <div class="remote-desc">
-                        <ol>
-                            <li>「設定」ボタンを押す。（給湯温度が表示されている場合は不要）</li>
-                            <li>「給湯温度の▼（下）」ボタンを押しながら、「電源」ボタンを2秒以上長押しする。</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 700シリーズ -->
-            <div class="remote-item">
-                <h3>■ 700シリーズのリモコン</h3>
-                <div class="remote-inner-col">
-                    <img class="remote-img remote-img-landscape" src="icon/remote_700.png" alt="700シリーズリモコン">
-                    <div class="remote-desc">
-                        <ol>
-                            <li>アラームが表示されている状態で「給湯温度の▼（下）」ボタンを押しながら、「運転」ボタンを2秒以上長押しする。</li>
-                            <li>「ピピッ」と音が鳴り、現在時刻や温度表示に戻ります。</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
+    <!-- 点検料金 -->
+    <section id="pricing" class="section">
+        <h2>点検料金の目安</h2>
+        <p>「あんしん点検」は有料の法定外点検となります。費用は次の3つの項目の合計です。</p>
 
-            <!-- GSシリーズ -->
-            <div class="remote-item">
-                <h3>■ GSシリーズのリモコン</h3>
-                <div class="remote-inner-col">
-                    <img class="remote-img remote-img-portrait" src="icon/remote_GS.png" alt="GSシリーズリモコン">
-                    <div class="remote-desc">
-                        <ol>
-                            <li>「▼」ボタンを押しながら、「運転」ボタンを2秒以上長押しする。</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PGシリーズ -->
-            <div class="remote-item">
-                <h3>■ PGシリーズのリモコン</h3>
-                <div class="remote-inner-col">
-                    <img class="remote-img remote-img-portrait" src="icon/remote_PG.png" alt="PGシリーズリモコン">
-                    <div class="remote-desc">
-                        <ol>
-                            <li>「▼」ボタンを押しながら、「運転」ボタンを2秒以上長押しする。</li>
-                        </ol>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ふろがま -->
-            <div class="remote-item">
-                <h3>■ ふろがま（GFシリーズ）</h3>
-                <div class="remote-inner-col">
-                    <div class="furo-img-wrap">
-                        <img src="icon/furo_A100.png" alt="GFシリーズ (操作パネル: GF-A100SC/GF-A101SC)">
-                        <img src="icon/furo_A550.png" alt="GFシリーズ (操作パネル: GF-A550SC/GF-A551SC)">
-                    </div>
-                    <div class="remote-desc">
-                        <p class="mt-0">製品により異なりますが、基本的には口火点火操作を行い、<strong>「操作パネルの▲ボタンを、お知らせランプが消えるまで（10秒以上）長押しする」</strong>ことでリセットが可能です。</p>
-                    </div>
-                </div>
-            </div>
+        <div class="formula">
+            <span class="formula-item">出張料</span>
+            <span class="formula-op">＋</span>
+            <span class="formula-item">技術料</span>
+            <span class="formula-op">＋</span>
+            <span class="formula-item">その他実費</span>
+            <span class="formula-op formula-eq">＝</span>
+            <span class="formula-item formula-total">点検料金（税込）</span>
         </div>
-        <p class="note">※参考：<a href="https://www.purpose.co.jp/home/system/timestamp.html" target="_blank" rel="noopener">パーパス社 タイムスタンプ解説ページ</a>（各リモコンの図解が掲載されています）</p>
-    </div>
 
-    <!-- 4. 料金 -->
-    <div class="section">
-        <h2>4. あんしん点検にかかる費用（点検料金）と時間</h2>
-        <p>「あんしん点検」は有料の法定外点検となります。費用は以下の3つの項目の合計となります。</p>
-        
-        <div class="price-formula">
-            <div class="formula-item total">点検料金（税込）</div>
-            <div class="formula-eq">＝</div>
-            <div class="formula-item">① 出張料</div>
-            <div class="formula-plus">＋</div>
-            <div class="formula-item">② 技術料</div>
-            <div class="formula-plus">＋</div>
-            <div class="formula-item">③ その他実費</div>
-        </div>
-        
-        <div class="table-caption">① 出張料ご案内</div>
-        <table class="detailed-table">
+        <h3 class="table-caption">出張料</h3>
+        <table>
             <thead>
                 <tr>
-                    <th class="w-70">お客様ご自宅までの片道距離</th>
-                    <th class="w-30">料金（税込）</th>
+                    <th>お客様ご自宅までの片道距離</th>
+                    <th class="align-right">料金（税込）</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>30km以内</td>
-                    <td class="price-val">2,750円</td>
-                </tr>
-                <tr>
-                    <td>50km以内</td>
-                    <td class="price-val">3,300円</td>
-                </tr>
-                <tr>
-                    <td>以降10kmごと</td>
-                    <td><span class="price-val">＋550円</span> 追加</td>
-                </tr>
+                <tr><td>30km以内</td><td class="align-right num">2,750円</td></tr>
+                <tr><td>50km以内</td><td class="align-right num">3,300円</td></tr>
+                <tr><td>以降10kmごと</td><td class="align-right num">＋550円</td></tr>
             </tbody>
         </table>
 
-        <div class="table-caption">② 技術料ご案内（目安作業時間含む）</div>
-        <table class="detailed-table">
+        <h3 class="table-caption">技術料（目安作業時間含む）</h3>
+        <table>
             <thead>
                 <tr>
-                    <th class="w-50">対象機器</th>
-                    <th class="w-25">作業時間</th>
-                    <th class="w-25">料金（税込）</th>
+                    <th>対象機器</th>
+                    <th class="align-right">作業時間</th>
+                    <th class="align-right">料金（税込）</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>ふろ給湯器・大型給湯器（50号以上）</td>
-                    <td class="text-center">約60分</td>
-                    <td class="price-val">5,500円</td>
+                    <td class="align-right num">約60分</td>
+                    <td class="align-right num accent">5,500円</td>
                 </tr>
                 <tr>
                     <td>小型湯沸し器・単機能給湯器（50号未満）</td>
-                    <td class="text-center">約45分</td>
-                    <td class="price-val">4,400円</td>
+                    <td class="align-right num">約45分</td>
+                    <td class="align-right num accent">4,400円</td>
                 </tr>
             </tbody>
         </table>
 
-        <div class="table-caption">③ その他の実費・特殊作業割増（該当する場合のみ）</div>
-        <table class="detailed-table">
-            <thead>
-                <tr>
-                    <th class="w-30">項目</th>
-                    <th class="w-70">料金内容</th>
-                </tr>
-            </thead>
+        <h3 class="table-caption">その他の実費・特殊作業割増（該当する場合のみ）</h3>
+        <table>
             <tbody>
                 <tr>
                     <th>高所作業</th>
@@ -207,21 +199,17 @@
                 </tr>
             </tbody>
         </table>
-    </div>
+    </section>
 
-    <!-- 5. お問い合わせ -->
-    <div class="section">
-        <h2>5. お問い合わせ・点検のご依頼先</h2>
-        <p>あんしん点検のご依頼や、引っ越し等に伴う所有者情報の変更、その他ご不明点は以下の専用窓口へご連絡ください。</p>
-        
-        <div class="contact-banner">
-            <p class="contact-label">【パーパス点検受付センター】</p>
-            <span class="phone-number">0120-323-884</span>
-            <p>通話料無料 ／ 受付時間：午前9時～午後5時</p>
-        </div>
-    </div>
+</main>
 
-</div>
+<footer id="contact" class="contact">
+    <p class="contact-eyebrow">お問い合わせ・点検のご依頼</p>
+    <p class="contact-org">パーパス点検受付センター</p>
+    <a class="contact-phone" href="tel:0120323884">0120-323-884</a>
+    <p class="contact-meta">通話料無料　／　受付時間　午前9時〜午後5時</p>
+    <p class="contact-note">引っ越し等に伴う所有者情報の変更、その他ご不明な点も上記窓口へご連絡ください。</p>
+</footer>
 
 </body>
 </html>

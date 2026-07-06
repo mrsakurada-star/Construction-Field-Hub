@@ -1,27 +1,33 @@
-/* ===== Variable Definitions ===== */
+/* © 2026 Nozomi Sakurada. All rights reserved. */
+/* Purpose Ecotech Brand Design System */
+
 :root {
-    --primary-color: #1d1d1f;
-    --primary-hover: #3a3a3c;
-    --secondary-color: #6e6e73;
-    --accent-color: #1d1d1f;
-    --danger-color: #ff3b30;
-    --warning-color: #ff9500;
-    --bg-color: #f5f5f7;
-    --card-bg: #ffffff;
-    --text-main: #1d1d1f;
-    --text-muted: #6e6e73;
-    --border-color: #d2d2d7;
-    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
-    /* Apple design tokens (mirrored for compatibility) */
-    --bg: #f5f5f7;
-    --white: #ffffff;
-    --border: #d2d2d7;
-    --border-dark: #b8b8be;
-    --text: #1d1d1f;
-    --text2: #6e6e73;
-    --text3: #86868b;
-    --accent: #1d1d1f;
-    --surface2: #f0f0f5;
+    /* Surfaces */
+    --white: #FFFFFF;
+    --mist: #F6F5F3;
+    --mist-2: #EFEDE9;
+
+    /* Borders */
+    --hairline: #E3E1DC;
+    --hairline-dark: #C9C6BF;
+
+    /* Typography */
+    --ink: #1A1A1A;
+    --ash: #6E6E73;
+    --ash-2: #9B9A97;
+
+    /* Accent (earth — used sparingly) */
+    --clay: #A8572E;
+    --clay-soft: rgba(168, 87, 46, 0.16);
+
+    /* Fonts */
+    --font-sans: "Noto Sans JP", "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    --font-serif: "Noto Serif JP", "Yu Mincho", "Hiragino Mincho ProN", serif;
+    --font-num: "Inter", "Noto Sans JP", sans-serif;
+
+    /* Motion */
+    --dur-base: 200ms;
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
 }
 
 /* ===== General Styles ===== */
@@ -32,17 +38,18 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, "Noto Sans JP", sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-main);
-    line-height: 1.6;
+    font-family: var(--font-sans);
+    background-color: var(--white);
+    color: var(--ink);
+    line-height: 1.7;
     -webkit-font-smoothing: antialiased;
 }
 
 /* ===== 🖥️ SCREEN (画面表示用) ===== */
 @media screen {
     body {
-        padding-top: 80px; /* Header space */
+        padding-top: 72px; /* Header space */
+        scroll-behavior: smooth;
     }
 
     header {
@@ -50,18 +57,17 @@ body {
         top: 0;
         left: 0;
         right: 0;
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid var(--border-color);
+        background: var(--white);
+        border-bottom: 1px solid var(--hairline);
         z-index: 1000;
-        height: 80px;
+        height: 72px;
         display: flex;
         align-items: center;
         padding: 0 2rem;
     }
 
     .header-content {
-        max-width: 1200px;
+        max-width: 900px;
         margin: 0 auto;
         width: 100%;
         display: flex;
@@ -76,21 +82,25 @@ body {
     }
 
     .logo-icon {
-        width: 32px;
-        height: 32px;
-        color: var(--primary-color);
+        width: 24px;
+        height: 24px;
+        color: var(--clay);
+        flex-shrink: 0;
     }
 
     .logo h1 {
-        font-size: 1.25rem;
+        font-size: 1.1rem;
         font-weight: 700;
-        color: var(--text-main);
+        color: var(--ink);
         line-height: 1.2;
+        letter-spacing: 0.02em;
     }
 
     .logo p {
         font-size: 0.8rem;
-        color: var(--text-muted);
+        color: var(--ash);
+        font-weight: 400;
+        letter-spacing: 0.01em;
     }
 
     nav {
@@ -102,36 +112,40 @@ body {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.625rem 1.25rem;
-        border-radius: 0.5rem;
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--ink);
+        background: transparent;
         font-weight: 500;
-        font-size: 0.9rem;
+        font-size: 0.875rem;
         cursor: pointer;
-        transition: all 0.2s;
+        transition: all var(--dur-base) var(--ease-out);
         text-decoration: none;
-        border: none;
+        color: var(--ink);
+        letter-spacing: 0.01em;
+    }
+
+    .btn:hover {
+        background: var(--mist);
     }
 
     .btn-primary {
-        background-color: var(--primary-color);
-        color: white;
+        border-color: var(--ink);
+        background: transparent;
+        color: var(--ink);
     }
 
     .btn-primary:hover {
-        background-color: var(--primary-hover);
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(29, 29, 31, 0.2);
+        background: var(--mist);
     }
 
     .btn-secondary {
-        background-color: var(--card-bg);
-        color: var(--text-main);
-        border: 1px solid var(--border-color);
+        border-color: var(--hairline);
+        color: var(--ash);
     }
 
     .btn-secondary:hover {
-        background-color: var(--bg-color);
-        border-color: var(--border-dark);
+        border-color: var(--ink);
+        color: var(--ink);
     }
 
     main {
@@ -143,17 +157,15 @@ body {
     footer {
         text-align: center;
         padding: 2rem;
-        color: var(--text-muted);
+        color: var(--ash);
         font-size: 0.875rem;
     }
 
     .page {
-        background: var(--card-bg);
+        background: var(--white);
         padding: 2.5rem;
-        border-radius: 1rem;
-        box-shadow: var(--shadow);
+        border: 1px solid var(--hairline);
         margin-bottom: 3rem;
-        border: 1px solid var(--border-color);
     }
 
     .header-actions {
@@ -164,29 +176,27 @@ body {
 
     .btn-outline {
         background-color: transparent;
-        color: var(--text-main);
-        border: 1px solid var(--border-color);
+        color: var(--ink);
+        border: 1px solid var(--hairline);
     }
 
     .btn-outline:hover {
-        background-color: var(--bg-color);
-        border-color: var(--primary-color);
+        background-color: var(--mist);
+        border-color: var(--ink);
     }
 
     .btn-sm {
-        padding: 0.4rem 0.75rem;
+        padding: 0.375rem 0.75rem;
         font-size: 0.8rem;
     }
 
     /* ===== ページ内ナビゲーションバー ===== */
     .page-nav {
         position: sticky;
-        top: 80px; /* ヘッダー高さ分下げる */
+        top: 72px;
         z-index: 900;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(8px);
-        border-bottom: 1px solid var(--border-color);
-        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        background: var(--white);
+        border-bottom: 1px solid var(--hairline);
     }
 
     .page-nav-inner {
@@ -201,14 +211,15 @@ body {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        padding: 0.6rem 1.1rem;
+        padding: 0.75rem 1rem;
         font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--text-muted);
+        font-weight: 500;
+        color: var(--ash);
         text-decoration: none;
-        border-bottom: 3px solid transparent;
-        transition: color 0.18s, border-color 0.18s, background 0.18s;
+        border-bottom: 1px solid transparent;
+        transition: all var(--dur-base) var(--ease-out);
         white-space: nowrap;
+        letter-spacing: 0.01em;
     }
 
     .page-nav-link i {
@@ -218,40 +229,32 @@ body {
     }
 
     .page-nav-link:hover {
-        color: var(--text-main);
-        background: var(--bg-color);
-        border-bottom-color: var(--text-main);
+        color: var(--ink);
+        border-bottom-color: var(--hairline);
     }
 
     .page-nav-link.active {
-        color: var(--text-main);
-        border-bottom-color: var(--text-main);
+        color: var(--ink);
+        border-bottom-color: var(--clay);
     }
 
-    /* ナビ分だけmainのpadding-topを追加 */
-    body {
-        padding-top: 80px; /* Header space */
-        scroll-behavior: smooth;
-    }
-
-    /* スクロール時アンカー位置のオフセット（ヘッダー+ナビ分） */
     .page {
-        scroll-margin-top: 128px; /* 80px header + 48px nav */
+        scroll-margin-top: 152px; /* 72px header + nav height */
     }
 }
 
 /* ===== 🖨️ PRINT (印刷表示用) ===== */
 @page {
     size: A4 portrait;
-    /* ブラウザフッターを考慮し小さめに設定 */
     margin: 8mm 10mm 12mm 10mm;
 }
 
 @media print {
     body {
-        background: white;
+        background: var(--white);
         padding: 0 !important;
         margin: 0 !important;
+        color: var(--ink);
     }
 
     .no-print {
@@ -268,36 +271,30 @@ body {
         max-width: none !important;
     }
 
-    /* =====
-       印刷時のページ全体枠組み
-       190mm × 272mm（@pageマージンを引いた有効領域）に固定。
-       コンテンツが溢れたら overflow: hidden で強制カット。
-    ===== */
     .page {
         width: 190mm !important;
         height: 272mm !important;
         margin: 0 auto !important;
-        padding: 6mm 8mm 6mm 8mm !important; /* 内側余白を最小限に */
+        padding: 6mm 8mm 6mm 8mm !important;
         border: none !important;
-        box-shadow: none !important;
         overflow: hidden !important;
         position: relative;
         display: flex;
         flex-direction: column;
         break-after: page;
-        background: white !important;
-        color: black !important;
+        background: var(--white) !important;
+        color: var(--ink) !important;
     }
 
     .page:last-child {
         break-after: auto;
     }
 
-    /* 印刷時：ページヘッダーの圧縮 */
     .page-header {
         margin-bottom: 4px !important;
         padding-bottom: 4px !important;
-        border-bottom-width: 2px !important;
+        border-bottom-width: 1px !important;
+        border-bottom-color: var(--hairline) !important;
     }
 
     .page-title {
@@ -312,17 +309,17 @@ body {
     .page-subtitle {
         font-size: 8pt !important;
         margin-top: 2px !important;
+        color: var(--ash) !important;
     }
 
     .brand-banner {
         font-size: 7pt !important;
         margin-bottom: 2px !important;
         padding-bottom: 2px !important;
-        color: #888 !important;
-        border-bottom-color: #eee !important;
+        color: var(--ash) !important;
+        border-bottom-color: var(--hairline) !important;
     }
 
-    /* 印刷時：ページボディ（カテゴリの列）*/
     .page-body {
         flex: 1;
         overflow: hidden;
@@ -331,14 +328,12 @@ body {
         gap: 3px;
     }
 
-    /* 印刷時：カテゴリブロック */
     .category-block {
-        border: 1px solid #ccc !important;
+        border: 1px solid var(--hairline) !important;
         margin-bottom: 0 !important;
-        border-radius: 4px !important;
         overflow: hidden !important;
         break-inside: avoid;
-        flex-shrink: 1; /* コンテンツに応じて縮小を許可 */
+        flex-shrink: 1;
     }
 
     .category-header {
@@ -363,9 +358,9 @@ body {
 
     .category-body {
         padding: 4px 8px 2px !important;
+        background: var(--white) !important;
     }
 
-    /* 印刷時：各セクション */
     .section {
         margin-bottom: 4px !important;
     }
@@ -374,15 +369,16 @@ body {
         font-size: 8pt !important;
         font-weight: 700 !important;
         margin-bottom: 2px !important;
+        color: var(--ink) !important;
     }
 
     .section-content {
         font-size: 7.5pt !important;
         margin-bottom: 2px !important;
         line-height: 1.4 !important;
+        color: var(--ink) !important;
     }
 
-    /* 印刷時：箇条書きリスト */
     .list-items {
         margin-left: 0 !important;
     }
@@ -392,16 +388,15 @@ body {
         padding-left: 1rem !important;
         margin-bottom: 1px !important;
         line-height: 1.4 !important;
+        color: var(--ink) !important;
     }
 
-    /* 印刷時：ステップボックス */
     .step-box {
-        background: #f5f5f5 !important;
+        background: var(--mist) !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
         padding: 4px 8px !important;
         margin: 2px 0 !important;
-        border-radius: 4px !important;
     }
 
     .step-item {
@@ -414,6 +409,8 @@ body {
         height: 15px !important;
         font-size: 6pt !important;
         flex-shrink: 0 !important;
+        background: var(--ink) !important;
+        color: var(--white) !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
@@ -423,27 +420,26 @@ body {
         line-height: 1.4 !important;
     }
 
-    /* 印刷時：アラート */
     .alert {
         padding: 3px 8px !important;
         margin-top: 2px !important;
         font-size: 7pt !important;
-        border-radius: 3px !important;
         gap: 4px !important;
         line-height: 1.4 !important;
+        border-left: 2px solid !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
     .alert-warning {
         background: #fffbeb !important;
-        border-color: #fde68a !important;
+        border-left-color: #fbbf24 !important;
         color: #92400e !important;
     }
 
     .alert-important {
         background: #fdf2f2 !important;
-        border-color: #fecaca !important;
+        border-left-color: #fca5a5 !important;
         color: #991b1b !important;
     }
 
@@ -453,13 +449,11 @@ body {
         flex-shrink: 0 !important;
     }
 
-    /* 印刷時：ワンポイントアドバイス */
     .tip-box {
         margin-top: 3px !important;
         padding: 4px 8px !important;
-        border-radius: 4px !important;
-        background: #f0fff4 !important;
-        border-left: 3px solid #22c55e !important;
+        background: #f0fdf4 !important;
+        border-left: 2px solid #22c55e !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
@@ -484,152 +478,158 @@ body {
         line-height: 1.4 !important;
     }
 
-    /* 印刷時：カテゴリヘッダー色 */
+    /* Category header colors */
     .cat-normal .category-header {
-        background: #1d1d1f !important;
-        color: #ffffff !important;
+        background: var(--ink) !important;
+        color: var(--white) !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
     .cat-cold .category-header {
-        background: #3a3a3c !important;
-        color: #ffffff !important;
+        background: var(--ash) !important;
+        color: var(--white) !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
 
     .cat-absent .category-header {
-        background: #86868b !important;
-        color: #ffffff !important;
+        background: var(--ash-2) !important;
+        color: var(--white) !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
-
-    /* Print color overrides */
-    :root {
-        --primary-color: #1d1d1f;
-        --border-color: #ccc;
-    }
 }
-
 
 /* ===== Brand Banner ===== */
 .brand-banner {
+    font-family: var(--font-num);
     font-size: 0.75rem;
-    font-weight: 700;
+    font-weight: 500;
     letter-spacing: 0.15em;
-    color: var(--secondary-color);
+    text-transform: uppercase;
+    color: var(--ash);
     margin-bottom: 0.5rem;
     padding-bottom: 0.25rem;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--hairline);
     text-align: right;
-}
-
-@media print {
-    .brand-banner {
-        color: #666 !important;
-        border-bottom-color: #eee !important;
-    }
 }
 
 /* ===== Content UI Elements ===== */
 .page-header {
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid var(--border-color);
+    border-bottom: 1px solid var(--hairline);
 }
 
 .title-area {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
+    gap: 2rem;
 }
 
 .page-title {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--text-main);
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--ink);
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    letter-spacing: 0.02em;
+    line-height: 1.3;
 }
 
 .page-title i {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
 }
 
 .page-subtitle {
-    font-size: 1.1rem;
-    color: var(--secondary-color);
-    font-weight: 500;
+    font-size: 1rem;
+    color: var(--ash);
+    font-weight: 400;
+    letter-spacing: 0.01em;
 }
 
 .category-tag {
-    background: #e8e8ed;
-    color: var(--text-main);
+    background: var(--mist);
+    color: var(--ash);
     padding: 0.25rem 0.75rem;
-    border-radius: 2rem;
-    font-size: 0.875rem;
-    font-weight: 600;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    border: 1px solid var(--hairline);
 }
 
 .section {
     margin-bottom: 1.5rem;
 }
 
-/* h3 に変更したため少し小さく調整 */
 .section-heading {
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     margin-bottom: 0.75rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    color: var(--text-main);
+    color: var(--ink);
+    letter-spacing: 0.01em;
+}
+
+.section-heading i {
+    width: 18px;
+    height: 18px;
 }
 
 .section-content {
-    font-size: 1rem;
+    font-size: 0.95rem;
     margin-bottom: 0.75rem;
+    color: var(--ink);
+    line-height: 1.7;
 }
 
 .list-items {
     list-style: none;
-    margin-left: 0.5rem;
+    margin-left: 0;
 }
 
 .list-items li {
     position: relative;
     padding-left: 1.5rem;
     margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--ink);
+    line-height: 1.7;
 }
 
 .list-items li::before {
     content: "・";
     position: absolute;
     left: 0;
-    color: var(--text-muted);
-    font-weight: bold;
+    color: var(--ash);
+    font-weight: 400;
 }
 
 .step-box {
-    background: var(--bg-color);
+    background: var(--mist);
     padding: 1.25rem;
-    border-radius: 0.75rem;
     margin: 1rem 0;
+    border: 1px solid var(--hairline);
 }
 
 .step-item {
     display: flex;
     gap: 1rem;
     margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.7;
 }
 
 .step-number {
-    background: var(--text-main);
-    color: white;
+    background: var(--ink);
+    color: var(--white);
     width: 24px;
     height: 24px;
     border-radius: 50%;
@@ -640,31 +640,35 @@ body {
     font-weight: 700;
     flex-shrink: 0;
     margin-top: 2px;
+    font-family: var(--font-num);
 }
 
 .alert {
     display: flex;
     gap: 0.75rem;
     padding: 1rem;
-    border-radius: 0.75rem;
     margin-top: 1rem;
     font-size: 0.9rem;
+    border-left: 2px solid;
+    line-height: 1.6;
 }
 
 .alert-warning {
     background: #fffbeb;
-    border: 1px solid #fde68a;
+    border-left-color: #fbbf24;
     color: #92400e;
 }
 
 .alert-important {
     background: #fdf2f2;
-    border: 1px solid #fecaca;
+    border-left-color: #fca5a5;
     color: #991b1b;
 }
 
 .alert-icon {
     flex-shrink: 0;
+    width: 18px;
+    height: 18px;
 }
 
 .print-footer {
@@ -672,8 +676,8 @@ body {
     display: none;
     justify-content: space-between;
     font-size: 0.75rem;
-    color: var(--text-muted);
-    border-top: 1px solid var(--border-color);
+    color: var(--ash);
+    border-top: 1px solid var(--hairline);
     padding-top: 0.5rem;
 }
 
@@ -689,11 +693,11 @@ body {
 /* ===== ワンポイントアドバイス ===== */
 .tip-box {
     margin-top: 1.5rem;
-    padding: 1.1rem 1.25rem;
+    padding: 1.25rem;
     background: #f0fdf4;
-    border: 1px solid #86efac;
-    border-left: 4px solid #22c55e;
-    border-radius: 0.75rem;
+    border: 1px solid #dcfce7;
+    border-left: 2px solid #22c55e;
+    line-height: 1.7;
 }
 
 .tip-header {
@@ -714,7 +718,7 @@ body {
     font-size: 0.85rem;
     font-weight: 700;
     color: #15803d;
-    letter-spacing: 0.03em;
+    letter-spacing: 0.02em;
 }
 
 .tip-content {
@@ -724,14 +728,11 @@ body {
     margin: 0;
 }
 
-
-
 /* ===== カテゴリブロック（普段・寒い日・不在時）===== */
 .category-block {
-    border-radius: 0.75rem;
     margin-bottom: 1.5rem;
     overflow: hidden;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--hairline);
 }
 
 .category-header {
@@ -741,6 +742,7 @@ body {
     padding: 0.75rem 1.25rem;
     font-weight: 700;
     font-size: 1rem;
+    letter-spacing: 0.01em;
 }
 
 .cat-icon {
@@ -752,42 +754,44 @@ body {
 .cat-label {
     font-size: 1rem;
     font-weight: 700;
+    letter-spacing: 0.01em;
 }
 
 .cat-subtitle {
     font-size: 0.8rem;
-    font-weight: 500;
-    opacity: 0.8;
+    font-weight: 400;
+    opacity: 0.9;
     margin-left: 0.25rem;
 }
 
 .category-body {
     padding: 1rem 1.25rem 0.25rem;
-    background: #ffffff;
+    background: var(--white);
 }
 
 /* 普段の凍結予防 — ダーク */
 .cat-normal .category-header {
-    background: var(--text-main);
-    color: #ffffff;
-    border-bottom: none;
+    background: var(--ink);
+    color: var(--white);
 }
-.cat-normal .cat-icon { color: #ffffff; }
+.cat-normal .cat-icon {
+    color: var(--white);
+}
 
-/* 特に寒い日の凍結予防 — ミッドグレー */
+/* 特に寒い日の凍結予防 — グレー */
 .cat-cold .category-header {
-    background: #3a3a3c;
-    color: #ffffff;
-    border-bottom: none;
+    background: var(--ash);
+    color: var(--white);
 }
-.cat-cold .cat-icon { color: #ffffff; }
+.cat-cold .cat-icon {
+    color: var(--white);
+}
 
 /* 不在時の凍結予防 — ライトグレー */
 .cat-absent .category-header {
-    background: #86868b;
-    color: #ffffff;
-    border-bottom: none;
+    background: var(--ash-2);
+    color: var(--white);
 }
-.cat-absent .cat-icon { color: #ffffff; }
-
-
+.cat-absent .cat-icon {
+    color: var(--white);
+}
