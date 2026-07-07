@@ -1,0 +1,8 @@
+[  191032ms] TypeError: Cannot set properties of null (setting 'hidden')
+    at renderSelectionToolbar (http://localhost:8150/Construction%20photos/js/photo.js:131:18)
+    at togglePhotoSelection (http://localhost:8150/Construction%20photos/js/photo.js:118:3)
+    at HTMLInputElement.onchange (http://localhost:8150/Construction%20photos/index.html:1:1)
+[  195953ms] TypeError: Cannot set properties of null (setting 'hidden')
+    at renderSelectionToolbar (http://localhost:8150/Construction%20photos/js/photo.js:131:18)
+    at togglePhotoSelection (http://localhost:8150/Construction%20photos/js/photo.js:118:3)
+    at HTMLInputElement.onchange (http://localhost:8150/Construction%20photos/index.html:1:1)

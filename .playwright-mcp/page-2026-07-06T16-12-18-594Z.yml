@@ -1,0 +1,83 @@
+- generic [active] [ref=f8e1]:
+  - banner [ref=f8e2]:
+    - img [ref=f8e4]
+    - heading "工事写真報告書 作成ツール" [level=1] [ref=f8e9]
+    - generic [ref=f8e10]:
+      - button "プレビュー更新" [ref=f8e11] [cursor=pointer]:
+        - img [ref=f8e12]
+        - text: プレビュー更新
+      - button "並べ替え" [ref=f8e15] [cursor=pointer]:
+        - img [ref=f8e16]
+        - text: 並べ替え
+      - button "PDF出力" [ref=f8e21] [cursor=pointer]:
+        - img [ref=f8e22]
+        - text: PDF出力
+  - generic [ref=f8e26]:
+    - complementary [ref=f8e27]:
+      - generic [ref=f8e28]:
+        - button "表紙情報" [ref=f8e29] [cursor=pointer]:
+          - img [ref=f8e30]
+          - text: 表紙情報
+        - button "写真管理 0" [ref=f8e33] [cursor=pointer]:
+          - img [ref=f8e34]
+          - text: 写真管理
+          - generic [ref=f8e38]: "0"
+      - generic [ref=f8e40]:
+        - generic [ref=f8e41]: 作成者・日付
+        - generic [ref=f8e42]:
+          - generic [ref=f8e43]: 作成日
+          - textbox "作成日" [ref=f8e44]
+        - generic [ref=f8e45]:
+          - generic [ref=f8e46]: 管理番号/注文番号
+          - textbox "例：2026-0304-001" [ref=f8e47]
+        - generic [ref=f8e48]:
+          - generic [ref=f8e49]: 弊社管理No
+          - textbox "例：ABC-12345" [ref=f8e50]
+        - generic [ref=f8e51]:
+          - generic [ref=f8e52]:
+            - generic [ref=f8e53]: 所属
+            - textbox "株式会社○○" [ref=f8e54]
+          - generic [ref=f8e55]:
+            - generic [ref=f8e56]: 担当者（作成者）
+            - textbox "山田 太郎" [ref=f8e57]
+        - generic [ref=f8e58]: 工事情報
+        - generic [ref=f8e59]:
+          - generic [ref=f8e60]: 現場名 / 工事名
+          - textbox "○○マンション" [ref=f8e61]
+        - generic [ref=f8e62]:
+          - generic [ref=f8e63]: 現場住所
+          - textbox "東京都○○区○○1-2-3" [ref=f8e64]
+        - generic [ref=f8e65]:
+          - generic [ref=f8e66]: 工事内容
+          - textbox "給湯器取替工事" [ref=f8e67]
+        - generic [ref=f8e68]: 工程一覧
+        - generic [ref=f8e69]:
+          - textbox "工程名" [ref=f8e70]:
+            - /placeholder: 例：基礎工事
+          - button "追加" [ref=f8e71] [cursor=pointer]:
+            - img [ref=f8e72]
+            - text: 追加
+        - generic [ref=f8e73]:
+          - generic [ref=f8e74]:
+            - text: 工事日
+            - button "工事日" [ref=f8e75] [cursor=pointer]:
+              - img [ref=f8e76]
+              - text: 自動取得
+          - generic [ref=f8e81]:
+            - generic [ref=f8e82]:
+              - generic [ref=f8e83]: 開始日
+              - textbox "開始日" [ref=f8e84]: 2026-07-06
+            - generic [ref=f8e85]:
+              - generic [ref=f8e86]: 終了日
+              - textbox "終了日" [ref=f8e87]: 2026-07-06
+        - generic [ref=f8e88]:
+          - button "クリア" [ref=f8e89] [cursor=pointer]:
+            - img [ref=f8e90]
+            - text: クリア
+          - button "写真のみ削除" [ref=f8e93] [cursor=pointer]:
+            - img [ref=f8e94]
+            - text: 写真のみ削除
+    - main [ref=f8e101]:
+      - generic [ref=f8e102]:
+        - img [ref=f8e104]
+        - heading "プレビュー表示中" [level=3] [ref=f8e107]

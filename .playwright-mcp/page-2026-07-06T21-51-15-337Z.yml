@@ -1,0 +1,151 @@
+- generic [active] [ref=f20e1]:
+  - banner [ref=f20e2]:
+    - img [ref=f20e4]
+    - heading "工事写真報告書 作成ツール" [level=1] [ref=f20e9]
+    - generic [ref=f20e10]:
+      - button "プレビュー更新" [ref=f20e11] [cursor=pointer]:
+        - img [ref=f20e12]
+        - text: プレビュー更新
+      - button "並べ替え" [ref=f20e15] [cursor=pointer]:
+        - img [ref=f20e16]
+        - text: 並べ替え
+      - button "PDF出力" [ref=f20e21] [cursor=pointer]:
+        - img [ref=f20e22]
+        - text: PDF出力
+  - generic [ref=f20e26]:
+    - complementary [ref=f20e27]:
+      - generic [ref=f20e28]:
+        - button "表紙情報" [ref=f20e29] [cursor=pointer]:
+          - img [ref=f20e30]
+          - text: 表紙情報
+        - button "写真管理 2" [ref=f20e143] [cursor=pointer]:
+          - img [ref=f20e34]
+          - text: 写真管理
+          - generic [ref=f20e38]: "2"
+      - generic [ref=f20e123]:
+        - generic [ref=f20e124]:
+          - generic [ref=f20e125] [cursor=pointer]:
+            - img [ref=f20e127]
+            - paragraph [ref=f20e130]:
+              - text: 写真をドラッグ＆ドロップ
+              - text: またはクリックして選択
+          - generic [ref=f20e131]:
+            - generic [ref=f20e145]: 基礎工事
+            - generic [ref=f20e146]:
+              - generic [ref=f20e147]: 未分類
+              - generic [ref=f20e148]: 前
+              - generic [ref=f20e149]:
+                - generic [ref=f20e150]:
+                  - checkbox "この写真を選択" [ref=f20e151] [cursor=pointer]
+                  - generic "test1.png" [ref=f20e152]
+                  - generic [ref=f20e153]:
+                    - button "上へ" [ref=f20e154] [cursor=pointer]:
+                      - img [ref=f20e155]
+                    - button "下へ" [ref=f20e157] [cursor=pointer]:
+                      - img [ref=f20e158]
+                    - button "削除" [ref=f20e160] [cursor=pointer]:
+                      - img [ref=f20e161]
+                - generic [ref=f20e164]:
+                  - button "前" [ref=f20e165] [cursor=pointer]
+                  - button "中" [ref=f20e166] [cursor=pointer]
+                  - button "後" [ref=f20e167] [cursor=pointer]
+                - generic [ref=f20e168]:
+                  - generic [ref=f20e169]: 撮影日
+                  - textbox [ref=f20e171]: 2026-07-06
+                  - generic [ref=f20e172]: タイトル
+                  - textbox "作業前①" [ref=f20e173]
+                  - generic [ref=f20e174]: 説明
+                  - textbox "外観" [ref=f20e175]
+              - generic [ref=f20e176]:
+                - generic [ref=f20e177]:
+                  - checkbox "この写真を選択" [ref=f20e178] [cursor=pointer]
+                  - generic "test2.png" [ref=f20e179]
+                  - generic [ref=f20e180]:
+                    - button "上へ" [ref=f20e181] [cursor=pointer]:
+                      - img [ref=f20e182]
+                    - button "下へ" [ref=f20e184] [cursor=pointer]:
+                      - img [ref=f20e185]
+                    - button "削除" [ref=f20e187] [cursor=pointer]:
+                      - img [ref=f20e188]
+                - generic [ref=f20e191]:
+                  - button "前" [ref=f20e192] [cursor=pointer]
+                  - button "中" [ref=f20e193] [cursor=pointer]
+                  - button "後" [ref=f20e194] [cursor=pointer]
+                - generic [ref=f20e195]:
+                  - generic [ref=f20e196]: 撮影日
+                  - textbox [ref=f20e198]: 2026-07-06
+                  - generic [ref=f20e199]: タイトル
+                  - textbox "作業前①" [ref=f20e200]
+                  - generic [ref=f20e201]: 説明
+                  - textbox "外観" [ref=f20e202]
+        - generic [ref=f20e134]:
+          - button "全削除" [ref=f20e135] [cursor=pointer]:
+            - img [ref=f20e136]
+            - text: 全削除
+          - button "プレビュー更新" [ref=f20e139] [cursor=pointer]:
+            - img [ref=f20e140]
+            - text: プレビュー更新
+    - main [ref=f20e101]:
+      - generic [ref=f20e203]:
+        - generic [ref=f20e204]: 弊社管理No：
+        - generic [ref=f20e205]: 工事写真報告書
+        - table [ref=f20e206]:
+          - rowgroup [ref=f20e207]:
+            - row "作成日" [ref=f20e208]:
+              - cell "作成日" [ref=f20e209]
+              - cell [ref=f20e210]
+            - row "管理番号/注文番号" [ref=f20e211]:
+              - cell "管理番号/注文番号" [ref=f20e212]
+              - cell [ref=f20e213]
+        - table [ref=f20e214]:
+          - rowgroup [ref=f20e215]:
+            - row "現場名" [ref=f20e216]:
+              - cell "現場名" [ref=f20e217]
+              - cell [ref=f20e218]
+            - row "現場住所" [ref=f20e219]:
+              - cell "現場住所" [ref=f20e220]
+              - cell [ref=f20e221]
+            - row "工事内容" [ref=f20e222]:
+              - cell "工事内容" [ref=f20e223]
+              - cell [ref=f20e224]
+            - row "工事日 2026/07/06" [ref=f20e225]:
+              - cell "工事日" [ref=f20e226]
+              - cell "2026/07/06" [ref=f20e227]
+        - table [ref=f20e228]:
+          - rowgroup [ref=f20e229]:
+            - row "所属" [ref=f20e230]:
+              - cell "所属" [ref=f20e231]
+              - cell [ref=f20e232]
+            - row "担当者" [ref=f20e233]:
+              - cell "担当者" [ref=f20e234]
+              - cell [ref=f20e235]
+      - generic [ref=f20e236]:
+        - generic [ref=f20e237]: 工事写真報告書
+        - table [ref=f20e240]:
+          - rowgroup [ref=f20e241]:
+            - row "工 事 名" [ref=f20e242]:
+              - cell "工 事 名" [ref=f20e243]
+              - cell [ref=f20e244]
+            - row "工 程 その他" [ref=f20e245]:
+              - cell "工 程" [ref=f20e246]
+              - cell "その他" [ref=f20e247]
+        - generic [ref=f20e248]:
+          - generic [ref=f20e251]:
+            - generic [ref=f20e252]:
+              - generic [ref=f20e253]: 撮影日
+              - generic [ref=f20e254]: 2026年7月6日
+            - generic [ref=f20e256]: タイトル
+            - generic [ref=f20e259]: 説 明
+          - generic [ref=f20e263]:
+            - generic [ref=f20e264]:
+              - generic [ref=f20e265]: 撮影日
+              - generic [ref=f20e266]: 2026年7月6日
+            - generic [ref=f20e268]: タイトル
+            - generic [ref=f20e271]: 説 明
+          - generic [ref=f20e273]:
+            - generic [ref=f20e275]: （写真なし）
+            - generic [ref=f20e276]:
+              - generic [ref=f20e278]: 撮影日
+              - generic [ref=f20e281]: タイトル
+              - generic [ref=f20e284]: 説 明
+        - generic [ref=f20e286]: 2 / 2 ページ

@@ -1,0 +1,12 @@
+[   68979ms] ReferenceError: switchTab is not defined
+    at HTMLButtonElement.onclick (http://localhost:8150/Construction%20photos/index.html:60:83)
+[   69223ms] ReferenceError: switchTab is not defined
+    at HTMLButtonElement.onclick (http://localhost:8150/Construction%20photos/index.html:60:83)
+[   70107ms] ReferenceError: switchTab is not defined
+    at HTMLButtonElement.onclick (http://localhost:8150/Construction%20photos/index.html:60:83)
+[   72809ms] ReferenceError: switchTab is not defined
+    at HTMLButtonElement.onclick (http://localhost:8150/Construction%20photos/index.html:60:83)
+[   73858ms] ReferenceError: switchTab is not defined
+    at HTMLButtonElement.onclick (http://localhost:8150/Construction%20photos/index.html:57:89)
+[   74626ms] ReferenceError: switchTab is not defined
+    at HTMLButtonElement.onclick (http://localhost:8150/Construction%20photos/index.html:60:83)

@@ -1,0 +1,87 @@
+- generic [active] [ref=f3e1]:
+  - banner [ref=f3e2]:
+    - img [ref=f3e4]
+    - heading "工事写真報告書 作成ツール" [level=1] [ref=f3e9]
+    - generic [ref=f3e10]:
+      - button "プレビュー更新" [ref=f3e11] [cursor=pointer]:
+        - img [ref=f3e12]
+        - text: プレビュー更新
+      - button "並べ替え" [ref=f3e15] [cursor=pointer]:
+        - img [ref=f3e16]
+        - text: 並べ替え
+      - button "PDF出力" [ref=f3e21] [cursor=pointer]:
+        - img [ref=f3e22]
+        - text: PDF出力
+  - generic [ref=f3e26]:
+    - complementary [ref=f3e27]:
+      - generic [ref=f3e28]:
+        - button "表紙情報" [ref=f3e29] [cursor=pointer]:
+          - img [ref=f3e30]
+          - text: 表紙情報
+        - button "写真管理 0" [ref=f3e33] [cursor=pointer]:
+          - img [ref=f3e34]
+          - text: 写真管理
+          - generic [ref=f3e38]: "0"
+      - generic [ref=f3e40]:
+        - generic [ref=f3e41]: 作成者・日付
+        - generic [ref=f3e42]:
+          - generic [ref=f3e43]: 作成日
+          - textbox "作成日" [ref=f3e44]
+        - generic [ref=f3e45]:
+          - generic [ref=f3e46]: 管理番号/注文番号
+          - textbox "例：2026-0304-001" [ref=f3e47]
+        - generic [ref=f3e48]:
+          - generic [ref=f3e49]: 弊社管理No
+          - textbox "例：ABC-12345" [ref=f3e50]
+        - generic [ref=f3e51]:
+          - generic [ref=f3e52]:
+            - generic [ref=f3e53]: 所属
+            - textbox "株式会社○○" [ref=f3e54]
+          - generic [ref=f3e55]:
+            - generic [ref=f3e56]: 担当者（作成者）
+            - textbox "山田 太郎" [ref=f3e57]
+        - generic [ref=f3e58]: 工事情報
+        - generic [ref=f3e59]:
+          - generic [ref=f3e60]: 現場名 / 工事名
+          - textbox "○○マンション" [ref=f3e61]: テスト現場マンション
+        - generic [ref=f3e62]:
+          - generic [ref=f3e63]: 現場住所
+          - textbox "東京都○○区○○1-2-3" [ref=f3e64]
+        - generic [ref=f3e65]:
+          - generic [ref=f3e66]: 工事内容
+          - textbox "給湯器取替工事" [ref=f3e67]
+        - generic [ref=f3e68]: 補足情報
+        - generic [ref=f3e69]:
+          - generic [ref=f3e70]: 補足情報
+          - textbox "既設の配管を活用し...後日、完工検査を実施予定です" [ref=f3e71]: 既設配管を活用しました 後日、完工検査を実施予定です
+        - generic [ref=f3e72]: 工程一覧
+        - generic [ref=f3e73]:
+          - textbox "工程名" [ref=f3e74]:
+            - /placeholder: 例：基礎工事
+          - button "追加" [ref=f3e75] [cursor=pointer]:
+            - img [ref=f3e76]
+            - text: 追加
+        - generic [ref=f3e77]:
+          - generic [ref=f3e78]:
+            - text: 工事日
+            - button "工事日" [ref=f3e79] [cursor=pointer]:
+              - img [ref=f3e80]
+              - text: 自動取得
+          - generic [ref=f3e85]:
+            - generic [ref=f3e86]:
+              - generic [ref=f3e87]: 開始日
+              - textbox "開始日" [ref=f3e88]: 2026-07-06
+            - generic [ref=f3e89]:
+              - generic [ref=f3e90]: 終了日
+              - textbox "終了日" [ref=f3e91]: 2026-07-06
+        - generic [ref=f3e92]:
+          - button "クリア" [ref=f3e93] [cursor=pointer]:
+            - img [ref=f3e94]
+            - text: クリア
+          - button "写真のみ削除" [ref=f3e97] [cursor=pointer]:
+            - img [ref=f3e98]
+            - text: 写真のみ削除
+    - main [ref=f3e105]:
+      - generic [ref=f3e106]:
+        - img [ref=f3e108]
+        - heading "プレビュー表示中" [level=3] [ref=f3e111]

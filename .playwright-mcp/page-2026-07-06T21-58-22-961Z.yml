@@ -1,0 +1,130 @@
+- generic [ref=f22e1]:
+  - banner [ref=f22e2]:
+    - img [ref=f22e4]
+    - heading "工事写真報告書 作成ツール" [level=1] [ref=f22e9]
+    - generic [ref=f22e10]:
+      - button "プレビュー更新" [ref=f22e11] [cursor=pointer]:
+        - img [ref=f22e12]
+        - text: プレビュー更新
+      - button "並べ替え" [ref=f22e15] [cursor=pointer]:
+        - img [ref=f22e16]
+        - text: 並べ替え
+      - button "PDF出力" [ref=f22e21] [cursor=pointer]:
+        - img [ref=f22e22]
+        - text: PDF出力
+  - generic [ref=f22e26]:
+    - complementary [ref=f22e27]:
+      - generic [ref=f22e28]:
+        - button "表紙情報" [ref=f22e29] [cursor=pointer]:
+          - img [ref=f22e30]
+          - text: 表紙情報
+        - button "写真管理 1" [active] [ref=f22e109] [cursor=pointer]:
+          - img [ref=f22e34]
+          - text: 写真管理
+          - generic [ref=f22e38]: "1"
+      - generic [ref=f22e235]:
+        - generic [ref=f22e236]:
+          - generic [ref=f22e237] [cursor=pointer]:
+            - img [ref=f22e239]
+            - paragraph [ref=f22e242]:
+              - text: 写真をドラッグ＆ドロップ
+              - text: またはクリックして選択
+          - generic [ref=f22e243]:
+            - generic [ref=f22e245]: 基礎工事
+            - generic [ref=f22e247]: 配管工事
+            - generic [ref=f22e248]:
+              - generic [ref=f22e249]: 未分類
+              - generic [ref=f22e250]: 前
+              - generic [ref=f22e251]:
+                - generic [ref=f22e252]:
+                  - checkbox "この写真を選択" [ref=f22e253] [cursor=pointer]
+                  - generic "test1.jpg" [ref=f22e254]
+                  - generic [ref=f22e255]:
+                    - button "上へ" [ref=f22e256] [cursor=pointer]:
+                      - img [ref=f22e257]
+                    - button "下へ" [ref=f22e259] [cursor=pointer]:
+                      - img [ref=f22e260]
+                    - button "削除" [ref=f22e262] [cursor=pointer]:
+                      - img [ref=f22e263]
+                - generic [ref=f22e266]:
+                  - button "前" [ref=f22e267] [cursor=pointer]
+                  - button "中" [ref=f22e268] [cursor=pointer]
+                  - button "後" [ref=f22e269] [cursor=pointer]
+                - generic [ref=f22e270]:
+                  - generic [ref=f22e271]: 撮影日
+                  - textbox [ref=f22e273]: 2026-07-06
+                  - generic [ref=f22e274]: タイトル
+                  - textbox "作業前①" [ref=f22e275]
+                  - generic [ref=f22e276]: 説明
+                  - textbox "外観" [ref=f22e277]
+        - generic [ref=f22e278]:
+          - button "全削除" [ref=f22e279] [cursor=pointer]:
+            - img [ref=f22e280]
+            - text: 全削除
+          - button "プレビュー更新" [ref=f22e283] [cursor=pointer]:
+            - img [ref=f22e284]
+            - text: プレビュー更新
+    - main [ref=f22e101]:
+      - generic [ref=f22e110]:
+        - generic [ref=f22e111]: 弊社管理No：
+        - generic [ref=f22e112]: 工事写真報告書
+        - table [ref=f22e113]:
+          - rowgroup [ref=f22e114]:
+            - row "作成日" [ref=f22e115]:
+              - cell "作成日" [ref=f22e116]
+              - cell [ref=f22e117]
+            - row "管理番号/注文番号" [ref=f22e118]:
+              - cell "管理番号/注文番号" [ref=f22e119]
+              - cell [ref=f22e120]
+        - table [ref=f22e121]:
+          - rowgroup [ref=f22e122]:
+            - row "現場名" [ref=f22e123]:
+              - cell "現場名" [ref=f22e124]
+              - cell [ref=f22e125]
+            - row "現場住所" [ref=f22e126]:
+              - cell "現場住所" [ref=f22e127]
+              - cell [ref=f22e128]
+            - row "工事内容" [ref=f22e129]:
+              - cell "工事内容" [ref=f22e130]
+              - cell [ref=f22e131]
+            - row "工事日 2026/07/06" [ref=f22e132]:
+              - cell "工事日" [ref=f22e133]
+              - cell "2026/07/06" [ref=f22e134]
+        - table [ref=f22e135]:
+          - rowgroup [ref=f22e136]:
+            - row "所属" [ref=f22e137]:
+              - cell "所属" [ref=f22e138]
+              - cell [ref=f22e139]
+            - row "担当者" [ref=f22e140]:
+              - cell "担当者" [ref=f22e141]
+              - cell [ref=f22e142]
+      - generic [ref=f22e143]:
+        - generic [ref=f22e144]: 工事写真報告書
+        - table [ref=f22e147]:
+          - rowgroup [ref=f22e148]:
+            - row "工 事 名" [ref=f22e149]:
+              - cell "工 事 名" [ref=f22e150]
+              - cell [ref=f22e151]
+            - row "工 程 その他" [ref=f22e152]:
+              - cell "工 程" [ref=f22e153]
+              - cell "その他" [ref=f22e154]
+        - generic [ref=f22e155]:
+          - generic [ref=f22e158]:
+            - generic [ref=f22e159]:
+              - generic [ref=f22e160]: 撮影日
+              - generic [ref=f22e161]: 2026年7月6日
+            - generic [ref=f22e163]: タイトル
+            - generic [ref=f22e166]: 説 明
+          - generic [ref=f22e168]:
+            - generic [ref=f22e170]: （写真なし）
+            - generic [ref=f22e171]:
+              - generic [ref=f22e173]: 撮影日
+              - generic [ref=f22e176]: タイトル
+              - generic [ref=f22e179]: 説 明
+          - generic [ref=f22e181]:
+            - generic [ref=f22e183]: （写真なし）
+            - generic [ref=f22e184]:
+              - generic [ref=f22e186]: 撮影日
+              - generic [ref=f22e189]: タイトル
+              - generic [ref=f22e192]: 説 明
+        - generic [ref=f22e194]: 2 / 2 ページ

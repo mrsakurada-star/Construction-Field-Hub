@@ -1,0 +1,189 @@
+- generic [active] [ref=f24e1]:
+  - banner [ref=f24e2]:
+    - img [ref=f24e4]
+    - heading "工事写真報告書 作成ツール" [level=1] [ref=f24e9]
+    - generic [ref=f24e10]:
+      - button "プレビュー更新" [ref=f24e11] [cursor=pointer]:
+        - img [ref=f24e12]
+        - text: プレビュー更新
+      - button "並べ替え" [ref=f24e15] [cursor=pointer]:
+        - img [ref=f24e16]
+        - text: 並べ替え
+      - button "PDF出力" [ref=f24e21] [cursor=pointer]:
+        - img [ref=f24e22]
+        - text: PDF出力
+  - generic [ref=f24e26]:
+    - complementary [ref=f24e27]:
+      - generic [ref=f24e28]:
+        - button "表紙情報" [ref=f24e29] [cursor=pointer]:
+          - img [ref=f24e30]
+          - text: 表紙情報
+        - button "写真管理 4" [ref=f24e33] [cursor=pointer]:
+          - img [ref=f24e34]
+          - text: 写真管理
+          - generic [ref=f24e38]: "4"
+      - generic [ref=f24e40]:
+        - generic [ref=f24e41]: 作成者・日付
+        - generic [ref=f24e42]:
+          - generic [ref=f24e43]: 作成日
+          - textbox "作成日" [ref=f24e44]
+        - generic [ref=f24e45]:
+          - generic [ref=f24e46]: 管理番号/注文番号
+          - textbox "例：2026-0304-001" [ref=f24e47]
+        - generic [ref=f24e48]:
+          - generic [ref=f24e49]: 弊社管理No
+          - textbox "例：ABC-12345" [ref=f24e50]
+        - generic [ref=f24e51]:
+          - generic [ref=f24e52]:
+            - generic [ref=f24e53]: 所属
+            - textbox "株式会社○○" [ref=f24e54]
+          - generic [ref=f24e55]:
+            - generic [ref=f24e56]: 担当者（作成者）
+            - textbox "山田 太郎" [ref=f24e57]
+        - generic [ref=f24e58]: 工事情報
+        - generic [ref=f24e59]:
+          - generic [ref=f24e60]: 現場名 / 工事名
+          - textbox "○○マンション" [ref=f24e61]
+        - generic [ref=f24e62]:
+          - generic [ref=f24e63]: 現場住所
+          - textbox "東京都○○区○○1-2-3" [ref=f24e64]
+        - generic [ref=f24e65]:
+          - generic [ref=f24e66]: 工事内容
+          - textbox "給湯器取替工事" [ref=f24e67]
+        - generic [ref=f24e68]: 工程一覧
+        - generic [ref=f24e69]:
+          - textbox "工程名" [ref=f24e70]:
+            - /placeholder: 例：基礎工事
+          - button "追加" [ref=f24e71] [cursor=pointer]:
+            - img [ref=f24e72]
+            - text: 追加
+        - generic [ref=f24e73]:
+          - generic [ref=f24e74]:
+            - generic [ref=f24e75]: 基礎工事
+            - generic [ref=f24e76]:
+              - button "上へ" [ref=f24e77] [cursor=pointer]:
+                - img [ref=f24e78]
+              - button "下へ" [ref=f24e80] [cursor=pointer]:
+                - img [ref=f24e81]
+              - button "削除" [ref=f24e83] [cursor=pointer]:
+                - img [ref=f24e84]
+          - generic [ref=f24e87]:
+            - generic [ref=f24e88]: 配管工事
+            - generic [ref=f24e89]:
+              - button "上へ" [ref=f24e90] [cursor=pointer]:
+                - img [ref=f24e91]
+              - button "下へ" [ref=f24e93] [cursor=pointer]:
+                - img [ref=f24e94]
+              - button "削除" [ref=f24e96] [cursor=pointer]:
+                - img [ref=f24e97]
+        - generic [ref=f24e100]:
+          - generic [ref=f24e101]:
+            - text: 工事日
+            - button "工事日" [ref=f24e102] [cursor=pointer]:
+              - img [ref=f24e103]
+              - text: 自動取得
+          - generic [ref=f24e108]:
+            - generic [ref=f24e109]:
+              - generic [ref=f24e110]: 開始日
+              - textbox "開始日" [ref=f24e111]: 2026-07-06
+            - generic [ref=f24e112]:
+              - generic [ref=f24e113]: 終了日
+              - textbox "終了日" [ref=f24e114]: 2026-07-06
+        - generic [ref=f24e115]:
+          - button "クリア" [ref=f24e116] [cursor=pointer]:
+            - img [ref=f24e117]
+            - text: クリア
+          - button "写真のみ削除" [ref=f24e120] [cursor=pointer]:
+            - img [ref=f24e121]
+            - text: 写真のみ削除
+    - main [ref=f24e128]:
+      - generic [ref=f24e129]:
+        - generic [ref=f24e130]: 弊社管理No：
+        - generic [ref=f24e131]: 工事写真報告書
+        - table [ref=f24e132]:
+          - rowgroup [ref=f24e133]:
+            - row "作成日" [ref=f24e134]:
+              - cell "作成日" [ref=f24e135]
+              - cell [ref=f24e136]
+            - row "管理番号/注文番号" [ref=f24e137]:
+              - cell "管理番号/注文番号" [ref=f24e138]
+              - cell [ref=f24e139]
+        - table [ref=f24e140]:
+          - rowgroup [ref=f24e141]:
+            - row "現場名" [ref=f24e142]:
+              - cell "現場名" [ref=f24e143]
+              - cell [ref=f24e144]
+            - row "現場住所" [ref=f24e145]:
+              - cell "現場住所" [ref=f24e146]
+              - cell [ref=f24e147]
+            - row "工事内容" [ref=f24e148]:
+              - cell "工事内容" [ref=f24e149]
+              - cell [ref=f24e150]
+            - row "工事日 2026/07/06" [ref=f24e151]:
+              - cell "工事日" [ref=f24e152]
+              - cell "2026/07/06" [ref=f24e153]
+        - table [ref=f24e154]:
+          - rowgroup [ref=f24e155]:
+            - row "所属" [ref=f24e156]:
+              - cell "所属" [ref=f24e157]
+              - cell [ref=f24e158]
+            - row "担当者" [ref=f24e159]:
+              - cell "担当者" [ref=f24e160]
+              - cell [ref=f24e161]
+      - generic [ref=f24e162]:
+        - generic [ref=f24e163]: 工事写真報告書
+        - table [ref=f24e166]:
+          - rowgroup [ref=f24e167]:
+            - row "工 事 名" [ref=f24e168]:
+              - cell "工 事 名" [ref=f24e169]
+              - cell [ref=f24e170]
+            - row "工 程 その他" [ref=f24e171]:
+              - cell "工 程" [ref=f24e172]
+              - cell "その他" [ref=f24e173]
+        - generic [ref=f24e174]:
+          - generic [ref=f24e177]:
+            - generic [ref=f24e178]:
+              - generic [ref=f24e179]: 撮影日
+              - generic [ref=f24e180]: 2026年7月6日
+            - generic [ref=f24e182]: タイトル
+            - generic [ref=f24e185]: 説 明
+          - generic [ref=f24e189]:
+            - generic [ref=f24e190]:
+              - generic [ref=f24e191]: 撮影日
+              - generic [ref=f24e192]: 2026年7月6日
+            - generic [ref=f24e194]: タイトル
+            - generic [ref=f24e197]: 説 明
+          - generic [ref=f24e201]:
+            - generic [ref=f24e202]:
+              - generic [ref=f24e203]: 撮影日
+              - generic [ref=f24e204]: 2026年7月6日
+            - generic [ref=f24e206]: タイトル
+            - generic [ref=f24e209]: 説 明
+        - generic [ref=f24e211]: 2 / 3 ページ
+      - generic [ref=f24e212]:
+        - generic [ref=f24e213]: 工事写真報告書
+        - table [ref=f24e216]:
+          - rowgroup [ref=f24e217]:
+            - row "工 事 名" [ref=f24e218]:
+              - cell "工 事 名" [ref=f24e219]
+              - cell [ref=f24e220]
+        - generic [ref=f24e221]:
+          - generic [ref=f24e224]:
+            - generic [ref=f24e225]:
+              - generic [ref=f24e226]: 撮影日
+              - generic [ref=f24e227]: 2026年7月6日
+            - generic [ref=f24e229]: タイトル
+            - generic [ref=f24e232]: 説 明
+          - generic [ref=f24e234]:
+            - generic [ref=f24e236]: （写真なし）
+            - generic [ref=f24e237]:
+              - generic [ref=f24e239]: 撮影日
+              - generic [ref=f24e242]: タイトル
+              - generic [ref=f24e245]: 説 明
+          - generic [ref=f24e247]:
+            - generic [ref=f24e249]: （写真なし）
+            - generic [ref=f24e250]:
+              - generic [ref=f24e252]: 撮影日
+              - generic [ref=f24e255]: タイトル
+              - generic [ref=f24e258]: 説 明
+        - generic [ref=f24e260]: 3 / 3 ページ

@@ -1,0 +1,240 @@
+- generic [ref=f24e1]:
+  - banner [ref=f24e2]:
+    - img [ref=f24e4]
+    - heading "工事写真報告書 作成ツール" [level=1] [ref=f24e9]
+    - generic [ref=f24e10]:
+      - button "プレビュー更新" [ref=f24e11] [cursor=pointer]:
+        - img [ref=f24e12]
+        - text: プレビュー更新
+      - button "並べ替え" [ref=f24e15] [cursor=pointer]:
+        - img [ref=f24e16]
+        - text: 並べ替え
+      - button "PDF出力" [ref=f24e21] [cursor=pointer]:
+        - img [ref=f24e22]
+        - text: PDF出力
+  - generic [ref=f24e26]:
+    - complementary [ref=f24e27]:
+      - generic [ref=f24e28]:
+        - button "表紙情報" [ref=f24e29] [cursor=pointer]:
+          - img [ref=f24e30]
+          - text: 表紙情報
+        - button "写真管理 4" [ref=f24e33] [cursor=pointer]:
+          - img [ref=f24e34]
+          - text: 写真管理
+          - generic [ref=f24e38]: "4"
+      - generic [ref=f24e262]:
+        - generic [ref=f24e263]:
+          - generic [ref=f24e264] [cursor=pointer]:
+            - img [ref=f24e266]
+            - paragraph [ref=f24e269]:
+              - text: 写真をドラッグ＆ドロップ
+              - text: またはクリックして選択
+          - generic [ref=f24e395]:
+            - generic [ref=f24e396]: 2枚選択中
+            - button "選択を解除" [ref=f24e397] [cursor=pointer]
+            - combobox "移動先の工程" [ref=f24e398]:
+              - option "未分類" [selected]
+              - option "基礎工事"
+              - option "配管工事"
+            - combobox "移動先の状態" [ref=f24e399]:
+              - option "前" [selected]
+              - option "中"
+              - option "後"
+            - button "移動" [ref=f24e400] [cursor=pointer]:
+              - img [ref=f24e401]
+              - text: 移動
+            - button "削除" [ref=f24e406] [cursor=pointer]:
+              - img [ref=f24e407]
+              - text: 削除
+          - generic [ref=f24e270]:
+            - generic [ref=f24e272]: 基礎工事
+            - generic [ref=f24e274]: 配管工事
+            - generic [ref=f24e275]:
+              - generic [ref=f24e276]: 未分類
+              - generic [ref=f24e277]: 前
+              - generic [ref=f24e278]:
+                - generic [ref=f24e279]:
+                  - checkbox "この写真を選択" [checked] [ref=f24e280] [cursor=pointer]
+                  - generic "test1.jpg" [ref=f24e281]
+                  - generic [ref=f24e282]:
+                    - button "上へ" [ref=f24e283] [cursor=pointer]:
+                      - img [ref=f24e284]
+                    - button "下へ" [ref=f24e286] [cursor=pointer]:
+                      - img [ref=f24e287]
+                    - button "削除" [ref=f24e289] [cursor=pointer]:
+                      - img [ref=f24e290]
+                - generic [ref=f24e293]:
+                  - button "前" [ref=f24e294] [cursor=pointer]
+                  - button "中" [ref=f24e295] [cursor=pointer]
+                  - button "後" [ref=f24e296] [cursor=pointer]
+                - generic [ref=f24e297]:
+                  - generic [ref=f24e298]: 撮影日
+                  - textbox [ref=f24e300]: 2026-07-06
+                  - generic [ref=f24e301]: タイトル
+                  - textbox "作業前①" [ref=f24e302]
+                  - generic [ref=f24e303]: 説明
+                  - textbox "外観" [ref=f24e304]
+              - generic [ref=f24e305]:
+                - generic [ref=f24e306]:
+                  - checkbox "この写真を選択" [checked] [active] [ref=f24e307] [cursor=pointer]
+                  - generic "test2.jpg" [ref=f24e308]
+                  - generic [ref=f24e309]:
+                    - button "上へ" [ref=f24e310] [cursor=pointer]:
+                      - img [ref=f24e311]
+                    - button "下へ" [ref=f24e313] [cursor=pointer]:
+                      - img [ref=f24e314]
+                    - button "削除" [ref=f24e316] [cursor=pointer]:
+                      - img [ref=f24e317]
+                - generic [ref=f24e320]:
+                  - button "前" [ref=f24e321] [cursor=pointer]
+                  - button "中" [ref=f24e322] [cursor=pointer]
+                  - button "後" [ref=f24e323] [cursor=pointer]
+                - generic [ref=f24e324]:
+                  - generic [ref=f24e325]: 撮影日
+                  - textbox [ref=f24e327]: 2026-07-06
+                  - generic [ref=f24e328]: タイトル
+                  - textbox "作業前①" [ref=f24e329]
+                  - generic [ref=f24e330]: 説明
+                  - textbox "外観" [ref=f24e331]
+              - generic [ref=f24e332]:
+                - generic [ref=f24e333]:
+                  - checkbox "この写真を選択" [ref=f24e334] [cursor=pointer]
+                  - generic "test3.jpg" [ref=f24e335]
+                  - generic [ref=f24e336]:
+                    - button "上へ" [ref=f24e337] [cursor=pointer]:
+                      - img [ref=f24e338]
+                    - button "下へ" [ref=f24e340] [cursor=pointer]:
+                      - img [ref=f24e341]
+                    - button "削除" [ref=f24e343] [cursor=pointer]:
+                      - img [ref=f24e344]
+                - generic [ref=f24e347]:
+                  - button "前" [ref=f24e348] [cursor=pointer]
+                  - button "中" [ref=f24e349] [cursor=pointer]
+                  - button "後" [ref=f24e350] [cursor=pointer]
+                - generic [ref=f24e351]:
+                  - generic [ref=f24e352]: 撮影日
+                  - textbox [ref=f24e354]: 2026-07-06
+                  - generic [ref=f24e355]: タイトル
+                  - textbox "作業前①" [ref=f24e356]
+                  - generic [ref=f24e357]: 説明
+                  - textbox "外観" [ref=f24e358]
+              - generic [ref=f24e359]:
+                - generic [ref=f24e360]:
+                  - checkbox "この写真を選択" [ref=f24e361] [cursor=pointer]
+                  - generic "test4.jpg" [ref=f24e362]
+                  - generic [ref=f24e363]:
+                    - button "上へ" [ref=f24e364] [cursor=pointer]:
+                      - img [ref=f24e365]
+                    - button "下へ" [ref=f24e367] [cursor=pointer]:
+                      - img [ref=f24e368]
+                    - button "削除" [ref=f24e370] [cursor=pointer]:
+                      - img [ref=f24e371]
+                - generic [ref=f24e374]:
+                  - button "前" [ref=f24e375] [cursor=pointer]
+                  - button "中" [ref=f24e376] [cursor=pointer]
+                  - button "後" [ref=f24e377] [cursor=pointer]
+                - generic [ref=f24e378]:
+                  - generic [ref=f24e379]: 撮影日
+                  - textbox [ref=f24e381]: 2026-07-06
+                  - generic [ref=f24e382]: タイトル
+                  - textbox "作業前①" [ref=f24e383]
+                  - generic [ref=f24e384]: 説明
+                  - textbox "外観" [ref=f24e385]
+        - generic [ref=f24e386]:
+          - button "全削除" [ref=f24e387] [cursor=pointer]:
+            - img [ref=f24e388]
+            - text: 全削除
+          - button "プレビュー更新" [ref=f24e391] [cursor=pointer]:
+            - img [ref=f24e392]
+            - text: プレビュー更新
+    - main [ref=f24e128]:
+      - generic [ref=f24e129]:
+        - generic [ref=f24e130]: 弊社管理No：
+        - generic [ref=f24e131]: 工事写真報告書
+        - table [ref=f24e132]:
+          - rowgroup [ref=f24e133]:
+            - row "作成日" [ref=f24e134]:
+              - cell "作成日" [ref=f24e135]
+              - cell [ref=f24e136]
+            - row "管理番号/注文番号" [ref=f24e137]:
+              - cell "管理番号/注文番号" [ref=f24e138]
+              - cell [ref=f24e139]
+        - table [ref=f24e140]:
+          - rowgroup [ref=f24e141]:
+            - row "現場名" [ref=f24e142]:
+              - cell "現場名" [ref=f24e143]
+              - cell [ref=f24e144]
+            - row "現場住所" [ref=f24e145]:
+              - cell "現場住所" [ref=f24e146]
+              - cell [ref=f24e147]
+            - row "工事内容" [ref=f24e148]:
+              - cell "工事内容" [ref=f24e149]
+              - cell [ref=f24e150]
+            - row "工事日 2026/07/06" [ref=f24e151]:
+              - cell "工事日" [ref=f24e152]
+              - cell "2026/07/06" [ref=f24e153]
+        - table [ref=f24e154]:
+          - rowgroup [ref=f24e155]:
+            - row "所属" [ref=f24e156]:
+              - cell "所属" [ref=f24e157]
+              - cell [ref=f24e158]
+            - row "担当者" [ref=f24e159]:
+              - cell "担当者" [ref=f24e160]
+              - cell [ref=f24e161]
+      - generic [ref=f24e162]:
+        - generic [ref=f24e163]: 工事写真報告書
+        - table [ref=f24e166]:
+          - rowgroup [ref=f24e167]:
+            - row "工 事 名" [ref=f24e168]:
+              - cell "工 事 名" [ref=f24e169]
+              - cell [ref=f24e170]
+            - row "工 程 その他" [ref=f24e171]:
+              - cell "工 程" [ref=f24e172]
+              - cell "その他" [ref=f24e173]
+        - generic [ref=f24e174]:
+          - generic [ref=f24e177]:
+            - generic [ref=f24e178]:
+              - generic [ref=f24e179]: 撮影日
+              - generic [ref=f24e180]: 2026年7月6日
+            - generic [ref=f24e182]: タイトル
+            - generic [ref=f24e185]: 説 明
+          - generic [ref=f24e189]:
+            - generic [ref=f24e190]:
+              - generic [ref=f24e191]: 撮影日
+              - generic [ref=f24e192]: 2026年7月6日
+            - generic [ref=f24e194]: タイトル
+            - generic [ref=f24e197]: 説 明
+          - generic [ref=f24e201]:
+            - generic [ref=f24e202]:
+              - generic [ref=f24e203]: 撮影日
+              - generic [ref=f24e204]: 2026年7月6日
+            - generic [ref=f24e206]: タイトル
+            - generic [ref=f24e209]: 説 明
+        - generic [ref=f24e211]: 2 / 3 ページ
+      - generic [ref=f24e212]:
+        - generic [ref=f24e213]: 工事写真報告書
+        - table [ref=f24e216]:
+          - rowgroup [ref=f24e217]:
+            - row "工 事 名" [ref=f24e218]:
+              - cell "工 事 名" [ref=f24e219]
+              - cell [ref=f24e220]
+        - generic [ref=f24e221]:
+          - generic [ref=f24e224]:
+            - generic [ref=f24e225]:
+              - generic [ref=f24e226]: 撮影日
+              - generic [ref=f24e227]: 2026年7月6日
+            - generic [ref=f24e229]: タイトル
+            - generic [ref=f24e232]: 説 明
+          - generic [ref=f24e234]:
+            - generic [ref=f24e236]: （写真なし）
+            - generic [ref=f24e237]:
+              - generic [ref=f24e239]: 撮影日
+              - generic [ref=f24e242]: タイトル
+              - generic [ref=f24e245]: 説 明
+          - generic [ref=f24e247]:
+            - generic [ref=f24e249]: （写真なし）
+            - generic [ref=f24e250]:
+              - generic [ref=f24e252]: 撮影日
+              - generic [ref=f24e255]: タイトル
+              - generic [ref=f24e258]: 説 明
+        - generic [ref=f24e260]: 3 / 3 ページ

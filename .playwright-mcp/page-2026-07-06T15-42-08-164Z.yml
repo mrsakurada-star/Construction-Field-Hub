@@ -1,0 +1,102 @@
+- generic [active] [ref=f2e1]:
+  - generic [ref=f2e2]:
+    - generic [ref=f2e3]:
+      - heading "FAX送信票・送付状作成" [level=1] [ref=f2e4]
+      - generic [ref=f2e5]:
+        - generic [ref=f2e6] [cursor=pointer]: FAX送信票
+        - generic [ref=f2e7] [cursor=pointer]: 書類送付状
+    - generic [ref=f2e8]:
+      - generic [ref=f2e9]:
+        - generic [ref=f2e10]: 日付
+        - textbox "日付" [ref=f2e11]: 2026-07-07
+      - generic [ref=f2e12]:
+        - generic [ref=f2e13]: 送信枚数 (本状含む)
+        - textbox "送信枚数 (本状含む)" [ref=f2e14]:
+          - /placeholder: 例：1 枚
+      - generic [ref=f2e15]:
+        - generic [ref=f2e16]: 宛先 (会社名・部署名)
+        - textbox "宛先 (会社名・部署名)" [ref=f2e17]:
+          - /placeholder: 例：株式会社 ○○
+      - generic [ref=f2e18]:
+        - generic [ref=f2e19]: 敬称
+        - combobox "敬称" [ref=f2e20] [cursor=pointer]:
+          - option "御中 (会社・部署宛)"
+          - option "様 (個人宛)" [selected]
+      - generic [ref=f2e21]:
+        - generic [ref=f2e22]: 相手先FAX番号
+        - textbox "相手先FAX番号" [ref=f2e23]:
+          - /placeholder: 例：00-0000-0000
+      - generic [ref=f2e24]:
+        - generic [ref=f2e25]:
+          - generic [ref=f2e26]: 送信元事業所の選択
+          - button "🔄 最新データ取得" [ref=f2e27]
+        - combobox "送信元事業所の選択" [ref=f2e28] [cursor=pointer]:
+          - option "リビングソリューション本部" [selected]
+          - option "リビングソリューション東京"
+          - option "リビングソリューション千葉"
+          - option "リビングソリューション神奈川"
+          - option "リビングソリューション埼玉"
+          - option "リビングソリューション札幌"
+          - option "リビングソリューション北東北(秋田・青森)"
+          - option "リビングソリューション北東北(盛岡・八戸)"
+          - option "リビングソリューション仙台"
+          - option "リビングソリューション新潟"
+          - option "リビングソリューション長野"
+          - option "リビングソリューション静岡"
+          - option "リビングソリューション名古屋"
+          - option "リビングソリューション金沢"
+          - option "リビングソリューション大阪"
+          - option "リビングソリューション京滋"
+          - option "リビングソリューション広島"
+          - option "リビングソリューション高松"
+          - option "リビングソリューション松山"
+          - option "リビングソリューション福岡"
+          - option "リビングソリューション沖縄"
+          - option "アクア事業部門本部"
+      - generic [ref=f2e29]:
+        - generic [ref=f2e30]: 差出人担当（あなた）
+        - textbox "差出人担当（あなた）" [ref=f2e31]:
+          - /placeholder: あなたの名前
+      - generic [ref=f2e32]:
+        - generic [ref=f2e33]: 件名
+        - textbox "件名" [ref=f2e34]:
+          - /placeholder: 例：御見積書の送付について
+      - generic [ref=f2e35]:
+        - generic [ref=f2e36]: メッセージ正文
+        - textbox "メッセージ正文" [ref=f2e37]:
+          - /placeholder: "拝啓　時下ますますご清栄のこととお慶び申し上げます。\n平素は格別のご高配を賜り、厚く御礼申し上げます。\nさて、下記書類をFAXにて送信いたします。ご査収のほど宜しくお願い申し上げます。"
+      - generic [ref=f2e38]:
+        - generic [ref=f2e39]: 同封内容 (あれば追加)
+        - textbox "同封内容 (あれば追加)" [ref=f2e40]:
+          - /placeholder: "・御見積書　1点\n・商品カタログ　1点"
+    - button "印刷 / PDF保存" [ref=f2e42] [cursor=pointer]
+  - generic [ref=f2e44]:
+    - generic [ref=f2e45]: 令和8年 7月 7日
+    - generic [ref=f2e46]: FAX送信票
+    - generic [ref=f2e47]:
+      - generic [ref=f2e48]:
+        - generic [ref=f2e49]:
+          - generic [ref=f2e50]: （宛先未入力）
+          - generic [ref=f2e51]: 様
+        - generic [ref=f2e53]: FAX：
+      - generic [ref=f2e54]:
+        - generic [ref=f2e55]: 株式会社パーパスエコテック
+        - generic [ref=f2e56]: リビングソリューション本部
+        - generic [ref=f2e57]:
+          - text: 〒170-0013
+          - text: 東京都豊島区東池袋1-18-1
+          - text: Hareza Tower 12F
+          - text: TEL：03-4221-3495
+          - text: FAX：03-4221-3901
+          - text: 担当：
+    - generic [ref=f2e59]: （件名未入力）
+    - generic [ref=f2e60]:
+      - generic [ref=f2e61]: 送信枚数：
+      - generic [ref=f2e62]: 1 枚 (本状を含む)
+    - generic [ref=f2e63]:
+      - text: 拝啓
+      - text: 時下ますますご清栄のこととお慶び申し上げます。平素は格別のご高配を賜り、厚く御礼申し上げます。
+      - text: さて、下記の通り書類を送付いたしましたので、ご査収のほどよろしくお願い申し上げます。
+      - text: 何卒よろしくお願いいたします。
+      - text: 敬具
+  - generic [ref=f2e64]: © 2026 Nozomi Sakurada. All rights reserved.

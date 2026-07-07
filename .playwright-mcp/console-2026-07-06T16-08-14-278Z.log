@@ -1,0 +1,4 @@
+[     736ms] [ERROR] Failed to load resource: the server responded with a status of 404 (File not found) @ http://localhost:8127/favicon.ico:0
+[  200881ms] TypeError: Cannot read properties of undefined (reading 'remove')
+    at onProcessHeaderDrop (http://localhost:8127/Construction%20photos/js/photo.js:259:18)
+    at HTMLDivElement.<anonymous> (http://localhost:8127/Construction%20photos/js/photo.js:145:42)

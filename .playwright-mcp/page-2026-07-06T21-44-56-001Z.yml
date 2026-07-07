@@ -1,0 +1,43 @@
+- generic [ref=f20e1]:
+  - banner [ref=f20e2]:
+    - img [ref=f20e4]
+    - heading "工事写真報告書 作成ツール" [level=1] [ref=f20e9]
+    - generic [ref=f20e10]:
+      - button "プレビュー更新" [ref=f20e11] [cursor=pointer]:
+        - img [ref=f20e12]
+        - text: プレビュー更新
+      - button "並べ替え" [ref=f20e15] [cursor=pointer]:
+        - img [ref=f20e16]
+        - text: 並べ替え
+      - button "PDF出力" [ref=f20e21] [cursor=pointer]:
+        - img [ref=f20e22]
+        - text: PDF出力
+  - generic [ref=f20e26]:
+    - complementary [ref=f20e27]:
+      - generic [ref=f20e28]:
+        - button "表紙情報" [ref=f20e29] [cursor=pointer]:
+          - img [ref=f20e30]
+          - text: 表紙情報
+        - button "写真管理 0" [active] [ref=f20e33] [cursor=pointer]:
+          - img [ref=f20e34]
+          - text: 写真管理
+          - generic [ref=f20e38]: "0"
+      - generic [ref=f20e123]:
+        - generic [ref=f20e124]:
+          - generic [ref=f20e125] [cursor=pointer]:
+            - img [ref=f20e127]
+            - paragraph [ref=f20e130]:
+              - text: 写真をドラッグ＆ドロップ
+              - text: またはクリックして選択
+          - generic [ref=f20e133]: 基礎工事
+        - generic [ref=f20e134]:
+          - button "全削除" [ref=f20e135] [cursor=pointer]:
+            - img [ref=f20e136]
+            - text: 全削除
+          - button "プレビュー更新" [ref=f20e139] [cursor=pointer]:
+            - img [ref=f20e140]
+            - text: プレビュー更新
+    - main [ref=f20e101]:
+      - generic [ref=f20e102]:
+        - img [ref=f20e104]
+        - heading "プレビュー表示中" [level=3] [ref=f20e107]

@@ -1,0 +1,20 @@
+- generic [active] [ref=f1e1]:
+  - banner [ref=f1e2]:
+    - img [ref=f1e4]
+    - heading "写真並べ替え" [level=1] [ref=f1e9]
+    - generic [ref=f1e10]: ドラッグ＆ドロップで順番を変更できます
+    - generic [ref=f1e11]:
+      - button "メインへ戻る" [ref=f1e12] [cursor=pointer]:
+        - img [ref=f1e13]
+        - text: メインへ戻る
+      - button "この順番で保存" [ref=f1e15] [cursor=pointer]:
+        - img [ref=f1e16]
+        - text: この順番で保存
+      - button "保存してメインへ" [ref=f1e20] [cursor=pointer]:
+        - img [ref=f1e21]
+        - text: 保存してメインへ
+  - main [ref=f1e23]:
+    - generic [ref=f1e24]:
+      - generic [ref=f1e25]: 全
+      - generic [ref=f1e26]: 0枚
+      - generic [ref=f1e27]: の写真が登録されています。ドラッグして並び順を変更し、保存してください。

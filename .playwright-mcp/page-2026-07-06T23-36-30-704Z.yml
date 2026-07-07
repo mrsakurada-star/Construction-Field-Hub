@@ -1,0 +1,41 @@
+- generic [ref=f2e1]:
+  - banner [ref=f2e2]:
+    - img [ref=f2e4]
+    - heading "工事写真報告書 作成ツール" [level=1] [ref=f2e9]
+    - generic [ref=f2e10]:
+      - button "プレビュー更新" [ref=f2e11] [cursor=pointer]:
+        - img [ref=f2e12]
+        - text: プレビュー更新
+      - button "並べ替え" [ref=f2e15] [cursor=pointer]:
+        - img [ref=f2e16]
+        - text: 並べ替え
+      - button "PDF出力" [ref=f2e21] [cursor=pointer]:
+        - img [ref=f2e22]
+        - text: PDF出力
+  - generic [ref=f2e26]:
+    - complementary [ref=f2e27]:
+      - generic [ref=f2e28]:
+        - button "表紙情報" [ref=f2e29] [cursor=pointer]:
+          - img [ref=f2e30]
+          - text: 表紙情報
+        - button "写真管理 0" [active] [ref=f2e33] [cursor=pointer]:
+          - img [ref=f2e34]
+          - text: 写真管理
+          - generic [ref=f2e38]: "0"
+      - generic [ref=f2e113]:
+        - generic [ref=f2e115] [cursor=pointer]:
+          - img [ref=f2e117]
+          - paragraph [ref=f2e120]:
+            - text: 写真をドラッグ＆ドロップ
+            - text: またはクリックして選択
+        - generic [ref=f2e121]:
+          - button "全削除" [ref=f2e122] [cursor=pointer]:
+            - img [ref=f2e123]
+            - text: 全削除
+          - button "プレビュー更新" [ref=f2e126] [cursor=pointer]:
+            - img [ref=f2e127]
+            - text: プレビュー更新
+    - main [ref=f2e105]:
+      - generic [ref=f2e106]:
+        - img [ref=f2e108]
+        - heading "プレビュー表示中" [level=3] [ref=f2e111]

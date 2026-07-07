@@ -1,0 +1,76 @@
+- generic [active] [ref=f4e1]:
+  - banner [ref=f4e2]:
+    - img [ref=f4e4]
+    - heading "工事写真報告書 作成ツール" [level=1] [ref=f4e9]
+    - generic [ref=f4e10]:
+      - button "プレビュー更新" [ref=f4e11] [cursor=pointer]:
+        - img [ref=f4e12]
+        - text: プレビュー更新
+      - button "並べ替え" [ref=f4e15] [cursor=pointer]:
+        - img [ref=f4e16]
+        - text: 並べ替え
+      - button "PDF出力" [ref=f4e21] [cursor=pointer]:
+        - img [ref=f4e22]
+        - text: PDF出力
+  - generic [ref=f4e26]:
+    - complementary [ref=f4e27]:
+      - generic [ref=f4e28]:
+        - button "表紙情報" [ref=f4e29] [cursor=pointer]:
+          - img [ref=f4e30]
+          - text: 表紙情報
+        - button "写真管理 0" [ref=f4e33] [cursor=pointer]:
+          - img [ref=f4e34]
+          - text: 写真管理
+          - generic [ref=f4e38]: "0"
+      - generic [ref=f4e40]:
+        - generic [ref=f4e41]: 作成者・日付
+        - generic [ref=f4e42]:
+          - generic [ref=f4e43]: 作成日
+          - textbox "作成日" [ref=f4e44]
+        - generic [ref=f4e45]:
+          - generic [ref=f4e46]: 管理番号/注文番号
+          - textbox "例：2026-0304-001" [ref=f4e47]
+        - generic [ref=f4e48]:
+          - generic [ref=f4e49]: 弊社管理No
+          - textbox "例：ABC-12345" [ref=f4e50]
+        - generic [ref=f4e51]:
+          - generic [ref=f4e52]:
+            - generic [ref=f4e53]: 所属
+            - textbox "株式会社○○" [ref=f4e54]
+          - generic [ref=f4e55]:
+            - generic [ref=f4e56]: 担当者（作成者）
+            - textbox "山田 太郎" [ref=f4e57]
+        - generic [ref=f4e58]: 工事情報
+        - generic [ref=f4e59]:
+          - generic [ref=f4e60]: 現場名 / 工事名
+          - textbox "○○マンション" [ref=f4e61]
+        - generic [ref=f4e62]:
+          - generic [ref=f4e63]: 現場住所
+          - textbox "東京都○○区○○1-2-3" [ref=f4e64]
+        - generic [ref=f4e65]:
+          - generic [ref=f4e66]: 工事内容
+          - textbox "給湯器取替工事" [ref=f4e67]
+        - generic [ref=f4e68]:
+          - generic [ref=f4e69]:
+            - text: 工事日
+            - button "工事日" [ref=f4e70] [cursor=pointer]:
+              - img [ref=f4e71]
+              - text: 自動取得
+          - generic [ref=f4e76]:
+            - generic [ref=f4e77]:
+              - generic [ref=f4e78]: 開始日
+              - textbox "開始日" [ref=f4e79]
+            - generic [ref=f4e80]:
+              - generic [ref=f4e81]: 終了日
+              - textbox "終了日" [ref=f4e82]
+        - generic [ref=f4e83]:
+          - button "クリア" [ref=f4e84] [cursor=pointer]:
+            - img [ref=f4e85]
+            - text: クリア
+          - button "写真のみ削除" [ref=f4e88] [cursor=pointer]:
+            - img [ref=f4e89]
+            - text: 写真のみ削除
+    - main [ref=f4e96]:
+      - generic [ref=f4e97]:
+        - img [ref=f4e99]
+        - heading "プレビュー表示中" [level=3] [ref=f4e102]
