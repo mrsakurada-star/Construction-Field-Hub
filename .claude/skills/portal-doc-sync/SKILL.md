@@ -1,6 +1,6 @@
 ---
-name: Portal & Manual Synchronization (ポータル・説明書同期)
-description: 各ツールがアップデートされた際に、ポータルの設定（tools.js）と機能説明書（機能説明書.md）を常に最新の状態に保つためのスキル。
+name: portal-doc-sync
+description: プロジェクト内の各ツールに機能追加・仕様変更・バージョン更新があったときに使用。ツール内バージョンフィールド・ポータル設定（tools.js）・機能説明書（機能説明書.md）を一貫して同期させる。
 ---
 
 # `portal_doc_sync` スキル
@@ -9,6 +9,7 @@ description: 各ツールがアップデートされた際に、ポータルの�
 
 ## 1. 同期の対象ファイル
 
+- **ツール内データファイル**（例: `js/general.js`, `js/kitchen.js`）: 各ツール自身が持つ `version` フィールド。
 - **`js/tools.js`**: ポータル画面（index.html）のツールカードに表示されるタイトル、説明文、タグを管理します。
 - **`機能説明書.md`**: 全ツールの詳細な機能と具体的な操作手順を網羅したドキュメントです。
 - **`index.html` (ポータル)**: 特性が変わった場合や全体に関わる変更がある場合に更新します。
@@ -16,6 +17,19 @@ description: 各ツールがアップデートされた際に、ポータルの�
 ## 2. 実装手順とチェックリスト
 
 ツールのアップデート（機能追加、バグ修正、UI変更など）を完了した直後に、以下の手順を実施してください。
+
+### STEP 0: ツール内バージョンフィールドの更新
+
+対象ツール内のデータファイル（例: `js/general.js`, `js/kitchen.js`, `js/maint.js`）の `version` フィールドを更新する。
+
+```javascript
+// js/general.js
+version: "Ver1.3",  // Ver1.2 から更新
+```
+
+**よくある更新パターン:**
+- **Field_Checklists 更新時**: `js/general.js` / `js/kitchen.js` / `js/maint.js` の3ファイルすべての version を更新
+- **Hot Water Calc v3 更新時**: 該当ツール内のバージョンフィールドを確認・更新（詳細ロジックは [hotwater-logic-sync](../hotwater-logic-sync/SKILL.md) を参照）
 
 ### STEP 1: `js/tools.js` の更新
 - [ ] **`desc` (説明文)**: 新機能や改善点を短い文章（2〜3行）で反映します。

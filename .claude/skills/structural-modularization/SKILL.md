@@ -1,6 +1,6 @@
 ---
-name: Structural Modularization (構造モジュール化)
-description: 巨大なHTMLファイルを「データ・ロジック・デザイン」の役割別に分割し、メンテナンスと拡張を容易にする標準構造構築スキル
+name: structural-modularization
+description: 1ファイルに全コードが書かれた巨大な「モノリシックHTML」を安全に改修・拡張したいときに使用。HTML/CSS/JSを役割別（データ・ロジック・デザイン）に分割する標準フォルダ構造を適用する。
 ---
 
 # `structural_modularization` スキル

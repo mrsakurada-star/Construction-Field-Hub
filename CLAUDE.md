@@ -1,3 +1,30 @@
+# Construction Field Hub
+
+現場担当者向けの業務ツール群を束ねるポータル。各ツールは `[Tool Name]/index.html` を入口とする独立フォルダで、`js/tools.js` からポータルにカード登録される。
+
+## アーキテクチャ
+
+- **`css/portal.css`が正**（Purpose Ecotech デザイントークン: `--ink` / `--ash` / `--ash-2` / `--clay` / `--mist`、`border-radius: 0`、200ms系トランジション）。2026-07-03 にオレンジ系トークンからリデザイン済み。
+- **`css/design-system.css` はレガシー**。旧オレンジトークン（`--accent #ff9500` 等）の残骸なので新規参照禁止。既存コードで見つけたら `portal.css` トークンへ置き換える。
+- **`js/tools.js`**: ポータルのツールカード（タイトル・説明・タグ）を管理
+- **`js/updates.js`**: ポータルの「最近のアップデート」履歴（`PORTAL_UPDATES` 配列）
+- **`機能説明書.md`**: 全ツールの詳細な機能・操作手順ドキュメント
+
+## skill一覧（`.claude/skills/`）
+
+| skill | 適用場面 |
+|---|---|
+| `simple-design-standard` | 新規ツール作成・既存UI修正（Purpose Ecotechトークン・Lucide Icons適用） |
+| `structural-modularization` | モノリシックHTMLを分割・構造化するとき |
+| `a4-print-adjustment` | 印刷レイアウトをA4 1枚に収めるとき |
+| `spa-button-type-enforcement` | `<button>` タグ実装・「押すと画面が真っ白」系バグ調査 |
+| `copyright-insertion` | ファイル新規作成・編集・コピーライト一括監査 |
+| `portal-doc-sync` | ツールのバージョン更新・機能追加時（version・tools.js・機能説明書.md同期） |
+| `portal-update-logging` | ツール更新後の js/updates.js 履歴追加 |
+| `hotwater-logic-sync` | 給湯能力計算の計算式・定数変更時（計算ロジック.md 同期） |
+
+gitnexus 系skill（`gitnexus-exploring` 等）は下記 CLI 表を参照。
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 

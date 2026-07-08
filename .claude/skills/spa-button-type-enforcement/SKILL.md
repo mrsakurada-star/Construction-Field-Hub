@@ -1,6 +1,6 @@
 ---
-name: SPA Button Type Enforcement
-description: SPA（Single Page Application）における暗黙的なフォーム送信バグを防ぐため、すべてのbutton要素にtype属性（原則type="button"）を明記するスキル
+name: spa-button-type-enforcement
+description: 新規ツールの開発・改修でHTMLの<button>タグを書くとき、または「ボタンを押すと画面が真っ白になる/リロードされる」系のバグを調査するときに使用。type属性の明記漏れによる暗黙のtype="submit"バグを防ぐ。
 ---
 
 # SPA Button Type Enforcement（SPAボタンタイプ明示化）

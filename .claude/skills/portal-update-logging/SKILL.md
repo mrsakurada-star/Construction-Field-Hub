@@ -1,6 +1,6 @@
 ---
-name: Portal Update Logging (ポータル・アップデート記録管理)
-description: ツールに新機能追加や修正があった際、ポータル画面の「最近のアップデート」履歴を正しく更新するためのスキル。
+name: portal-update-logging
+description: ツールに新機能追加・バグ修正・UI改善があったときに使用。ポータル画面（index.html）の「最近のアップデート」履歴（js/updates.js）を正しい形式で更新する。
 ---
 
 # `portal_update_logging` スキル

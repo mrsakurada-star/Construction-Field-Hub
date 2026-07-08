@@ -1,3 +1,5 @@
+> プロジェクトのアーキテクチャ・skill一覧は `CLAUDE.md` を参照。
+
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 

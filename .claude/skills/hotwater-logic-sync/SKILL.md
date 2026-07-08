@@ -1,6 +1,6 @@
 ---
-name: Hot Water Calc Logic Sync（給湯計算ロジック同期）
-description: 給湯能力計算システムの計算ロジックに変更があった際に、計算ロジック.mdを最新状態に同期するためのスキル
+name: hotwater-logic-sync
+description: Hot water capacity calculation/js/main.js の計算式・係数・定数・給湯方式ロジックを変更したときに使用。計算ロジック.md を正確・一貫した状態に同期する。
 ---
 
 # `hotwater_logic_sync` スキル
