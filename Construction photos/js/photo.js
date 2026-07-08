@@ -258,6 +258,9 @@ function buildPhotoCard(p) {
   div.dataset.photoId = String(p.id);
   div.addEventListener('dragstart', onPhotoCardDragStart);
   div.addEventListener('dragend', onPhotoCardDragEnd);
+  div.addEventListener('dragover', onPhotoCardDragOver);
+  div.addEventListener('dragleave', onPhotoCardDragLeave);
+  div.addEventListener('drop', onPhotoCardDrop);
 
   const phaseTabsHTML = PHASE_ORDER.map(ph => `
     <button type="button"
@@ -332,6 +335,36 @@ function onPhotoCardDragStart(e) {
 function onPhotoCardDragEnd() {
   this.classList.remove('dragging');
   dragPhotoId = null;
+}
+
+/** カード矩形の上半分にカーソルがあるかを判定する（dragover のインジケータ表示・drop の挿入位置決定の両方から使う） */
+function isDragOverTopHalf(e, el) {
+  const rect = el.getBoundingClientRect();
+  return (e.clientY - rect.top) < rect.height / 2;
+}
+
+function onPhotoCardDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  if (dragPhotoId === null || parseInt(this.dataset.photoId) === dragPhotoId) return;
+
+  document.querySelectorAll('.photo-item.drag-over-top, .photo-item.drag-over-bottom').forEach(el => {
+    if (el !== this) el.classList.remove('drag-over-top', 'drag-over-bottom');
+  });
+
+  const topHalf = isDragOverTopHalf(e, this);
+  this.classList.toggle('drag-over-top', topHalf);
+  this.classList.toggle('drag-over-bottom', !topHalf);
+}
+
+function onPhotoCardDragLeave() {
+  this.classList.remove('drag-over-top', 'drag-over-bottom');
+}
+
+function onPhotoCardDrop(e) {
+  e.preventDefault();
+  this.classList.remove('drag-over-top', 'drag-over-bottom');
+  // Task 2 で並び替え本体を実装
 }
 
 function onProcessHeaderDragOver(e) {
