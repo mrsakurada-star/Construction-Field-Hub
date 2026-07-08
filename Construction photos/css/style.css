@@ -417,6 +417,14 @@
       opacity: 0.4;
     }
 
+    .photo-item.drag-over-top {
+      border-top: 3px solid var(--stamp);
+    }
+
+    .photo-item.drag-over-bottom {
+      border-bottom: 3px solid var(--stamp);
+    }
+
     /* 複数選択 一括操作バー */
     .selection-toolbar {
       display: flex;
