@@ -334,6 +334,9 @@ function onPhotoCardDragStart(e) {
 
 function onPhotoCardDragEnd() {
   this.classList.remove('dragging');
+  document.querySelectorAll('.photo-item.drag-over-top, .photo-item.drag-over-bottom').forEach(el => {
+    el.classList.remove('drag-over-top', 'drag-over-bottom');
+  });
   dragPhotoId = null;
 }
 
