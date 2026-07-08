@@ -373,11 +373,11 @@ function onPhotoCardDrop(e) {
 
   const dragIdx = photos.findIndex(p => p.id === dragPhotoId);
   if (dragIdx === -1) return;
+  if (!photos.some(p => p.id === targetId)) return; // ドロップ先が既に存在しない（古いDOM）場合は何もしない
+
   const [dragged] = photos.splice(dragIdx, 1);
 
   const target = photos.find(p => p.id === targetId);
-  if (!target) return; // ドラッグ元自身が対象だった場合は splice 済みで target が消えている
-
   dragged.processId = target.processId;
   dragged.phase = target.phase;
 

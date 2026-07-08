@@ -1,0 +1,10 @@
+::1 - - [08/Jul/2026 16:46:02] "GET /Construction%20photos/index.html HTTP/1.1" 200 -
+::1 - - [08/Jul/2026 16:46:02] "GET /Construction%20photos/css/style.css HTTP/1.1" 200 -
+::1 - - [08/Jul/2026 16:46:02] "GET /Construction%20photos/js/common.js HTTP/1.1" 200 -
+::1 - - [08/Jul/2026 16:46:02] "GET /Construction%20photos/js/db.js HTTP/1.1" 200 -
+::1 - - [08/Jul/2026 16:46:02] "GET /Construction%20photos/js/storage.js HTTP/1.1" 200 -
+::1 - - [08/Jul/2026 16:46:02] "GET /Construction%20photos/js/renderer.js HTTP/1.1" 200 -
+::1 - - [08/Jul/2026 16:46:02] "GET /Construction%20photos/js/photo.js HTTP/1.1" 200 -
+::1 - - [08/Jul/2026 16:46:02] "GET /Construction%20photos/js/pdf_export.js HTTP/1.1" 200 -
+::1 - - [08/Jul/2026 16:46:02] code 404, message File not found
+::1 - - [08/Jul/2026 16:46:02] "GET /favicon.ico HTTP/1.1" 404 -
