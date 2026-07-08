@@ -367,7 +367,27 @@ function onPhotoCardDragLeave() {
 function onPhotoCardDrop(e) {
   e.preventDefault();
   this.classList.remove('drag-over-top', 'drag-over-bottom');
-  // Task 2 で並び替え本体を実装
+
+  const targetId = parseInt(this.dataset.photoId);
+  if (dragPhotoId === null || dragPhotoId === targetId) return;
+
+  const dragIdx = photos.findIndex(p => p.id === dragPhotoId);
+  if (dragIdx === -1) return;
+  const [dragged] = photos.splice(dragIdx, 1);
+
+  const target = photos.find(p => p.id === targetId);
+  if (!target) return; // ドラッグ元自身が対象だった場合は splice 済みで target が消えている
+
+  dragged.processId = target.processId;
+  dragged.phase = target.phase;
+
+  const targetIdx = photos.findIndex(p => p.id === targetId);
+  const insertAt = isDragOverTopHalf(e, this) ? targetIdx : targetIdx + 1;
+  photos.splice(insertAt, 0, dragged);
+
+  saveToStorage();
+  renderPhotoList();
+  updatePreview();
 }
 
 function onProcessHeaderDragOver(e) {
