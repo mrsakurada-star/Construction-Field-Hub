@@ -11,7 +11,21 @@
  */
 
 // 現在の並び順で管理する配列
-let photoItems = []; // { id, src, title, name, date }
+let photoItems = []; // { id, src, title, name, date, desc, processId, phase }
+
+// 並べ替え対象の写真が属する工程一覧（localStorage から復元、id/name のみ）
+let reorderProcesses = [];
+
+const PHASE_LABELS = { before: '前', during: '中', after: '後' };
+
+/** 写真1枚の「工程名・前中後」バッジ文字列を返す（未分類・削除済み工程は「未分類」） */
+function getProcessBadgeLabel(item) {
+  const phaseLabel = PHASE_LABELS[item.phase] || PHASE_LABELS.before;
+  const pr = item.processId === null || item.processId === undefined
+    ? null
+    : reorderProcesses.find(p => p.id === item.processId);
+  return `${pr ? pr.name : '未分類'}・${phaseLabel}`;
+}
 
 // ドラッグ状態
 let dragSrcEl  = null;
@@ -34,6 +48,7 @@ async function initReorder() {
     const data = JSON.parse(raw);
     meta  = data.photosMeta  || [];
     order = data.photoOrder  || meta.map(m => m.id);
+    reorderProcesses = data.processes || [];
   } catch (e) {
     showEmpty();
     return;
@@ -58,7 +73,10 @@ async function initReorder() {
         src:   srcMap.get(m.id) || null,
         title: m.title || '',
         name:  m.name  || '',
-        date:  m.date  || ''
+        date:  m.date  || '',
+        desc:      m.desc || '',
+        processId: m.processId ?? null,
+        phase:     m.phase || 'before'
       };
     });
 
@@ -91,6 +109,11 @@ function createCard(item, idx) {
   badge.className   = 'order-badge';
   badge.textContent = idx + 1;
 
+  // 工程バッジ（工程名・前中後）
+  const processBadge = document.createElement('div');
+  processBadge.className   = 'thumb-process-badge';
+  processBadge.textContent = getProcessBadgeLabel(item);
+
   // サムネイル画像エリア
   const imgWrap = document.createElement('div');
   imgWrap.className = 'thumb-img-wrap';
@@ -122,8 +145,15 @@ function createCard(item, idx) {
 
   info.appendChild(titleEl);
   info.appendChild(metaEl);
+  if (item.desc) {
+    const descEl = document.createElement('div');
+    descEl.className   = 'thumb-desc';
+    descEl.textContent = item.desc;
+    info.appendChild(descEl);
+  }
 
   card.appendChild(badge);
+  card.appendChild(processBadge);
   card.appendChild(imgWrap);
   card.appendChild(info);
 
