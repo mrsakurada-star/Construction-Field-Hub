@@ -34,6 +34,41 @@ function getProcessNameForPhoto(p) {
   return pr ? pr.name : 'その他';
 }
 
+/**
+ * ソート済み写真列（getSortedPhotosForExport の出力）を、工程が変わる境界で
+ * 必ず新しいページから始まるようにページ単位（最大3枚）に分割する。
+ * 各グループの先頭ページにのみ工程名を持たせ、続きのページは空文字にする。
+ */
+function buildPhotoPages(sortedPhotos) {
+  const groups = [];
+  let currentGroup = null;
+  let currentName;
+  sortedPhotos.forEach(p => {
+    const name = getProcessNameForPhoto(p);
+    if (!currentGroup || name !== currentName) {
+      currentGroup = { name, photos: [] };
+      groups.push(currentGroup);
+      currentName = name;
+    }
+    currentGroup.photos.push(p);
+  });
+  if (groups.length === 0) {
+    groups.push({ name: '', photos: [] });
+  }
+
+  const pages = [];
+  groups.forEach(group => {
+    const pageCount = Math.max(Math.ceil(group.photos.length / 3), 1);
+    for (let i = 0; i < pageCount; i++) {
+      pages.push({
+        processName: i === 0 ? group.name : '',
+        photos: group.photos.slice(i * 3, i * 3 + 3)
+      });
+    }
+  });
+  return pages;
+}
+
 function updatePreview() {
   saveToStorage();
   const area = document.getElementById('previewArea');
@@ -56,16 +91,12 @@ function updatePreview() {
   const frontPageCount = 1 + (hasSupplement ? 1 : 0); // 表紙 + （あれば）補足ページ
 
   const sortedPhotos = getSortedPhotosForExport();
-  const totalPages = Math.max(Math.ceil(sortedPhotos.length / 3), 1);
-  let lastProcessName = null;
-  for (let page = 0; page < totalPages; page++) {
-    const pagePhotos = sortedPhotos.slice(page * 3, page * 3 + 3);
-    const pageProcessName = pagePhotos.length ? getProcessNameForPhoto(pagePhotos[0]) : null;
-    const showProcessName = pageProcessName !== null && pageProcessName !== lastProcessName;
-    lastProcessName = pageProcessName !== null ? pageProcessName : lastProcessName;
-    const reportPage = buildReportPage(cover, pagePhotos, page + 1, totalPages + frontPageCount, showProcessName ? pageProcessName : '', frontPageCount);
+  const pages = buildPhotoPages(sortedPhotos);
+  const totalPages = pages.length;
+  pages.forEach((pg, idx) => {
+    const reportPage = buildReportPage(cover, pg.photos, idx + 1, totalPages + frontPageCount, pg.processName, frontPageCount);
     area.appendChild(reportPage);
-  }
+  });
 }
 
 function buildCoverPage(cover) {
