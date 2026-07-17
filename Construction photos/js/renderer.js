@@ -1,37 +1,7 @@
 /* © 2026 Nozomi Sakurada. All rights reserved. */
 
-/**
- * PDF/プレビュー出力用に、工程順 → phase順（前中後）→ 元の相対順序でソートした
- * photos のコピーを返す。photos 本体（写真管理タブでの表示順）は変更しない。
- */
 function getSortedPhotosForExport() {
-  const phaseRank = { before: 0, during: 1, after: 2 };
-  const processRank = new Map(processes.map((pr, idx) => [pr.id, idx]));
-  const UNASSIGNED_RANK = processes.length; // 未分類は最後
-
-  return photos
-    .map((p, idx) => ({ p, idx })) // 元の相対順序を保持するためのタイブレーカー
-    .sort((a, b) => {
-      const pidA = a.p.processId ?? null;
-      const pidB = b.p.processId ?? null;
-      const rankA = pidA === null ? UNASSIGNED_RANK : (processRank.get(pidA) ?? UNASSIGNED_RANK);
-      const rankB = pidB === null ? UNASSIGNED_RANK : (processRank.get(pidB) ?? UNASSIGNED_RANK);
-      if (rankA !== rankB) return rankA - rankB;
-
-      const phaseA = phaseRank[a.p.phase] ?? 0;
-      const phaseB = phaseRank[b.p.phase] ?? 0;
-      if (phaseA !== phaseB) return phaseA - phaseB;
-
-      return a.idx - b.idx;
-    })
-    .map(entry => entry.p);
-}
-
-/** 写真1枚が属する工程名を返す（未分類は 'その他'） */
-function getProcessNameForPhoto(p) {
-  if (p.processId === null || p.processId === undefined) return 'その他';
-  const pr = processes.find(pr => pr.id === p.processId);
-  return pr ? pr.name : 'その他';
+  return sortPhotosForExport(photos, processes);
 }
 
 /**
@@ -44,7 +14,7 @@ function buildPhotoPages(sortedPhotos) {
   let currentGroup = null;
   let currentName;
   sortedPhotos.forEach(p => {
-    const name = getProcessNameForPhoto(p);
+    const name = getProcessNameForPhoto(p, processes);
     if (!currentGroup || name !== currentName) {
       currentGroup = { name, photos: [] };
       groups.push(currentGroup);
