@@ -193,7 +193,6 @@ function removeProcess(id) {
   processes = processes.filter(p => p.id !== id);
   photos.forEach(p => { if (p.processId === id) p.processId = null; });
   saveToStorage();
-  renderProcessList();
   renderPhotoList();
 }
 
