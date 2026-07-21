@@ -182,7 +182,6 @@ function addProcess(name) {
   if (!trimmed) return;
   processes.push({ id: nextProcessId++, name: trimmed });
   saveToStorage();
-  renderProcessList();
   renderPhotoList();
 }
 
