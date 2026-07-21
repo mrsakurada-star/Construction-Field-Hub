@@ -47,14 +47,16 @@ async function handleFiles(files) {
       title: '',
       desc: '',
       processId: null,
-      phase: 'before'
+      phase: 'before',
+      label: ''
     };
     photos.push(photo);
   }
   renderPhotoList();
   applyAutoWorkDates(false);
   updatePreview();
-  document.getElementById('photoCount').textContent = photos.length;
+  const countEl = document.getElementById('photoCount');
+  if (countEl) countEl.textContent = photos.length;
 }
 
 function toDateInputFormat(d) {
@@ -163,23 +165,21 @@ function bulkDeleteSelected() {
   renderPhotoList();
   renderSelectionToolbar();
   updatePreview();
-  document.getElementById('photoCount').textContent = photos.length;
+  const countEl = document.getElementById('photoCount');
+  if (countEl) countEl.textContent = photos.length;
 }
 
-/** 選択中の写真をまとめて別の工程/phaseへ移動する */
+/** 選択中の写真をまとめて別の工程へ移動する */
 function bulkMoveSelected() {
   if (!selectedPhotoIds.size) return;
 
   const processSelect = document.getElementById('bulkMoveProcessSelect');
-  const phaseSelect = document.getElementById('bulkMovePhaseSelect');
   const targetProcessId = processSelect.value === '' ? null : parseInt(processSelect.value);
-  const targetPhase = phaseSelect.value;
 
   selectedPhotoIds.forEach(id => {
     const p = photos.find(x => x.id === id);
     if (p) {
       p.processId = targetProcessId;
-      p.phase = targetPhase;
     }
   });
 
@@ -201,59 +201,105 @@ function renderPhotoList() {
   const existingIds = new Set(photos.map(p => p.id));
   Array.from(selectedPhotoIds).forEach(id => { if (!existingIds.has(id)) selectedPhotoIds.delete(id); });
 
-  // グルーピングキー: processId (null は '未分類'扱い) -> phase -> photos[]
-  // 工程セクションは写真が0枚でもD&Dのドロップ対象として常に表示する（未分類セクションは写真がある場合のみ表示）
-  const groups = new Map(); // processId(or null) -> Map(phase -> photo[])
-  processes.forEach(pr => groups.set(pr.id, { before: [], during: [], after: [] }));
+  // グルーピング: processId -> photos[]
+  // 並べ替え順（photoOrder）は既に photos 配列に反映されているので、そのまま使用
+  const groups = new Map(); // processId(or null) -> photo[]
+  processes.forEach(pr => groups.set(pr.id, []));
   photos.forEach(p => {
     const pid = p.processId ?? null;
-    if (!groups.has(pid)) groups.set(pid, { before: [], during: [], after: [] });
-    const phase = PHASE_ORDER.includes(p.phase) ? p.phase : 'before';
-    groups.get(pid)[phase].push(p);
+    if (!groups.has(pid)) groups.set(pid, []);
+    groups.get(pid).push(p);
   });
 
   // 表示順: processes の並び順 → 末尾に未分類
   const orderedGroupKeys = [...processes.map(pr => pr.id), null];
 
   orderedGroupKeys.forEach(pid => {
-    const group = groups.get(pid);
-    if (!group) return; // 未分類グループに写真が1枚もない場合のみここに該当
-    if (pid === null && !Object.values(group).some(arr => arr.length)) return; // 未分類は空なら非表示
+    const groupPhotos = groups.get(pid);
+    if (pid === null && (!groupPhotos || !groupPhotos.length)) return; // 未分類は空なら非表示
 
-    const section = document.createElement('div');
-    section.className = 'process-section';
-    section.dataset.processId = pid === null ? '' : String(pid);
+    const group = document.createElement('div');
+    group.className = 'process-group';
+    group.dataset.processId = pid === null ? '' : String(pid);
 
+    // グループヘッダー: 工程名・枚数・ページ数ヒント・操作ボタン
     const header = document.createElement('div');
-    header.className = 'process-section-header';
-    header.textContent = pid === null
+    header.className = 'process-group-header';
+
+    const processName = pid === null
       ? '未分類'
       : (processes.find(pr => pr.id === pid)?.name || '未分類');
+    const photoCount = groupPhotos ? groupPhotos.length : 0;
+    const pageCount = Math.max(Math.ceil(photoCount / 3), 1); // 3枚/ページルール
+
+    const headerContent = document.createElement('div');
+    headerContent.className = 'process-group-header-content';
+    headerContent.innerHTML = `
+      <div class="process-group-info">
+        <span class="process-group-name">${escapeHtml(processName)}</span>
+        <span class="process-group-stats">·&nbsp;${photoCount}枚&nbsp;·&nbsp;${pageCount}ページ</span>
+      </div>
+      ${pid !== null ? `
+        <div class="process-group-actions">
+          <button class="btn-icon" type="button" onclick="moveProcess(${pid}, -1)" title="上へ">
+            <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg>
+          </button>
+          <button class="btn-icon" type="button" onclick="moveProcess(${pid}, 1)" title="下へ">
+            <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <button class="btn-icon" type="button" onclick="removeProcess(${pid})" title="削除">
+            <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+        </div>
+      ` : ''}
+    `;
+    header.appendChild(headerContent);
     header.addEventListener('dragover', onProcessHeaderDragOver);
     header.addEventListener('dragleave', onProcessHeaderDragLeave);
     header.addEventListener('drop', e => onProcessHeaderDrop(e, pid, header));
-    section.appendChild(header);
+    group.appendChild(header);
 
-    PHASE_ORDER.forEach(phase => {
-      const items = group[phase];
-      if (!items.length) return;
-
-      const phaseHeading = document.createElement('div');
-      phaseHeading.className = 'phase-heading';
-      phaseHeading.textContent = PHASE_LABELS[phase];
-      section.appendChild(phaseHeading);
-
-      items.forEach(p => section.appendChild(buildPhotoCard(p)));
-    });
-
-    list.appendChild(section);
+    // グリッド領域
+    const grid = document.createElement('div');
+    grid.className = 'photo-grid';
+    grid.dataset.processId = pid === null ? '' : String(pid);
+    if (!photoCount) {
+      // 空工程: 破線ドロップゾーン
+      grid.classList.add('empty-drop-zone');
+      grid.innerHTML = '<div class="empty-drop-hint">ここに写真をドラッグ</div>';
+    } else {
+      // 写真をグリッドに配置
+      groupPhotos.forEach((p, idx) => {
+        // 3枚ごとにページ区切りマーカーを挿入
+        if (idx > 0 && idx % 3 === 0) {
+          const marker = document.createElement('div');
+          marker.className = 'photo-grid-page-marker';
+          const pageNum = Math.floor(idx / 3) + 1;
+          marker.innerHTML = `<span>─ ページ ${pageNum} ─</span>`;
+          grid.appendChild(marker);
+        }
+        grid.appendChild(buildPhotoCard(p));
+      });
+    }
+    group.appendChild(grid);
+    list.appendChild(group);
   });
+
+  // 「＋工程を追加」ボタン
+  const addButton = document.createElement('div');
+  addButton.className = 'add-process-button-row';
+  addButton.innerHTML = `
+    <button class="btn btn-outline" type="button" onclick="showAddProcessDialog()">
+      <i data-lucide="plus"></i>工程を追加
+    </button>
+  `;
+  list.appendChild(addButton);
 }
 
-/** 1枚の写真カード DOM を構築する */
+/** 1枚の写真タイル DOM を構築する（グリッド用） */
 function buildPhotoCard(p) {
   const div = document.createElement('div');
-  div.className = 'photo-item';
+  div.className = 'photo-tile';
   div.draggable = true;
   div.dataset.photoId = String(p.id);
   div.addEventListener('dragstart', onPhotoCardDragStart);
@@ -262,40 +308,38 @@ function buildPhotoCard(p) {
   div.addEventListener('dragleave', onPhotoCardDragLeave);
   div.addEventListener('drop', onPhotoCardDrop);
 
-  const phaseTabsHTML = PHASE_ORDER.map(ph => `
-    <button type="button"
-      class="phase-tab-btn${(p.phase || 'before') === ph ? ' active' : ''}"
-      onclick="setPhotoPhase(${p.id}, '${ph}')">${PHASE_LABELS[ph]}</button>
-  `).join('');
+  // ラベルチップ（未設定なら非表示）
+  const labelChipHTML = (p.label && p.label.trim())
+    ? `<div class="label-chip" title="${escapeAttr(p.label)}">${escapeHtml(p.label)}</div>`
+    : '';
 
   div.innerHTML = `
-    <div class="photo-item-header">
+    <div class="photo-tile-header">
       <input type="checkbox" class="photo-select-checkbox" data-photo-id="${p.id}" ${selectedPhotoIds.has(p.id) ? 'checked' : ''} onchange="togglePhotoSelection(${p.id}, this.checked)" aria-label="この写真を選択">
-      <img class="photo-thumb" src="${p.src}" alt="">
-      <span class="photo-name" title="${p.name}">${p.name}</span>
-      <div class="photo-actions">
-        <button class="btn-icon up" onclick="movePhoto(${p.id}, -1)" title="上へ">
-          <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg>
-        </button>
-        <button class="btn-icon down" onclick="movePhoto(${p.id}, 1)" title="下へ">
-          <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </button>
-        <button class="btn-icon" onclick="removePhoto(${p.id})" title="削除">
+      <button class="photo-tile-thumb-btn" type="button" onclick="openLightbox(${p.id})" style="flex:1; border:none; background:none; padding:0; cursor:pointer;">
+        <img class="photo-tile-thumb" src="${p.src}" alt="">
+      </button>
+      <div class="photo-tile-actions">
+        <button class="btn-icon" type="button" onclick="removePhoto(${p.id})" title="削除">
           <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
       </div>
     </div>
-    <div class="phase-tabs">${phaseTabsHTML}</div>
-    <div class="photo-item-fields">
-      <label>撮影日</label>
-      <div class="photo-date-row">
-        <input type="date" value="${p.date || ''}" onchange="updatePhotoField(${p.id}, 'date', this.value)" style="flex:1">
-        ${p.exifDate ? '<span class="exif-badge"><svg class="icon-svg" style="width:1em;height:1em;margin-right:2px;" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>EXIF自動取得</span>' : ''}
+    ${labelChipHTML}
+    <div class="photo-tile-meta">
+      <div class="photo-meta-row">
+        <label>撮影日</label>
+        <input type="date" value="${p.date || ''}" onchange="updatePhotoField(${p.id}, 'date', this.value)">
+        ${p.exifDate ? '<svg class="icon-svg" viewBox="0 0 24 24" title="EXIF自動取得"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>' : ''}
       </div>
-      <label>タイトル</label>
-      <input type="text" value="${escapeAttr(p.title)}" placeholder="作業前①" oninput="updatePhotoField(${p.id}, 'title', this.value)">
-      <label>説明</label>
-      <textarea rows="2" placeholder="外観" oninput="updatePhotoField(${p.id}, 'desc', this.value)">${escapeHtml(p.desc)}</textarea>
+      <div class="photo-meta-row">
+        <label>タイトル</label>
+        <input type="text" value="${escapeAttr(p.title)}" placeholder="作業前①" oninput="updatePhotoField(${p.id}, 'title', this.value)">
+      </div>
+      <div class="photo-meta-row">
+        <label>説明</label>
+        <textarea rows="1" placeholder="外観" oninput="updatePhotoField(${p.id}, 'desc', this.value)">${escapeHtml(p.desc)}</textarea>
+      </div>
     </div>
   `;
   return div;
@@ -429,7 +473,8 @@ function removePhoto(id) {
   savedPhotoIds.delete(id);
   renderPhotoList();
   updatePreview();
-  document.getElementById('photoCount').textContent = photos.length;
+  const countEl = document.getElementById('photoCount');
+  if (countEl) countEl.textContent = photos.length;
 }
 
 async function clearAllPhotos() {
@@ -457,5 +502,164 @@ function applyAutoWorkDates(force = true) {
   if (force || !startEl.value) startEl.value = min;
   if (force || !endEl.value) endEl.value = max;
   saveToStorage();
+  updatePreview();
+}
+
+/** 工程追加ダイアログを表示する（簡易版） */
+function showAddProcessDialog() {
+  const name = prompt('新しい工程名を入力してください:');
+  if (name) {
+    addProcess(name);
+  }
+}
+
+// ライトボックス状態
+let currentLightboxPhotoId = null;
+
+/** ライトボックスを開く */
+function openLightbox(photoId) {
+  const photo = photos.find(p => p.id === photoId);
+  if (!photo) return;
+
+  currentLightboxPhotoId = photoId;
+  const overlay = document.getElementById('lightboxOverlay');
+
+  // 画像と情報を設定
+  document.getElementById('lightboxImage').src = photo.src;
+  document.getElementById('lightboxFilename').textContent = photo.name;
+  const exifBadge = document.getElementById('lightboxExifBadge');
+  exifBadge.style.display = photo.exifDate ? 'inline-block' : 'none';
+
+  // フォーム値を反映
+  document.getElementById('lightboxDate').value = photo.date || '';
+  document.getElementById('lightboxTitle').value = photo.title || '';
+  document.getElementById('lightboxDesc').value = photo.desc || '';
+  document.getElementById('lightboxLabel').value = photo.label || '';
+
+  // ナビボタンの disabled 状態を更新
+  updateLightboxNavButtons();
+
+  // オーバーレイを表示
+  overlay.hidden = false;
+  document.body.style.overflow = 'hidden';
+
+  // キーボードリスナー付与
+  document.addEventListener('keydown', handleLightboxKeydown);
+  // 背景クリックで閉じる
+  overlay.addEventListener('click', handleLightboxBackgroundClick);
+}
+
+/** ライトボックスナビゲーション（前後送り） */
+function lightboxNav(direction) {
+  if (currentLightboxPhotoId === null) return;
+
+  // 現在のインデックスを取得
+  const currentIdx = photos.findIndex(p => p.id === currentLightboxPhotoId);
+  if (currentIdx === -1) return;
+
+  const nextIdx = currentIdx + direction;
+  if (nextIdx < 0 || nextIdx >= photos.length) return; // 端で止める
+
+  openLightbox(photos[nextIdx].id);
+}
+
+/** ライトボックスナビボタンの disabled 状態を更新 */
+function updateLightboxNavButtons() {
+  if (currentLightboxPhotoId === null) return;
+
+  const currentIdx = photos.findIndex(p => p.id === currentLightboxPhotoId);
+  const prevBtn = document.getElementById('lightboxPrevBtn');
+  const nextBtn = document.getElementById('lightboxNextBtn');
+
+  prevBtn.disabled = currentIdx <= 0;
+  nextBtn.disabled = currentIdx >= photos.length - 1;
+}
+
+/** ライトボックスを閉じる */
+function closeLightbox() {
+  currentLightboxPhotoId = null;
+  const overlay = document.getElementById('lightboxOverlay');
+  overlay.hidden = true;
+  document.body.style.overflow = 'auto';
+
+  // キーボードリスナー削除
+  document.removeEventListener('keydown', handleLightboxKeydown);
+  overlay.removeEventListener('click', handleLightboxBackgroundClick);
+}
+
+/** ライトボックス内フィールド更新（その場編集がタイル側に反映） */
+function updateLightboxField(field, value) {
+  if (currentLightboxPhotoId === null) return;
+
+  const photo = photos.find(p => p.id === currentLightboxPhotoId);
+  if (!photo) return;
+
+  photo[field] = value;
+  saveToStorage();
+
+  // タイル側のDOM を更新（該当タイルを再描画）
+  const tileEl = document.querySelector(`[data-photo-id="${currentLightboxPhotoId}"]`);
+  if (tileEl && field !== 'label') {
+    // 日付/タイトル/説明の場合はタイル内 input 値を更新
+    if (field === 'date') {
+      const dateInput = tileEl.querySelector('input[type="date"]');
+      if (dateInput) dateInput.value = value;
+    } else if (field === 'title') {
+      const titleInput = tileEl.querySelector('input[type="text"]');
+      if (titleInput) titleInput.value = value;
+    } else if (field === 'desc') {
+      const descInput = tileEl.querySelector('textarea');
+      if (descInput) descInput.value = value;
+    }
+  } else if (tileEl && field === 'label') {
+    // ラベルの場合はchip を再描画
+    renderPhotoList();
+  }
+
+  updatePreview();
+}
+
+/** ライトボックスキーボード操作ハンドラ */
+function handleLightboxKeydown(e) {
+  if (document.getElementById('lightboxOverlay').hidden) return;
+
+  if (e.key === 'Escape') {
+    closeLightbox();
+  } else if (e.key === 'ArrowLeft') {
+    lightboxNav(-1);
+  } else if (e.key === 'ArrowRight') {
+    lightboxNav(1);
+  } else if (e.key === 'Tab') {
+    // フォーカストラップ
+    const overlay = document.getElementById('lightboxOverlay');
+    const focusableElements = overlay.querySelectorAll(
+      'button, input, textarea, [tabindex]'
+    );
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    if (e.shiftKey && document.activeElement === firstElement) {
+      e.preventDefault();
+      lastElement.focus();
+    } else if (!e.shiftKey && document.activeElement === lastElement) {
+      e.preventDefault();
+      firstElement.focus();
+    }
+  }
+}
+
+/** ライトボックス背景クリックで閉じる */
+function handleLightboxBackgroundClick(e) {
+  if (e.target === document.getElementById('lightboxOverlay')) {
+    closeLightbox();
+  }
+}
+
+/** 写真の任意ラベルを更新する */
+function updatePhotoLabel(id, label) {
+  const p = photos.find(x => x.id === id);
+  if (p) { p.label = label; }
+  saveToStorage();
+  renderPhotoList();
   updatePreview();
 }
