@@ -1411,13 +1411,13 @@
     /* ===================== PDF/PRINT - META LABEL CHIP ===================== */
     .meta-label-chip {
       display: inline-block;
-      background: #f0f0f0;
-      border: 1px solid #ccc;
+      background: var(--stamp-soft);
+      border: 1px solid var(--stamp);
       border-radius: 3px;
       padding: 2px 6px;
       font-size: 10px;
       font-weight: 600;
-      color: #333;
+      color: var(--stamp);
       margin-bottom: 2px;
     }
 
