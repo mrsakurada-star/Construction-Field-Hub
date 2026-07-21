@@ -7,7 +7,8 @@ function getSortedPhotosForExport() {
 /**
  * ソート済み写真列（getSortedPhotosForExport の出力）を、工程が変わる境界で
  * 必ず新しいページから始まるようにページ単位（最大3枚）に分割する。
- * 各グループの先頭ページにのみ工程名を持たせ、続きのページは空文字にする。
+ * 工程が複数ページにまたがる場合も、各ページの先頭に工程名を表示する
+ * （3枚以上の工程でも全ページのトップに工程が出るようにする）。
  */
 function buildPhotoPages(sortedPhotos) {
   const groups = [];
@@ -31,7 +32,8 @@ function buildPhotoPages(sortedPhotos) {
     const pageCount = Math.max(Math.ceil(group.photos.length / 3), 1);
     for (let i = 0; i < pageCount; i++) {
       pages.push({
-        processName: i === 0 ? group.name : '',
+        // 工程が複数ページに分かれても各ページ先頭に工程名を出す
+        processName: group.name,
         photos: group.photos.slice(i * 3, i * 3 + 3)
       });
     }

@@ -74,6 +74,9 @@
     <div class="logo"><i data-lucide="clipboard-check"></i></div>
     <div><h1>工事写真報告書 作成ツール</h1></div>
     <div class="header-actions">
+      <button class="btn btn-outline" type="button" id="sidebarToggleBtn" onclick="toggleSidebar()" title="表紙情報パネルの表示/非表示" aria-pressed="false">
+        <i data-lucide="panel-left"></i>表紙情報
+      </button>
       <button class="btn btn-outline" type="button" onclick="updatePreview()">
         <i data-lucide="rotate-ccw"></i>プレビュー更新
       </button>
@@ -287,7 +290,28 @@
       document.querySelectorAll('#tab-cover input, #tab-cover textarea').forEach(el => {
         el.addEventListener('input', () => { saveToStorage(); });
       });
+      // 表紙情報パネルの折り畳み状態を復元
+      applySidebarCollapsed(localStorage.getItem(SIDEBAR_COLLAPSE_KEY) === '1');
     });
+
+    /** 表紙情報サイドバーの折り畳み表示/復元 */
+    const SIDEBAR_COLLAPSE_KEY = 'cfh_photos_sidebar_collapsed';
+    function applySidebarCollapsed(collapsed) {
+      const body = document.querySelector('.app-body');
+      const btn = document.getElementById('sidebarToggleBtn');
+      if (!body) return;
+      body.classList.toggle('sidebar-collapsed', collapsed);
+      if (btn) {
+        btn.classList.toggle('active', collapsed);
+        btn.setAttribute('aria-pressed', collapsed ? 'true' : 'false');
+      }
+    }
+    /** 表紙情報サイドバーの表示/非表示を切り替える（状態を保存） */
+    function toggleSidebar() {
+      const collapsed = !document.querySelector('.app-body').classList.contains('sidebar-collapsed');
+      applySidebarCollapsed(collapsed);
+      localStorage.setItem(SIDEBAR_COLLAPSE_KEY, collapsed ? '1' : '0');
+    }
 
     /** ビュー切替（写真編集 ⇄ PDFプレビュー） */
     function switchViewMode(mode) {
