@@ -140,6 +140,7 @@ function buildReportPage(cover, pagePhotos, pageNum, totalPagesAll, processName,
             <img src="${p.src}" alt="${escapeAttr(p.title)}">
           </div>
           <div class="photo-meta-cell">
+            ${(p.label && p.label.trim()) ? `<div class="meta-row"><span class="meta-label-chip">${escapeHtml(p.label)}</span></div>` : ''}
             <div class="meta-row">
               <span class="meta-label">撮影日</span>
               <span class="meta-value">${formatDate(p.date) || '　'}</span>
