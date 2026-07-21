@@ -57,6 +57,16 @@
     - 並べ替えページ（reorder.html）: 各カードに工程・前中後バッジと
       説明文を表示するように変更（並べ替え自体の挙動は変更なし）
   -->
+  <!--
+    === 更新内容 (2026-07-21) ===
+    - UI統合: メイン領域に工程ごとグリッド編集画面を実装、別ページ(reorder.html)廃止で1画面に統合
+    - ライトボックス: 写真クリック拡大プレビュー・◀▶前後送り・メタ編集（撮影日/タイトル/説明/任意ラベル）実装
+    - sort仕様変更: phase ソートキー廃止→工程rank＋元index のみ、ドラッグ順=PDF順(WYSIWYG)
+    - 任意ラベル: 新フィールド label(string, 既定'')追加、PDF/ライトボックスで編集可、前中後バッジ廃止
+    - フォールバック: タイル上に上下ボタン・工程変更ドロップダウン追加（タッチ/ドラッグ不可環境対応）
+    - 工程管理: グループヘッダーに改名・上下移動・削除ボタン搭載、表紙タブの重複UI廃止
+    - バグ修正: photoCount 無ガード参照を null チェック化、孤立関数(setPhotoPhase/updatePhotoLabel)削除
+  -->
 </head>
 <body>
   <!-- Header -->
@@ -99,14 +109,6 @@
           <div class="form-group"><label>工事内容</label><textarea id="coverWorkContent" rows="4" placeholder="給湯器取替工事"></textarea></div>
           <div class="section-title">補足情報</div>
           <div class="form-group"><label>補足情報</label><textarea id="coverSupplement" rows="4" placeholder="既設の配管を活用し...後日、完工検査を実施予定です"></textarea></div>
-          <div class="section-title">工程一覧</div>
-          <div class="process-add-row">
-            <input type="text" id="processNameInput" placeholder="例：基礎工事" aria-label="工程名">
-            <button class="btn btn-outline" type="button" onclick="handleAddProcess()">
-              <i data-lucide="plus"></i>追加
-            </button>
-          </div>
-          <div class="process-list" id="processList"></div>
           <div class="form-group">
             <label class="work-date-label">
               <span>工事日</span>
@@ -119,8 +121,6 @@
               <div><label for="coverWorkEndDate">終了日</label><input type="date" id="coverWorkEndDate"></div>
             </div>
           </div>
-          <!-- 表紙タブの工程一覧UI は廃止（フェーズ2: 写真管理タブに統合） -->
-          <!-- 工事日直下に配置する操作ボタン -->
           <div class="cover-action-row">
             <button class="btn btn-secondary" type="button" onclick="clearStorage()">
               <i data-lucide="trash-2"></i>クリア
@@ -288,13 +288,6 @@
         el.addEventListener('input', () => { saveToStorage(); });
       });
     });
-
-    /** 工程追加ボタンのハンドラ。入力欄をクリアしてから追加する */
-    function handleAddProcess() {
-      const input = document.getElementById('processNameInput');
-      addProcess(input.value);
-      input.value = '';
-    }
 
     /** ビュー切替（写真編集 ⇄ PDFプレビュー） */
     function switchViewMode(mode) {

@@ -12,9 +12,9 @@ const PORTAL_TOOLS = [
     {
         id: "photos",
         title: "工事写真報告書作成ツール",
-        desc: "工事写真のドラッグ&ドロップ並べ替えと高品質PDF出力",
+        desc: "工程ごとのグリッド統合編集・写真クリック拡大プレビュー・高品質PDF出力",
         category: "site-mgmt",
-        tags: ["写真管理", "PDF出力"],
+        tags: ["写真管理", "PDF出力", "工程管理"],
         url: "Construction photos/index.html",
         icon: "image"
     },

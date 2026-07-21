@@ -210,3 +210,19 @@ function moveProcess(id, dir) {
   saveToStorage();
   renderPhotoList();
 }
+
+/**
+ * 工程名を変更する。
+ * @param {number} id
+ * @param {string} name 新しい工程名
+ */
+function renameProcess(id, name) {
+  const trimmed = (name || '').trim();
+  if (!trimmed) return;
+  const process = processes.find(p => p.id === id);
+  if (!process) return;
+  process.name = trimmed;
+  saveToStorage();
+  renderPhotoList();
+  updatePreview();
+}

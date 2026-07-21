@@ -241,6 +241,9 @@ function renderPhotoList() {
       </div>
       ${pid !== null ? `
         <div class="process-group-actions">
+          <button class="btn-icon" type="button" onclick="showRenameProcessDialog(${pid}, '${escapeAttr(processName)}')" title="改名">
+            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+          </button>
           <button class="btn-icon" type="button" onclick="moveProcess(${pid}, -1)" title="上へ">
             <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg>
           </button>
@@ -313,6 +316,10 @@ function buildPhotoCard(p) {
     ? `<div class="label-chip" title="${escapeAttr(p.label)}">${escapeHtml(p.label)}</div>`
     : '';
 
+  // 工程選択肢を生成（未分類 + 全工程）
+  const processOptionsHTML = '<option value="">未分類</option>' +
+    processes.map(pr => `<option value="${pr.id}" ${p.processId === pr.id ? 'selected' : ''}>${escapeHtml(pr.name)}</option>`).join('');
+
   div.innerHTML = `
     <div class="photo-tile-header">
       <input type="checkbox" class="photo-select-checkbox" data-photo-id="${p.id}" ${selectedPhotoIds.has(p.id) ? 'checked' : ''} onchange="togglePhotoSelection(${p.id}, this.checked)" aria-label="この写真を選択">
@@ -320,6 +327,12 @@ function buildPhotoCard(p) {
         <img class="photo-tile-thumb" src="${p.src}" alt="">
       </button>
       <div class="photo-tile-actions">
+        <button class="btn-icon" type="button" onclick="movePhoto(${p.id}, -1)" title="上へ">
+          <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="18 15 12 9 6 15"></polyline></svg>
+        </button>
+        <button class="btn-icon" type="button" onclick="movePhoto(${p.id}, 1)" title="下へ">
+          <svg class="icon-svg" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </button>
         <button class="btn-icon" type="button" onclick="removePhoto(${p.id})" title="削除">
           <svg class="icon-svg" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
@@ -340,19 +353,15 @@ function buildPhotoCard(p) {
         <label>説明</label>
         <textarea rows="1" placeholder="外観" oninput="updatePhotoField(${p.id}, 'desc', this.value)">${escapeHtml(p.desc)}</textarea>
       </div>
+      <div class="photo-meta-row">
+        <label>工程</label>
+        <select onchange="setPhotoProcess(${p.id}, this.value === '' ? null : Number(this.value))" class="photo-process-select" aria-label="写真の工程を選択">
+          ${processOptionsHTML}
+        </select>
+      </div>
     </div>
   `;
   return div;
-}
-
-/** 写真の phase（前/中/後）を切り替える */
-function setPhotoPhase(id, phase) {
-  const p = photos.find(x => x.id === id);
-  if (!p) return;
-  p.phase = phase;
-  saveToStorage();
-  renderPhotoList();
-  updatePreview();
 }
 
 /** 写真の所属工程を切り替える（D&D からも呼ばれる） */
@@ -423,7 +432,6 @@ function onPhotoCardDrop(e) {
 
   const target = photos.find(p => p.id === targetId);
   dragged.processId = target.processId;
-  dragged.phase = target.phase;
 
   const targetIdx = photos.findIndex(p => p.id === targetId);
   const insertAt = isDragOverTopHalf(e, this) ? targetIdx : targetIdx + 1;
@@ -484,7 +492,8 @@ async function clearAllPhotos() {
     savedPhotoIds.clear();
     renderPhotoList();
     updatePreview();
-    document.getElementById('photoCount').textContent = 0;
+    const countEl = document.getElementById('photoCount');
+    if (countEl) countEl.textContent = 0;
   }
 }
 
@@ -510,6 +519,14 @@ function showAddProcessDialog() {
   const name = prompt('新しい工程名を入力してください:');
   if (name) {
     addProcess(name);
+  }
+}
+
+/** 工程名改名ダイアログを表示する */
+function showRenameProcessDialog(processId, currentName) {
+  const name = prompt('工程名を変更してください:', currentName);
+  if (name && name.trim()) {
+    renameProcess(processId, name);
   }
 }
 
@@ -577,6 +594,10 @@ function updateLightboxNavButtons() {
 
 /** ライトボックスを閉じる */
 function closeLightbox() {
+  // ラベル編集の反映（renderPhotoList で chip を更新）
+  renderPhotoList();
+  updatePreview();
+
   currentLightboxPhotoId = null;
   const overlay = document.getElementById('lightboxOverlay');
   overlay.hidden = true;
@@ -597,7 +618,7 @@ function updateLightboxField(field, value) {
   photo[field] = value;
   saveToStorage();
 
-  // タイル側のDOM を更新（該当タイルを再描画）
+  // タイル側のDOM を更新（該当タイルを軽量更新）
   const tileEl = document.querySelector(`[data-photo-id="${currentLightboxPhotoId}"]`);
   if (tileEl && field !== 'label') {
     // 日付/タイトル/説明の場合はタイル内 input 値を更新
@@ -611,12 +632,9 @@ function updateLightboxField(field, value) {
       const descInput = tileEl.querySelector('textarea');
       if (descInput) descInput.value = value;
     }
-  } else if (tileEl && field === 'label') {
-    // ラベルの場合はchip を再描画
-    renderPhotoList();
+    updatePreview(); // 日付/タイトル/説明は PDF に反映
   }
-
-  updatePreview();
+  // label 編集は closeLightbox 時に renderPhotoList() でまとめて更新（軽量化）
 }
 
 /** ライトボックスキーボード操作ハンドラ */
@@ -653,13 +671,4 @@ function handleLightboxBackgroundClick(e) {
   if (e.target === document.getElementById('lightboxOverlay')) {
     closeLightbox();
   }
-}
-
-/** 写真の任意ラベルを更新する */
-function updatePhotoLabel(id, label) {
-  const p = photos.find(x => x.id === id);
-  if (p) { p.label = label; }
-  saveToStorage();
-  renderPhotoList();
-  updatePreview();
 }
