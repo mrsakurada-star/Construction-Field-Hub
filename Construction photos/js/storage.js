@@ -26,7 +26,8 @@ function saveToStorage() {
     id: p.id, date: p.date, title: p.title,
     desc: p.desc, exifDate: p.exifDate, name: p.name,
     processId: p.processId ?? null,
-    phase: p.phase || 'before'
+    phase: p.phase || 'before',
+    label: p.label || ''
   }));
 
   // 並べ替え順番を id 配列として保存
@@ -111,7 +112,8 @@ async function loadFromStorage() {
             title:    m.title,
             desc:     m.desc,
             processId: m.processId ?? null,
-            phase:     m.phase || 'before'
+            phase:     m.phase || 'before',
+            label:    m.label || ''
           };
         });
 
