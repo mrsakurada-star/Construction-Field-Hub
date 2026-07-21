@@ -28,7 +28,7 @@ gitnexus 系skill（`gitnexus-exploring` 等）は下記 CLI 表を参照。
 <!-- gitnexus:start -->
 # GitNexus — Code Intelligence
 
-This project is indexed by GitNexus as **Construction-Field-Hub** (1068 symbols, 2247 relationships, 88 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+This project is indexed by GitNexus as **Construction-Field-Hub** (1062 symbols, 2244 relationships, 87 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
 
 > Index stale? Run `node .gitnexus/run.cjs analyze` from the project root — it auto-selects an available runner. No `.gitnexus/run.cjs` yet? `npx gitnexus analyze` (npm 11 crash → `npm i -g gitnexus`; #1939).
 
