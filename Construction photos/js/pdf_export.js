@@ -5,8 +5,18 @@
  * html2canvas で各レポートページを画像化し、jsPDF で A4 PDF を生成する。
  */
 async function exportPDF() {
+  // 編集ビュー表示中は .report-page が display:none のコンテナ内にあり寸法が0になる。
+  // その状態で html2canvas を呼ぶとサイズ0のキャンバス→NaN→addImage 例外で出力失敗するため、
+  // キャプチャ前に必ずPDFプレビュービューを可視化し、終了後に元のビューへ戻す。
+  const editView = document.getElementById('photoEditView');
+  const wasEditView = !!(editView && editView.classList.contains('active'));
+  if (wasEditView && typeof switchViewMode === 'function') {
+    switchViewMode('preview'); // pdfPreviewView を表示 + updatePreview() で最新化
+  }
+
   const pages = document.querySelectorAll('.report-page');
   if (!pages.length) {
+    if (wasEditView && typeof switchViewMode === 'function') switchViewMode('edit');
     showToast('まず表紙情報を入力してプレビューを更新してください', false);
     return;
   }
@@ -92,5 +102,8 @@ async function exportPDF() {
     console.error('[PDF] 出力エラー:', err);
     overlay.classList.remove('show');
     showToast('PDF 出力に失敗しました: ' + err.message, false);
+  } finally {
+    // 出力前に編集ビューだった場合は元へ戻す
+    if (wasEditView && typeof switchViewMode === 'function') switchViewMode('edit');
   }
 }
