@@ -87,6 +87,18 @@
       grid-template-columns: 420px 1fr;
       gap: 0;
       min-height: 0;
+      transition: grid-template-columns 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* 表紙情報パネルを折り畳んだ状態: サイドバー列を消して写真編集領域を全幅に */
+    .app-body.sidebar-collapsed {
+      grid-template-columns: 0 1fr;
+    }
+    .app-body.sidebar-collapsed .sidebar {
+      overflow: hidden;
+      border-right: none;
+      opacity: 0;
+      pointer-events: none;
     }
 
     /* ===================== SIDEBAR ===================== */
