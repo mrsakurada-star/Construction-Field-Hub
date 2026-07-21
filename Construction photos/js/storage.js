@@ -207,5 +207,5 @@ function moveProcess(id, dir) {
   if (idx === -1 || newIdx < 0 || newIdx >= processes.length) return;
   [processes[idx], processes[newIdx]] = [processes[newIdx], processes[idx]];
   saveToStorage();
-  renderProcessList();
+  renderPhotoList();
 }
