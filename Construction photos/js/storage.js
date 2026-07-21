@@ -126,7 +126,8 @@ async function loadFromStorage() {
       photos.forEach(p => { if (p.src) savedPhotoIds.add(p.id); });
 
       renderPhotoList();
-      document.getElementById('photoCount').textContent = photos.length;
+      const countEl = document.getElementById('photoCount');
+      if (countEl) countEl.textContent = photos.length;
     }
 
   } catch (e) {
