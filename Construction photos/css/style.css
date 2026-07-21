@@ -1129,3 +1129,263 @@
         padding: 9px 10px;
       }
     }
+
+    /* ===================== PROCESS GROUP & PHOTO GRID (フェーズ2) ===================== */
+    /* 工程グルーピング: 各工程をカード化し、グリッドで写真を表示 */
+
+    .process-group {
+      margin-bottom: 24px;
+      border: 1.5px solid var(--rule-soft);
+      border-radius: 0;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    .process-group-header {
+      background: var(--surface2);
+      border-bottom: 1.5px solid var(--rule-soft);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .process-group-header.drag-over {
+      background: var(--stamp-soft);
+      border-color: var(--stamp);
+    }
+
+    .process-group-header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex: 1;
+      gap: 12px;
+    }
+
+    .process-group-info {
+      display: flex;
+      align-items: baseline;
+      gap: 0;
+      flex: 1;
+    }
+
+    .process-group-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+    }
+
+    .process-group-stats {
+      font-size: 12px;
+      color: var(--ink2);
+      margin-left: 8px;
+      white-space: nowrap;
+    }
+
+    .process-group-actions {
+      display: flex;
+      gap: 4px;
+    }
+
+    /* グリッド表示エリア */
+    .photo-grid {
+      padding: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+      min-height: 120px;
+      background: var(--surface);
+    }
+
+    .photo-grid.empty-drop-zone {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 160px;
+      border: 2px dashed var(--rule-soft);
+      margin: 12px;
+      border-radius: 4px;
+    }
+
+    .empty-drop-hint {
+      font-size: 13px;
+      color: var(--ink2);
+      font-weight: 500;
+    }
+
+    /* ページ区切りマーカー（3枚ごと） */
+    .photo-grid-page-marker {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 8px 0;
+      font-size: 11px;
+      color: var(--ink2);
+      opacity: 0.6;
+    }
+
+    .photo-grid-page-marker span {
+      border-top: 1px solid var(--rule-soft);
+      flex: 1;
+      text-align: center;
+      padding: 0 8px;
+    }
+
+    /* 写真タイル */
+    .photo-tile {
+      background: var(--surface2);
+      border: 1.5px solid var(--rule-soft);
+      border-radius: 3px;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      cursor: grab;
+    }
+
+    .photo-tile:active {
+      cursor: grabbing;
+    }
+
+    .photo-tile.dragging {
+      opacity: 0.4;
+      cursor: grabbing;
+    }
+
+    .photo-tile.drag-over-top {
+      border-top: 3px solid var(--stamp);
+    }
+
+    .photo-tile.drag-over-bottom {
+      border-bottom: 3px solid var(--stamp);
+    }
+
+    .photo-tile-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+      flex-shrink: 0;
+    }
+
+    .photo-select-checkbox {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      cursor: pointer;
+      accent-color: var(--stamp);
+    }
+
+    .photo-tile-thumb-btn {
+      position: relative;
+      overflow: hidden;
+      flex: 1;
+      cursor: pointer;
+    }
+
+    .photo-tile-thumb {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+      border-radius: 2px;
+      transition: transform 0.2s;
+    }
+
+    .photo-tile-thumb-btn:hover .photo-tile-thumb {
+      transform: scale(1.05);
+    }
+
+    .photo-tile-actions {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    /* ラベルチップ */
+    .label-chip {
+      background: var(--stamp-soft);
+      border: 1px solid var(--stamp);
+      color: var(--stamp);
+      border-radius: 12px;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      margin: 0 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: calc(100% - 16px);
+    }
+
+    /* メタ情報行 */
+    .photo-tile-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 0 8px 8px 8px;
+      font-size: 12px;
+    }
+
+    .photo-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .photo-meta-row > label {
+      font-size: 10px;
+      color: var(--ink2);
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .photo-meta-row > input[type="date"],
+    .photo-meta-row > input[type="text"],
+    .photo-meta-row > textarea {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--rule-soft);
+      border-radius: 2px;
+      padding: 4px 6px;
+      color: var(--ink);
+      font-size: 11px;
+      font-family: inherit;
+      transition: border-color 0.15s;
+    }
+
+    .photo-meta-row > input[type="date"]:focus,
+    .photo-meta-row > input[type="text"]:focus,
+    .photo-meta-row > textarea:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+
+    .photo-meta-row > textarea {
+      resize: none;
+    }
+
+    .photo-meta-row > svg {
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      color: var(--ink2);
+      opacity: 0.6;
+    }
+
+    /* 工程追加ボタン行 */
+    .add-process-button-row {
+      padding: 16px;
+      text-align: center;
+    }
+
+    .add-process-button-row .btn {
+      justify-content: center;
+    }
