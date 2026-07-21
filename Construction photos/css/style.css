@@ -1372,6 +1372,24 @@
       resize: none;
     }
 
+    .photo-process-select {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--rule-soft);
+      border-radius: 2px;
+      padding: 4px 6px;
+      color: var(--ink);
+      font-size: 11px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .photo-process-select:focus {
+      outline: none;
+      border-color: var(--ink);
+    }
+
     .photo-meta-row > svg {
       flex-shrink: 0;
       width: 14px;
