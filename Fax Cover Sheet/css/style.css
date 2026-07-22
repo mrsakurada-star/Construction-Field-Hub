@@ -302,6 +302,22 @@ body {
         text-align: right;
     }
 
+    .print-overflow-warning {
+        display: none;
+        margin-bottom: 12px;
+        padding: 10px 14px;
+        background: #FDECEA;
+        border: 1px solid #C62828;
+        color: #C62828;
+        font-size: 13px;
+        line-height: 1.6;
+        text-align: left;
+    }
+
+    .print-overflow-warning.is-visible {
+        display: block;
+    }
+
     .btn-print {
         display: inline-block;
         padding: 12px 28px;
