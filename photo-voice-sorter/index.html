@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CFH フォトボイス分類</title>
+  <link rel="stylesheet" href="../css/portal.css" />
+  <link rel="stylesheet" href="./css/pvs.css" />
+</head>
+<body>
+  <header class="pvs-header"><h1>フォトボイス分類</h1></header>
+
+  <section id="pvs-settings" class="pvs-card">
+    <h2>設定</h2>
+    <label>プロキシURL <input id="cfg-proxy" type="url" placeholder="https://cfh-pvs-proxy...workers.dev/classify" /></label>
+    <label>工程マスタ（1行に1工程）<textarea id="cfg-master" rows="6"></textarea></label>
+    <label>命名テンプレート <input id="cfg-template" type="text" /></label>
+    <button id="cfg-save" class="pvs-btn">保存</button>
+  </section>
+
+  <section class="pvs-card">
+    <button id="pvs-pick" class="pvs-btn pvs-btn-accent">フォルダを選択</button>
+    <span id="pvs-progress"></span>
+  </section>
+
+  <section id="pvs-work" class="pvs-card" hidden>
+    <img id="pvs-photo" alt="現在の写真" />
+    <button id="pvs-mic" class="pvs-btn">🎤 話す</button>
+    <p id="pvs-spoken" class="pvs-spoken"></p>
+    <label>タイトル <input id="pvs-title" type="text" /></label>
+    <label>工程 <select id="pvs-process"></select></label>
+    <div class="pvs-actions">
+      <button id="pvs-ok" class="pvs-btn pvs-btn-accent">OK 次へ</button>
+      <button id="pvs-skip" class="pvs-btn">未分類でスキップ</button>
+    </div>
+  </section>
+
+  <section class="pvs-card">
+    <button id="pvs-export-json" class="pvs-btn">JSON書き出し</button>
+    <button id="pvs-export-csv" class="pvs-btn">CSV対応表</button>
+  </section>
+
+  <p id="pvs-status" class="pvs-status" role="status"></p>
+
+  <script type="module" src="./js/pvs-app.js"></script>
+</body>
+</html>
