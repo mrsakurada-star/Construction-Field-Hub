@@ -1,0 +1,12 @@
+/* photo-voice-sorter/css/pvs.css — Purpose Ecotech トークン準拠（ink/ash/clay/mist、ボーダーレス） */
+body { background: #F6F5F3; color: #1A1A1A; font-family: "Noto Sans JP", "Inter", sans-serif; margin: 0; padding: 16px; }
+.pvs-header h1 { font-size: 20px; margin: 8px 0 16px; }
+.pvs-card { background: #fff; border: 1px solid #9B9A97; border-radius: 0; padding: 16px; margin-bottom: 16px; }
+.pvs-card label { display: block; margin: 8px 0; font-size: 14px; }
+.pvs-card input, .pvs-card textarea, .pvs-card select { width: 100%; padding: 8px; border: 1px solid #9B9A97; border-radius: 0; font-size: 15px; box-sizing: border-box; }
+.pvs-btn { padding: 10px 16px; border: 1px solid #9B9A97; border-radius: 0; background: #fff; color: #1A1A1A; cursor: pointer; font-size: 15px; transition: 200ms cubic-bezier(.4,0,.2,1); }
+.pvs-btn-accent { background: #A8572E; border-color: #A8572E; color: #fff; }
+.pvs-actions { display: flex; gap: 8px; margin-top: 12px; }
+#pvs-photo { max-width: 100%; max-height: 50vh; display: block; border-radius: 0; margin-bottom: 12px; }
+.pvs-spoken { color: #6E6E73; font-size: 14px; min-height: 20px; }
+.pvs-status { font-size: 14px; color: #A8572E; min-height: 20px; }

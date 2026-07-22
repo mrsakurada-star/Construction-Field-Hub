@@ -1,0 +1,2 @@
+# コピーして .dev.vars を作り、実際のキーを入れる（.dev.vars は gitignore 済み）
+GEMINI_API_KEY=your-gemini-api-key-here
