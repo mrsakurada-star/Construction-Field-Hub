@@ -15,29 +15,29 @@
     <label>プロキシURL <input id="cfg-proxy" type="url" placeholder="https://cfh-pvs-proxy...workers.dev/classify" /></label>
     <label>工程マスタ（1行に1工程）<textarea id="cfg-master" rows="6"></textarea></label>
     <label>命名テンプレート <input id="cfg-template" type="text" /></label>
-    <button id="cfg-save" class="pvs-btn">保存</button>
+    <button id="cfg-save" type="button" class="pvs-btn">保存</button>
   </section>
 
   <section class="pvs-card">
-    <button id="pvs-pick" class="pvs-btn pvs-btn-accent">フォルダを選択</button>
+    <button id="pvs-pick" type="button" class="pvs-btn pvs-btn-accent">フォルダを選択</button>
     <span id="pvs-progress"></span>
   </section>
 
   <section id="pvs-work" class="pvs-card" hidden>
     <img id="pvs-photo" alt="現在の写真" />
-    <button id="pvs-mic" class="pvs-btn">🎤 話す</button>
+    <button id="pvs-mic" type="button" class="pvs-btn">🎤 話す</button>
     <p id="pvs-spoken" class="pvs-spoken"></p>
     <label>タイトル <input id="pvs-title" type="text" /></label>
     <label>工程 <select id="pvs-process"></select></label>
     <div class="pvs-actions">
-      <button id="pvs-ok" class="pvs-btn pvs-btn-accent">OK 次へ</button>
-      <button id="pvs-skip" class="pvs-btn">未分類でスキップ</button>
+      <button id="pvs-ok" type="button" class="pvs-btn pvs-btn-accent">OK 次へ</button>
+      <button id="pvs-skip" type="button" class="pvs-btn">未分類でスキップ</button>
     </div>
   </section>
 
   <section class="pvs-card">
-    <button id="pvs-export-json" class="pvs-btn">JSON書き出し</button>
-    <button id="pvs-export-csv" class="pvs-btn">CSV対応表</button>
+    <button id="pvs-export-json" type="button" class="pvs-btn">JSON書き出し</button>
+    <button id="pvs-export-csv" type="button" class="pvs-btn">CSV対応表</button>
   </section>
 
   <p id="pvs-status" class="pvs-status" role="status"></p>
