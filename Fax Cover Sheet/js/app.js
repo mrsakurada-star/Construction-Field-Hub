@@ -189,38 +189,70 @@
             computePrintScale();
         }
 
-        // 印刷用：文字量が多い場合にA4 1枚へ自動縮小するスケールを計測
-        function computePrintScale() {
-            const wrapper = document.getElementById('sheet-content-wrapper');
-            const printSheet = document.getElementById('print-sheet');
-            if (!wrapper || !printSheet) return;
-
-            // 縮小前の自然な高さを、印刷時と同じ幅・余白の複製で計測する
+        // 印刷用：指定した幅(mm)でコンテンツを複製し、自然な高さ(px)を計測する
+        function measureNaturalHeightPx(wrapper, widthMm) {
             const clone = wrapper.cloneNode(true);
+            clone.removeAttribute('id'); // 複製元とIDが重複しないようにする
             clone.style.transform = 'none';
             clone.style.position = 'absolute';
             clone.style.visibility = 'hidden';
             clone.style.left = '-9999px';
             clone.style.top = '0';
-            clone.style.width = '190mm';
+            clone.style.width = widthMm + 'mm';
             clone.style.height = 'auto';
             clone.style.padding = '12mm 15mm';
             clone.style.boxSizing = 'border-box';
             clone.style.display = 'flex';
             clone.style.flexDirection = 'column';
             document.body.appendChild(clone);
-
-            const naturalHeightPx = clone.scrollHeight;
+            const heightPx = clone.scrollHeight;
             document.body.removeChild(clone);
+            return heightPx;
+        }
 
-            const targetHeightPx = 267 * (96 / 25.4); // .sheetの印刷時高さ(267mm)をpx換算
+        // 印刷用：文字量が多い場合にA4 1枚へ自動縮小するスケールを計測
+        const PRINT_SHEET_WIDTH_MM = 190;
+        const PRINT_SHEET_HEIGHT_MM = 267;
+        const PRINT_SAFETY_MARGIN = 0.97; // 計測誤差・フォント差分に対する安全マージン
+        const PRINT_MIN_SCALE = 0.55;
+
+        function computePrintScale() {
+            const wrapper = document.getElementById('sheet-content-wrapper');
+            const printSheet = document.getElementById('print-sheet');
+            if (!wrapper || !printSheet) return;
+
+            const targetHeightPx = (PRINT_SHEET_HEIGHT_MM * (96 / 25.4)) * PRINT_SAFETY_MARGIN;
+
+            // 1パス目：等倍幅(190mm)で自然な高さを計測
+            let naturalHeightPx = measureNaturalHeightPx(wrapper, PRINT_SHEET_WIDTH_MM);
 
             let scale = 1;
             if (naturalHeightPx > targetHeightPx) {
-                scale = Math.max(0.65, targetHeightPx / naturalHeightPx);
+                scale = Math.max(PRINT_MIN_SCALE, targetHeightPx / naturalHeightPx);
+
+                // 2パス目：実際に縮小後わたる幅(190/scale mm)で再計測し、
+                // 折返し行数の変化によるズレを補正する
+                const compensatedWidthMm = PRINT_SHEET_WIDTH_MM / scale;
+                const recheckedHeightPx = measureNaturalHeightPx(wrapper, compensatedWidthMm);
+                if (recheckedHeightPx > targetHeightPx) {
+                    scale = Math.max(PRINT_MIN_SCALE, targetHeightPx / recheckedHeightPx);
+                }
             }
             printSheet.style.setProperty('--print-scale', scale.toFixed(3));
+
+            // 最小スケールまで縮小しても収まりきらない場合は警告を表示する
+            const warning = document.getElementById('print-overflow-warning');
+            if (warning) {
+                const finalHeightPx = measureNaturalHeightPx(wrapper, PRINT_SHEET_WIDTH_MM / scale) * scale;
+                warning.classList.toggle('is-visible', finalHeightPx > targetHeightPx);
+            }
         }
+
+        // フォント読み込み完了後・印刷直前に再計測して、初期描画時とのズレを防ぐ
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(() => computePrintScale());
+        }
+        window.addEventListener('beforeprint', computePrintScale);
 
         // Remote Fetch Logic (via CORS proxy)
         async function fetchOfficesOnline() {
