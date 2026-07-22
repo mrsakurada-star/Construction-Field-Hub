@@ -1,0 +1,7 @@
+name = "cfh-pvs-proxy"
+main = "src/worker.js"
+compatibility_date = "2025-01-01"
+
+[vars]
+# 許可するオリジン（本番デプロイ先に合わせて更新）
+ALLOWED_ORIGIN = "*"
