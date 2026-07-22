@@ -434,6 +434,10 @@ body {
         flex-direction: column !important;
         font-family: var(--font-serif);
         color: var(--ink);
+        /* 文字量が多い場合、JS計測によりA4 1枚に収まるよう自動縮小する */
+        transform: scale(var(--print-scale, 1));
+        transform-origin: top left;
+        width: calc(100% / var(--print-scale, 1));
     }
 
     /* Sheet Title - Print */
