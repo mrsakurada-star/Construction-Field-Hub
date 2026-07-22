@@ -186,6 +186,40 @@
             }
 
             saveToLocal();
+            computePrintScale();
+        }
+
+        // 印刷用：文字量が多い場合にA4 1枚へ自動縮小するスケールを計測
+        function computePrintScale() {
+            const wrapper = document.getElementById('sheet-content-wrapper');
+            const printSheet = document.getElementById('print-sheet');
+            if (!wrapper || !printSheet) return;
+
+            // 縮小前の自然な高さを、印刷時と同じ幅・余白の複製で計測する
+            const clone = wrapper.cloneNode(true);
+            clone.style.transform = 'none';
+            clone.style.position = 'absolute';
+            clone.style.visibility = 'hidden';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.width = '190mm';
+            clone.style.height = 'auto';
+            clone.style.padding = '12mm 15mm';
+            clone.style.boxSizing = 'border-box';
+            clone.style.display = 'flex';
+            clone.style.flexDirection = 'column';
+            document.body.appendChild(clone);
+
+            const naturalHeightPx = clone.scrollHeight;
+            document.body.removeChild(clone);
+
+            const targetHeightPx = 267 * (96 / 25.4); // .sheetの印刷時高さ(267mm)をpx換算
+
+            let scale = 1;
+            if (naturalHeightPx > targetHeightPx) {
+                scale = Math.max(0.65, targetHeightPx / naturalHeightPx);
+            }
+            printSheet.style.setProperty('--print-scale', scale.toFixed(3));
         }
 
         // Remote Fetch Logic (via CORS proxy)
