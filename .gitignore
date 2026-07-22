@@ -1,3 +1,6 @@
 .DS_Store
 desktop.ini
 Thumbs.db
+
+# subagent-driven-development scratch (ledger, briefs, reports)
+.superpowers/
