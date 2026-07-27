@@ -108,4 +108,13 @@ const PORTAL_TOOLS = [
         url: "Site Work Order/index.html",
         icon: "clipboard-signature"
     },
+    {
+        id: "photo_voice_sorter",
+        title: "フォトボイス分類",
+        desc: "写真を見ながら話すだけでタイトル・工程を自動分類、実ファイルをリネーム",
+        category: "site-mgmt",
+        tags: ["写真管理", "音声入力", "AI分類"],
+        url: "photo-voice-sorter/index.html",
+        icon: "mic"
+    },
 ];
