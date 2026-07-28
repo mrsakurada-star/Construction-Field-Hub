@@ -2,9 +2,10 @@
 /* © 2026 Nozomi Sakurada. All rights reserved. */
 import { buildClassifyPrompt } from './prompt.js';
 
+// 無料枠のFlash-Liteモデルを使用（短文の分類・命名という軽い用途向け）。
 // モデルIDはデプロイ時にGoogleの最新モデル一覧と照合し、古くなっていないか確認すること
 const GEMINI_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
 
 function corsHeaders(env) {
   return {
