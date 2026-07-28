@@ -1,6 +1,8 @@
 // photo-voice-sorter/proxy/src/worker.js
+/* © 2026 Nozomi Sakurada. All rights reserved. */
 import { buildClassifyPrompt } from './prompt.js';
 
+// モデルIDはデプロイ時にGoogleの最新モデル一覧と照合し、古くなっていないか確認すること
 const GEMINI_URL =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
@@ -20,6 +22,13 @@ export default {
     const url = new URL(request.url);
     if (request.method !== 'POST' || url.pathname !== '/classify') {
       return new Response('Not found', { status: 404, headers: cors });
+    }
+
+    if (env.ALLOWED_ORIGIN && env.ALLOWED_ORIGIN !== '*') {
+      const origin = request.headers.get('Origin');
+      if (origin !== env.ALLOWED_ORIGIN) {
+        return new Response('Forbidden', { status: 403, headers: cors });
+      }
     }
 
     try {

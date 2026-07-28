@@ -1,3 +1,4 @@
+/* © 2026 Nozomi Sakurada. All rights reserved. */
 const FORBIDDEN = /[\\/:*?"<>|]/g;
 
 export function renderFileName({ template, process, title, seq, ext }) {

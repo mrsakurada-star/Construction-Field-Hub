@@ -1,3 +1,4 @@
+/* © 2026 Nozomi Sakurada. All rights reserved. */
 const KEY = 'pvs.config';
 
 const DEFAULTS = {

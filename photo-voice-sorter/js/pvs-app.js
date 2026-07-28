@@ -1,4 +1,5 @@
 // photo-voice-sorter/js/pvs-app.js
+/* © 2026 Nozomi Sakurada. All rights reserved. */
 import { loadConfig, saveConfig } from './pvs-config.js';
 import { isSpeechSupported, createRecognizer } from './pvs-speech.js';
 import { isFileAccessSupported, pickImageDir, renameFile } from './pvs-files.js';
@@ -20,7 +21,9 @@ function fillSettings() {
   $('cfg-proxy').value = cfg.proxyUrl;
   $('cfg-master').value = cfg.processMaster.join('\n');
   $('cfg-template').value = cfg.nameTemplate;
-  $('pvs-process').innerHTML = cfg.processMaster.map((p) => `<option>${p}</option>`).join('');
+  const processSelect = $('pvs-process');
+  processSelect.replaceChildren();
+  cfg.processMaster.forEach((p) => processSelect.appendChild(new Option(p, p)));
 }
 
 function showCurrent() {
@@ -30,6 +33,8 @@ function showCurrent() {
   $('pvs-progress').textContent = `${index + 1} / ${files.length}`;
   $('pvs-spoken').textContent = '';
   $('pvs-title').value = '';
+  $('pvs-process').selectedIndex = 0;
+  status('');
 }
 
 $('cfg-save').addEventListener('click', () => {
@@ -40,9 +45,10 @@ $('cfg-save').addEventListener('click', () => {
 });
 
 $('pvs-pick').addEventListener('click', async () => {
-  if (!isFileAccessSupported()) { status('この環境はフォルダ操作に未対応です（リネーム不可・CSVのみ）。'); return; }
+  if (!isFileAccessSupported()) { status('この環境（Chrome/Edge以外）はフォルダ操作に非対応のため、本ツールをご利用いただけません。Chrome または Edge でお試しください。'); return; }
   try {
     const picked = await pickImageDir();
+    if (files.length) files.forEach((f) => URL.revokeObjectURL(f.url));
     dirHandle = picked.dirHandle; files = picked.files;
     photos = []; index = 0; usedNames.clear();
     files.forEach((f) => usedNames.add(f.name));
@@ -92,7 +98,9 @@ $('pvs-skip').addEventListener('click', () => commit(false));
 function download(name, text, type) {
   const blob = new Blob([text], { type });
   const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  const url = URL.createObjectURL(blob);
+  a.href = url; a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
 $('pvs-export-json').addEventListener('click', () => download('pvs-photos.json', buildExportJson(photos), 'application/json'));

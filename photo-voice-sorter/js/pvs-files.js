@@ -1,3 +1,4 @@
+/* © 2026 Nozomi Sakurada. All rights reserved. */
 const IMAGE_EXT = new Set(['jpg', 'jpeg', 'png']);
 
 export function isFileAccessSupported() {

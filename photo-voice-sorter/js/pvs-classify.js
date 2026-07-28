@@ -1,3 +1,4 @@
+/* © 2026 Nozomi Sakurada. All rights reserved. */
 export function validateProcess(candidate, processMaster) {
   const c = String(candidate ?? '').trim();
   return processMaster.includes(c) ? c : null;

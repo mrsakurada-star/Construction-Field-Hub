@@ -1,0 +1,8 @@
+{
+  "name": "cfh-photo-voice-sorter",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
