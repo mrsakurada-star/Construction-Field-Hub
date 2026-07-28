@@ -4,6 +4,17 @@
  */
 const PORTAL_UPDATES = [
     {
+        toolId: "photo_voice_sorter",
+        toolName: "フォトボイス分類",
+        date: "2026-07-28",
+        changes: [
+            "新規ツールを追加：写真を1枚ずつ音声で説明するとAIがタイトル・工程を提案",
+            "確認・修正した内容で実ファイルをリネーム（File System Access API）",
+            "タイトル・工程付き写真リストをJSON書き出し（CSV対応表フォールバックあり）",
+            "APIキーはCloudflare Workersプロキシのシークレットに保存し、git・ブラウザ双方へ非公開"
+        ]
+    },
+    {
         toolId: "photos",
         toolName: "工事写真報告書作成ツール",
         date: "2026-07-21",

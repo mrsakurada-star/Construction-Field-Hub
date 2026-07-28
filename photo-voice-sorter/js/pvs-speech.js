@@ -1,3 +1,4 @@
+/* © 2026 Nozomi Sakurada. All rights reserved. */
 export function isSpeechSupported() {
   return typeof (globalThis.SpeechRecognition || globalThis.webkitSpeechRecognition) === 'function';
 }

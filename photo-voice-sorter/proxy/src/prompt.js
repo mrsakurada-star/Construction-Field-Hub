@@ -1,3 +1,4 @@
+/* © 2026 Nozomi Sakurada. All rights reserved. */
 export function buildClassifyPrompt({ spokenText, processMaster }) {
   const list = (processMaster || []).map((p) => `- ${p}`).join('\n');
   return [

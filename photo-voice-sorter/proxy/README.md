@@ -13,3 +13,8 @@ curl -X POST http://localhost:8787/classify \
   -H 'Content-Type: application/json' \
   -d '{"spokenText":"2階の給湯器を外したところ","processMaster":["撤去","据付"]}'
 → {"title":"...","process":"撤去"} が返る
+
+## 本番運用の注意
+
+- `ALLOWED_ORIGIN` は本番デプロイ時、実際に配信するポータルのオリジン（例: `https://xxxxx.pages.dev`）に必ず設定してください。`*` のままだと任意のオリジンからのリクエストを許可してしまいます。
+- 本アプリにはアプリ内レート制限を実装していません。`/classify` ルートには Cloudflare のビルトイン Rate Limiting の設定を検討してください。

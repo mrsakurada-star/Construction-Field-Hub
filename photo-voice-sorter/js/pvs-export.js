@@ -1,5 +1,6 @@
-export function buildExportJson(photos) {
-  return JSON.stringify({ generatedAt: null, photos }, null, 2);
+/* © 2026 Nozomi Sakurada. All rights reserved. */
+export function buildExportJson(photos, generatedAt = new Date().toISOString()) {
+  return JSON.stringify({ generatedAt, photos }, null, 2);
 }
 
 function csvCell(v) {
