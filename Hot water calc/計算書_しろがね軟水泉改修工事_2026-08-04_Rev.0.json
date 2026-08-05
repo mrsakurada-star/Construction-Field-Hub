@@ -1,0 +1,142 @@
+{
+  "version": "3.0",
+  "savedAt": "2026-08-04T01:48:10.407Z",
+  "common": {
+    "name": "しろがね軟水泉改修工事",
+    "pref": "青森県",
+    "tc": "4",
+    "k": "1.1",
+    "facility": "nursing",
+    "author": "(株)パーパスエコテック　LS北東北",
+    "date": "2026年08月04日",
+    "rev": "Rev.0",
+    "memo": "",
+    "gasType": "LPG"
+  },
+  "revHistory": [],
+  "systems": [
+    {
+      "id": 1,
+      "name": "水栓＋浴槽落とし湯",
+      "pat": "pat1",
+      "fixtures": [
+        {
+          "id": 1,
+          "zone": "room",
+          "name": "洗面台（客室）",
+          "hq": 7.6,
+          "hqTank": 30,
+          "qty": 1
+        },
+        {
+          "id": 2,
+          "zone": "room",
+          "name": "シャワー（客室）",
+          "hq": 114,
+          "hqTank": 120,
+          "qty": 0
+        }
+      ],
+      "p4params": {
+        "vol": 10,
+        "qty": 1,
+        "nfilter": 6,
+        "dt2": 5,
+        "dt1": 10,
+        "tset": 42,
+        "tfill": 4,
+        "useQfill": false
+      },
+      "p23params": {
+        "pipelen": 0,
+        "losscoef": 10,
+        "tankvol": 1000
+      },
+      "expansionParams": {
+        "enable": false,
+        "vsysPipe": 0,
+        "unitModel": "GS-S3200GW"
+      },
+      "multiParams": {
+        "facilityType": "nursing",
+        "shower": {
+          "qty": 25,
+          "enabled": true
+        },
+        "wash": {
+          "qty": 10,
+          "enabled": false
+        },
+        "kitchen": {
+          "qty": 0,
+          "enabled": false
+        },
+        "bath": {
+          "vol": 16000,
+          "fillMin": 60,
+          "outdoor": false,
+          "enabled": true
+        }
+      },
+      "sliders": {
+        "shower": 74
+      },
+      "th": 60,
+      "unitcap": 50,
+      "result": {
+        "isMulti": true,
+        "pat": "multi",
+        "lineName": "水栓＋浴槽落とし湯",
+        "groups": [
+          {
+            "key": "shower",
+            "label": "シャワー・浴室カラン",
+            "qty": 25,
+            "gosuEach": 15,
+            "u": 0.74,
+            "autoU": 0.38,
+            "isManual": true,
+            "gosu": 277.5
+          }
+        ],
+        "sumGosuA": 277.5,
+        "gosuA": 305.25,
+        "unitsA": 7,
+        "bathResult": {
+          "vol": 16000,
+          "fillMin": 60,
+          "outdoor": false,
+          "bathTemp": 44,
+          "flowBath": 266.6666666666667,
+          "gosuBath": 426.66666666666674,
+          "gosuB": 469.3333333333334,
+          "unitsB": 10
+        },
+        "unitsB": 10,
+        "gosuB": 469.3333333333334,
+        "finalUnits": 10,
+        "unitcap": 50,
+        "pipeInfo": {
+          "maxUnits": 10,
+          "kyusuiA": "50A",
+          "kyutoA": "50A",
+          "maxFlowTotal": 178
+        },
+        "ftype": "nursing",
+        "facilityLabel": "介護・老健施設",
+        "src": "設計資料073-8 P.8",
+        "tc": 4,
+        "K": 1.1,
+        "waterDirect": {
+          "status": "ng",
+          "label": "原則不可",
+          "message": "複数台マルチは原則不可。PU-6等ポンプユニットの使用を検討してください。"
+        },
+        "gasKw70Alert": true,
+        "QcircKw": 0,
+        "QcircGosu": 0,
+        "expansionTank": null
+      }
+    }
+  ]
+}

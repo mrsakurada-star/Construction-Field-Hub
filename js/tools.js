@@ -3,7 +3,7 @@ const PORTAL_TOOLS = [
     {
         id: "checklists",
         title: "工事・メンテ統合チェック表",
-        desc: "給湯機器工事・キッチン・メンテナンス向けチェックリスト（PDF印刷対応）",
+        desc: "給湯機器工事・キッチン・メンテナンス向けチェックリスト＋修理完了報告書（PDF印刷対応）",
         category: "site-mgmt",
         tags: ["チェックリスト", "現場管理"],
         url: "Field_Checklists/index.html",

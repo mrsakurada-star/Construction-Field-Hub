@@ -4,6 +4,15 @@
  */
 const PORTAL_UPDATES = [
     {
+        toolId: "checklists",
+        toolName: "工事・メンテ統合チェック表",
+        date: "2026-08-05",
+        changes: [
+            "「修理完了報告書」を4つ目のタブとして統合（旧: 独立ファイル 修理完了報告書.html）",
+            "依頼ID・完了内容・フロン排出規制法記入欄・お客様サイン欄を1画面で入力・印刷可能に"
+        ]
+    },
+    {
         toolId: "photo_voice_sorter",
         toolName: "フォトボイス分類",
         date: "2026-07-28",
