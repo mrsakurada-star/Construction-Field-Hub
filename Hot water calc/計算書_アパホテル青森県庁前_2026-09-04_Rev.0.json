@@ -1,0 +1,150 @@
+{
+  "version": "3.0",
+  "savedAt": "2026-09-04T06:39:26.840Z",
+  "common": {
+    "name": "アパホテル青森駅県庁通",
+    "pref": "青森県",
+    "tc": "4",
+    "k": "1.1",
+    "facility": "bizhotel",
+    "author": "(株)パーパスエコテック　LS北東北",
+    "date": "2026年09月04日",
+    "rev": "Rev.0",
+    "memo": "",
+    "gasType": "13A"
+  },
+  "revHistory": [
+    {
+      "rev": "Rev.0",
+      "date": "2026年09月04日",
+      "note": "同時使用率２０％→２５％"
+    }
+  ],
+  "systems": [
+    {
+      "id": 1,
+      "name": "客室系統",
+      "pat": "pat2",
+      "fixtures": [
+        {
+          "id": 1,
+          "zone": "room",
+          "name": "洗面台（客室）",
+          "hq": 7.6,
+          "hqTank": 30,
+          "qty": 1
+        },
+        {
+          "id": 2,
+          "zone": "room",
+          "name": "シャワー（客室）",
+          "hq": 114,
+          "hqTank": 120,
+          "qty": 0
+        }
+      ],
+      "p4params": {
+        "vol": 10,
+        "qty": 1,
+        "nfilter": 6,
+        "dt2": 5,
+        "dt1": 10,
+        "tset": 42,
+        "tfill": 4,
+        "useQfill": false
+      },
+      "p23params": {
+        "pipelen": 0,
+        "losscoef": 10,
+        "tankvol": 1000
+      },
+      "expansionParams": {
+        "enable": false,
+        "vsysPipe": 0,
+        "unitModel": "GS-S3200GW"
+      },
+      "multiParams": {
+        "facilityType": "bizhotel",
+        "shower": {
+          "qty": 114,
+          "enabled": true
+        },
+        "wash": {
+          "qty": 114,
+          "enabled": true
+        },
+        "kitchen": {
+          "qty": 0,
+          "enabled": false
+        },
+        "bath": {
+          "vol": 3000,
+          "fillMin": 60,
+          "outdoor": false,
+          "enabled": false
+        }
+      },
+      "sliders": {
+        "shower": 25,
+        "wash": 25
+      },
+      "th": 60,
+      "unitcap": 50,
+      "result": {
+        "isMulti": true,
+        "pat": "multi",
+        "lineName": "客室系統",
+        "groups": [
+          {
+            "key": "shower",
+            "label": "シャワー・浴室カラン",
+            "qty": 114,
+            "gosuEach": 15,
+            "u": 0.25,
+            "autoU": 0.2,
+            "isManual": true,
+            "gosu": 427.5
+          },
+          {
+            "key": "wash",
+            "label": "手洗い（洗面）カラン",
+            "qty": 114,
+            "gosuEach": 9,
+            "u": 0.25,
+            "autoU": 0.2,
+            "isManual": true,
+            "gosu": 256.5
+          }
+        ],
+        "sumGosuA": 684,
+        "gosuA": 752.4000000000001,
+        "unitsA": 16,
+        "bathResult": null,
+        "unitsB": 0,
+        "gosuB": 0,
+        "finalUnits": 16,
+        "unitcap": 50,
+        "pipeInfo": {
+          "maxUnits": 20,
+          "kyusuiA": "80A",
+          "kyutoA": "80A",
+          "maxFlowTotal": 356
+        },
+        "ftype": "bizhotel",
+        "facilityLabel": "ビジネスホテル",
+        "src": "設計資料073-8 P.8",
+        "tc": 4,
+        "K": 1.1,
+        "waterDirect": {
+          "status": "warn",
+          "label": "要確認",
+          "message": "給湯循環は所轄水道局に要問い合わせ。"
+        },
+        "gasKw70Alert": true,
+        "QcircKw": 0,
+        "QcircGosu": 0,
+        "expansionTank": null
+      }
+    }
+  ]
+}
